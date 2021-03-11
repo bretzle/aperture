@@ -22,6 +22,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "light_arena"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bda7d821ae7974e30228b0f0785c2e14b63e4f7ac0c3969f0a2af79992ebf099"
+
+[[package]]
 name = "log"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -111,6 +117,7 @@ name = "pbrust"
 version = "0.1.0"
 dependencies = [
  "approx",
+ "light_arena",
  "log",
  "num",
 ]

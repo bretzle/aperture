@@ -1,5 +1,5 @@
 use crate::{
-    geometry::{Bounds3f, Matrix, Normal3f, Point3f, Vector3f},
+    geometry::{Bounds3f, Matrix, Normal3f, Point3f, Vector2f, Vector3f},
     utils::gamma,
 };
 use log::error;
@@ -367,20 +367,20 @@ impl<'a, 'b> Mul<&'a Bounds3f> for &'b Transform {
     }
 }
 
-// #[allow(non_snake_case)]
-// pub fn solve_linear_system2x2(A: &[[f32; 2]; 2], B: Vector2f) -> Option<(f32, f32)> {
-//     let det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
-//     if det.abs() < 1e-10 {
-//         return None;
-//     }
-//     let x0 = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
-//     let x1 = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
+#[allow(non_snake_case)]
+pub fn solve_linear_system2x2(A: &[[f32; 2]; 2], B: Vector2f) -> Option<(f32, f32)> {
+    let det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+    if det.abs() < 1e-10 {
+        return None;
+    }
+    let x0 = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
+    let x1 = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
 
-//     if x0.is_nan() || x1.is_nan() {
-//         return None;
-//     }
-//     Some((x0, x1))
-// }
+    if x0.is_nan() || x1.is_nan() {
+        return None;
+    }
+    Some((x0, x1))
+}
 
 #[cfg(test)]
 mod tests {
