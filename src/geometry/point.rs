@@ -1,4 +1,4 @@
-use super::Vector3;
+use super::{vector::Vector2, Vector3};
 use num::{abs, Num, Signed, Zero};
 use std::fmt::{Display, Error, Formatter};
 use std::ops::{
@@ -260,5 +260,258 @@ where
 
     fn is_zero(&self) -> bool {
         self.x.is_zero() && self.y.is_zero() && self.z.is_zero()
+    }
+}
+
+//////////////////////////
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Point2<T> {
+    pub x: T,
+    pub y: T,
+}
+
+impl<T> Point2<T>
+where
+    T: Num + Signed + Copy,
+{
+    pub fn new(x: T, y: T) -> Point2<T> {
+        Point2 { x, y }
+    }
+
+    pub fn abs(&self) -> Point2<T> {
+        Point2::new(abs(self.x), abs(self.y))
+    }
+}
+
+impl Point2<f32> {
+    pub fn has_nan(self) -> bool {
+        self.x.is_nan() || self.y.is_nan()
+    }
+}
+
+// Operators
+// Point2 + Point2 -> Point2
+impl<T> Add<Point2<T>> for Point2<T>
+where
+    T: Add<Output = T> + Copy,
+{
+    type Output = Point2<T>;
+
+    fn add(self, rhs: Point2<T>) -> Point2<T> {
+        Point2 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+// Point2 + Vector2 -> Point2
+impl<T> Add<Vector2<T>> for Point2<T>
+where
+    T: Add<Output = T> + Copy,
+{
+    type Output = Point2<T>;
+
+    fn add(self, rhs: Vector2<T>) -> Point2<T> {
+        Point2 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+// Point2 += Point2 -> Point2
+impl<T> AddAssign<Point2<T>> for Point2<T>
+where
+    T: AddAssign + Copy,
+{
+    fn add_assign(&mut self, other: Point2<T>) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
+// Point2 += Vector2 -> Point2
+impl<T> AddAssign<Vector2<T>> for Point2<T>
+where
+    T: AddAssign + Copy,
+{
+    fn add_assign(&mut self, other: Vector2<T>) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
+// Point2 - Point2 -> Vector2
+impl<T> Sub<Point2<T>> for Point2<T>
+where
+    T: Sub<Output = T> + Copy,
+{
+    type Output = Vector2<T>;
+
+    fn sub(self, rhs: Point2<T>) -> Vector2<T> {
+        Vector2::new(self.x - rhs.x, self.y - rhs.y)
+    }
+}
+
+// Point2 - Vector2 -> Point2
+impl<T> Sub<Vector2<T>> for Point2<T>
+where
+    T: Num + Signed + Copy,
+{
+    type Output = Point2<T>;
+
+    fn sub(self, rhs: Vector2<T>) -> Point2<T> {
+        Point2::new(self.x - rhs.x, self.y - rhs.y)
+    }
+}
+
+// Point2 -= Vector2 -> Point2
+impl<T> SubAssign<Vector2<T>> for Point2<T>
+where
+    T: SubAssign + Copy,
+{
+    fn sub_assign(&mut self, other: Vector2<T>) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
+}
+
+impl<T> Div<T> for Point2<T>
+where
+    T: Div<Output = T> + Copy,
+{
+    type Output = Point2<T>;
+
+    fn div(self, v: T) -> Point2<T> {
+        Point2 {
+            x: self.x / v,
+            y: self.y / v,
+        }
+    }
+}
+
+impl<T> DivAssign<T> for Point2<T>
+where
+    T: DivAssign + Copy,
+{
+    fn div_assign(&mut self, v: T) {
+        self.x /= v;
+        self.y /= v;
+    }
+}
+
+impl<T> Mul<T> for Point2<T>
+where
+    T: Mul<Output = T> + Copy,
+{
+    type Output = Point2<T>;
+
+    fn mul(self, v: T) -> Point2<T> {
+        Point2 {
+            x: self.x * v,
+            y: self.y * v,
+        }
+    }
+}
+
+impl Mul<Point2<f32>> for f32 {
+    type Output = Point2<f32>;
+
+    fn mul(self, p: Point2<f32>) -> Point2<f32> {
+        Point2::new(self * p.x, self * p.y)
+    }
+}
+
+impl<T> MulAssign<T> for Point2<T>
+where
+    T: MulAssign + Copy,
+{
+    fn mul_assign(&mut self, v: T) {
+        self.x *= v;
+        self.y *= v;
+    }
+}
+
+impl<T> Neg for Point2<T>
+where
+    T: Neg<Output = T>,
+{
+    type Output = Point2<T>;
+
+    fn neg(self) -> Point2<T> {
+        Point2 {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
+
+impl<T> Index<usize> for Point2<T> {
+    type Output = T;
+
+    fn index(&self, i: usize) -> &T {
+        match i {
+            0 => &self.x,
+            1 => &self.y,
+            _ => panic!("Invalid index into point"),
+        }
+    }
+}
+
+impl<T> IndexMut<usize> for Point2<T> {
+    fn index_mut(&mut self, i: usize) -> &mut T {
+        match i {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            _ => panic!("Invalid index into point"),
+        }
+    }
+}
+
+impl<T> Default for Point2<T>
+where
+    T: Default,
+{
+    fn default() -> Self {
+        Point2 {
+            x: T::default(),
+            y: T::default(),
+        }
+    }
+}
+
+impl<T> Display for Point2<T>
+where
+    T: Display,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        write!(f, "[{}, {}]", self.x, self.y)
+    }
+}
+
+impl<T> Zero for Point2<T>
+where
+    T: Num + Signed + Copy,
+{
+    fn zero() -> Point2<T> {
+        Point2::new(T::zero(), T::zero())
+    }
+
+    fn is_zero(&self) -> bool {
+        self.x.is_zero() && self.y.is_zero()
+    }
+}
+
+impl From<Point2<f32>> for Point2<i32> {
+    fn from(p: Point2<f32>) -> Point2<i32> {
+        Point2::new(p.x as i32, p.y as i32)
+    }
+}
+
+impl From<Point2<i32>> for Point2<f32> {
+    fn from(p: Point2<i32>) -> Point2<f32> {
+        Point2::new(p.x as f32, p.y as f32)
     }
 }
