@@ -6,6 +6,7 @@ use crate::{
 use std::fmt::Debug;
 
 mod sphere;
+mod cylinder;
 
 pub trait Shape: Debug + Send + Sync {
     fn intersect(&self, ray: &Ray) -> Option<(SurfaceInteraction, f32)>;
