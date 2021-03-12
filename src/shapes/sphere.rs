@@ -4,6 +4,7 @@ use crate::{
     geometry::*,
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
+    sampling::{uniform_cone_pdf, uniform_sample_sphere},
     transform::Transform,
     utils::*,
 };

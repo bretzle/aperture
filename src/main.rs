@@ -11,6 +11,7 @@ mod material;
 mod bsdf;
 mod paramset;
 mod efloat;
+mod sampling;
 
 fn main() {
     println!("Hello, world!");

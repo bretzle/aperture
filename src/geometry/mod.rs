@@ -60,3 +60,15 @@ pub fn face_forward_n(v1: &Normal3f, v2: &Normal3f) -> Normal3f {
         *v1
     }
 }
+
+#[inline]
+pub fn spherical_direction_vec(
+    sin_theta: f32,
+    cos_theta: f32,
+    phi: f32,
+    x: &Vector3f,
+    y: &Vector3f,
+    z: &Vector3f,
+) -> Vector3f {
+    sin_theta * phi.cos() * *x + sin_theta * phi.sin() * *y + cos_theta * *z
+}
