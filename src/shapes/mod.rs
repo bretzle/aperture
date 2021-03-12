@@ -8,6 +8,8 @@ use std::fmt::Debug;
 mod sphere;
 mod cylinder;
 mod disk;
+mod cone;
+mod paraboloid;
 
 pub trait Shape: Debug + Send + Sync {
     fn intersect(&self, ray: &Ray) -> Option<(SurfaceInteraction, f32)>;
