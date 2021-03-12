@@ -9,6 +9,8 @@ mod primitive;
 mod spectrum;
 mod material;
 mod bsdf;
+mod paramset;
+mod efloat;
 
 fn main() {
     println!("Hello, world!");

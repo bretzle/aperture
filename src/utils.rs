@@ -1,7 +1,9 @@
 use num::One;
 use std::ops::{Add, Mul, Sub};
 
-const MACHINE_EPSILON: f32 = f32::EPSILON * 0.5;
+use crate::geometry::Point3f;
+
+pub const MACHINE_EPSILON: f32 = f32::EPSILON * 0.5;
 
 /// Linear interpolation between 2 values.
 ///
@@ -77,4 +79,25 @@ pub fn next_float_down(v: f32) -> f32 {
         ui += 1;
     }
     f32::from_bits(ui)
+}
+
+pub fn distance_squared(p1: &Point3f, p2: &Point3f) -> f32 {
+    (*p2 - *p1).length_sq()
+}
+
+pub fn distance(p1: &Point3f, p2: &Point3f) -> f32 {
+    (*p2 - *p1).length()
+}
+
+pub fn clamp<T>(val: T, low: T, high: T) -> T
+where
+    T: PartialOrd + Copy,
+{
+    if val < low {
+        low
+    } else if val > high {
+        high
+    } else {
+        val
+    }
 }
