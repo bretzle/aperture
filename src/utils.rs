@@ -1,5 +1,9 @@
+use log::debug;
 use num::One;
-use std::ops::{Add, Mul, Sub};
+use std::{
+    ops::{Add, Mul, Sub},
+    path::Path,
+};
 
 use crate::geometry::{Point3f, Vector3f};
 
@@ -113,4 +117,10 @@ pub fn coordinate_system(v1: &Vector3f) -> (Vector3f, Vector3f) {
     let v3 = v1.cross(&v2);
 
     (v2, v3)
+}
+
+// TODO
+pub fn resolve_filename(filename: &str) -> String {
+    debug!("Resolving filename {}", filename);
+    filename.to_owned()
 }

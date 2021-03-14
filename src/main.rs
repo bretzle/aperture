@@ -12,6 +12,7 @@ mod bsdf;
 mod paramset;
 mod efloat;
 mod sampling;
+mod texture;
 
 fn main() {
     println!("Hello, world!");

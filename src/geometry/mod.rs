@@ -5,6 +5,8 @@ mod point;
 mod ray;
 mod vector;
 
+use num::{Num, Signed};
+
 use crate::utils::{next_float_down, next_float_up};
 
 use self::bounds::*;
@@ -71,4 +73,42 @@ pub fn spherical_direction_vec(
     z: &Vector3f,
 ) -> Vector3f {
     sin_theta * phi.cos() * *x + sin_theta * phi.sin() * *y + cos_theta * *z
+}
+
+/// Return the dimension index (0, 1 or 2) that contains the largest component.
+pub fn max_dimension<T>(v: &Vector3<T>) -> usize
+where
+    T: Num + PartialOrd,
+{
+    if v.x > v.y {
+        if v.x > v.z {
+            0
+        } else {
+            2
+        }
+    } else if v.y > v.z {
+        1
+    } else {
+        2
+    }
+}
+
+pub fn max_component(v: &Vector3f) -> f32 {
+    f32::max(v.x, f32::max(v.y, v.z))
+}
+
+/// Permute the components of this vector based on the given indices for x, y and z.
+pub fn permute_v<T>(v: &Vector3<T>, x: usize, y: usize, z: usize) -> Vector3<T>
+where
+    T: Num + Copy,
+{
+    Vector3::new(v[x], v[y], v[z])
+}
+
+/// Permute the components of this point based on the given indices for x, y and z.
+pub fn permute_p<T>(v: &Point3<T>, x: usize, y: usize, z: usize) -> Point3<T>
+where
+    T: Num + Signed + Copy,
+{
+    Point3::new(v[x], v[y], v[z])
 }
