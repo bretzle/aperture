@@ -1,4 +1,4 @@
-#![allow(clippy::many_single_char_names)]
+#![allow(clippy::many_single_char_names, non_snake_case)]
 
 mod geometry;
 mod transform;
