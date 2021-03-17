@@ -11,6 +11,7 @@ num = "0.4.0"
 log = "0.4"
 approx = "0.4.0"
 light_arena = "1.0.1"
+itertools = "0.10.0"
 
 [profile.release]
 lto = true

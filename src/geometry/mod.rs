@@ -9,6 +9,7 @@ use num::{Num, Signed};
 
 use crate::utils::{next_float_down, next_float_up};
 
+pub use self::bounds::Axis;
 use self::bounds::*;
 pub use self::matrix::*;
 use self::normal::*;

@@ -3,6 +3,7 @@
 use efloat::EFloat;
 
 mod bsdf;
+mod bvh;
 mod efloat;
 mod geometry;
 mod interaction;
