@@ -5,12 +5,12 @@ use crate::{
 };
 use std::fmt::Debug;
 
-mod sphere;
+mod cone;
 mod cylinder;
 mod disk;
-mod cone;
-mod paraboloid;
 mod mesh;
+mod paraboloid;
+mod sphere;
 
 pub trait Shape: Debug + Send + Sync {
     fn intersect(&self, ray: &Ray) -> Option<(SurfaceInteraction, f32)>;

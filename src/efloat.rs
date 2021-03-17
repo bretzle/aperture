@@ -3,10 +3,16 @@ use std::mem;
 use std::ops::*;
 
 /// Special Float that can be used for error analysis
+///
+/// EFloat keeps track of an interval that describes the uncertainty of errors in
+/// intermediate floating-point arithmetic.
 #[derive(Debug, Clone, Copy)]
 pub struct EFloat {
+    /// The value
     v: f32,
+    /// The lower bound approximation
     low: f32,
+    /// The upper bound approximation
     high: f32,
 }
 
@@ -93,7 +99,7 @@ impl Default for EFloat {
 
 /// Solves a quadratic equation
 pub fn solve_quadratic(a: &EFloat, b: &EFloat, c: &EFloat) -> Option<(EFloat, EFloat)> {
-    let discrim: f64 = f64::from(b.v) * f64::from(b.v) - 4f64 * f64::from(a.v) * f64::from(c.v);
+    let discrim = f64::from(b.v) * f64::from(b.v) - 4f64 * f64::from(a.v) * f64::from(c.v);
     if discrim < 0.0 {
         return None;
     }

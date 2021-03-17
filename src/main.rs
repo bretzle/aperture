@@ -1,19 +1,25 @@
 #![allow(clippy::many_single_char_names, non_snake_case)]
 
+use efloat::EFloat;
+
+mod bsdf;
+mod efloat;
 mod geometry;
+mod interaction;
+mod material;
+mod paramset;
+mod primitive;
+mod sampling;
+mod shapes;
+mod spectrum;
+mod texture;
 mod transform;
 mod utils;
-mod interaction;
-mod shapes;
-mod primitive;
-mod spectrum;
-mod material;
-mod bsdf;
-mod paramset;
-mod efloat;
-mod sampling;
-mod texture;
 
 fn main() {
     println!("Hello, world!");
+
+    let a = dbg!(EFloat::from(1.0));
+    let b = dbg!(EFloat::from(5.0));
+    let c = dbg!(a / b);
 }

@@ -14,7 +14,7 @@ impl Spectrum {
         }
     }
 
-	pub fn white() -> Self {
+    pub fn white() -> Self {
         Self {
             r: 1.0,
             g: 1.0,

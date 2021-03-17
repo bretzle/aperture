@@ -2,7 +2,10 @@ use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
 use log::error;
 
-use crate::{geometry::Vector3f, interaction::SurfaceInteraction, paramset::ParamSet, spectrum::Spectrum, transform::Transform};
+use crate::{
+    geometry::Vector3f, interaction::SurfaceInteraction, paramset::ParamSet, spectrum::Spectrum,
+    transform::Transform,
+};
 
 pub type TextureFloat = dyn Texture<f32>;
 
