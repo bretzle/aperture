@@ -1,0 +1,3 @@
+max_width = 100
+newline_style = "Windows"
+merge_imports = true

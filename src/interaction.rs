@@ -4,7 +4,7 @@ use crate::{
     material::TransportMode,
     primitive::Primitive,
     shapes::Shape,
-    spectrum::Spectrum,
+    spectrum::{Colors, Spectrum},
     transform::{solve_linear_system2x2, Transform},
 };
 use light_arena::Allocator;
@@ -171,7 +171,7 @@ impl<'a, 'b> SurfaceInteraction<'a, 'b> {
         self.primitive
             .and_then(|p| p.area_light())
             .map(|light| light.l(self.into(), w))
-            .unwrap_or_else(Spectrum::black)
+            .unwrap_or(Colors::BLACK)
     }
 
     pub fn transform(&self, t: &Transform) -> SurfaceInteraction<'a, 'b> {

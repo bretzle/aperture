@@ -3,7 +3,10 @@ use std::{collections::HashMap, fmt::Debug, sync::Arc};
 use log::error;
 
 use crate::{
-    geometry::Vector3f, interaction::SurfaceInteraction, paramset::ParamSet, spectrum::Spectrum,
+    geometry::Vector3f,
+    interaction::SurfaceInteraction,
+    paramset::ParamSet,
+    spectrum::{Colors, Spectrum},
     transform::Transform,
 };
 
@@ -35,7 +38,7 @@ impl ConstantTexture<Spectrum> {
         _tex2world: &Transform,
         tp: &TextureParams<'_>,
     ) -> ConstantTexture<Spectrum> {
-        ConstantTexture::new(tp.find_spectrum("value", Spectrum::white()))
+        ConstantTexture::new(tp.find_spectrum("value", Colors::WHITE))
     }
 }
 

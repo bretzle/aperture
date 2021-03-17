@@ -2,10 +2,11 @@ use super::Shape;
 use crate::{
     geometry::{Bounds3f, Normal3f, Point2f, Point3f, Ray, Vector3f},
     interaction::{Interaction, SurfaceInteraction},
+    paramset::ParamSet,
     sampling::concentric_sample_disk,
+    transform::Transform,
     utils::clamp,
 };
-use crate::{paramset::ParamSet, transform::Transform};
 use std::{f32::consts::PI, sync::Arc};
 
 #[derive(Debug)]

@@ -124,3 +124,25 @@ pub fn resolve_filename(filename: &str) -> String {
     debug!("Resolving filename {}", filename);
     filename.to_owned()
 }
+
+pub fn find_interval<P>(size: usize, pred: P) -> usize
+where
+    P: Fn(usize) -> bool,
+{
+    let mut first = 0;
+    let mut len = size;
+
+    while len > 0 {
+        let half = len >> 1;
+        let middle = first + half;
+
+        if pred(middle as usize) {
+            first = middle + 1;
+            len -= half + 1;
+        } else {
+            len = half;
+        }
+    }
+
+    clamp(first as isize - 1, 0, size as isize - 2) as usize
+}

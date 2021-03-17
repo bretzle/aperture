@@ -6,10 +6,11 @@ use super::{
 };
 use crate::utils::*;
 use num::{Bounded, Num, Signed};
-use std::cmp::PartialOrd;
-use std::f32;
-use std::fmt;
-use std::ops::{DivAssign, Index, SubAssign};
+use std::{
+    cmp::PartialOrd,
+    f32, fmt,
+    ops::{DivAssign, Index, SubAssign},
+};
 
 /// Axis Aligned Bounding Box
 #[derive(Debug, Copy, Clone)]

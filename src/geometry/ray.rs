@@ -1,7 +1,5 @@
 use num::zero;
-use std::f32::INFINITY;
-use std::fmt;
-use std::ops::Mul;
+use std::{f32::INFINITY, fmt, ops::Mul};
 
 use super::{Point3f, Vector3f};
 use crate::transform::Transform;

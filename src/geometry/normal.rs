@@ -1,9 +1,9 @@
 use super::Vector3;
 use num::{Num, Zero};
-use std::convert::From;
-use std::fmt::{Display, Error, Formatter};
-use std::ops::{
-    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+use std::{
+    convert::From,
+    fmt::{Display, Error, Formatter},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 #[derive(Copy, Clone, Debug, PartialEq)]

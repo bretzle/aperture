@@ -9,9 +9,7 @@ use crate::{
 use itertools as it;
 use light_arena::Allocator;
 use log::info;
-use std::cmp::min;
-use std::mem::replace;
-use std::sync::Arc;
+use std::{cmp::min, mem::replace, sync::Arc};
 
 mod node;
 

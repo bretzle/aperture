@@ -1,8 +1,8 @@
 use super::{vector::Vector2, Vector3};
 use num::{abs, Num, Signed, Zero};
-use std::fmt::{Display, Error, Formatter};
-use std::ops::{
-    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+use std::{
+    fmt::{Display, Error, Formatter},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 #[derive(Copy, Clone, Debug, PartialEq)]

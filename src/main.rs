@@ -4,6 +4,7 @@ use efloat::EFloat;
 
 mod bsdf;
 mod bvh;
+mod cie;
 mod efloat;
 mod geometry;
 mod interaction;

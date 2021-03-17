@@ -1,6 +1,5 @@
 use crate::utils::{next_float_down, next_float_up, MACHINE_EPSILON};
-use std::mem;
-use std::ops::*;
+use std::{mem, ops::*};
 
 /// Special Float that can be used for error analysis
 ///
