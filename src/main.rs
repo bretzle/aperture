@@ -8,6 +8,7 @@ mod camera;
 mod cie;
 mod efloat;
 mod film;
+mod filter;
 mod geometry;
 mod interaction;
 mod material;

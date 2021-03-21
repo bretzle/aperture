@@ -404,6 +404,10 @@ impl Vector2<f32> {
     pub fn length(self) -> f32 {
         f32::sqrt(self.length_squared())
     }
+
+    pub fn inverse(&self) -> Self {
+        Self::new(1.0 / self.x, 1.0 / self.y)
+    }
 }
 
 // Operators
