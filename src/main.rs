@@ -13,6 +13,7 @@ mod interaction;
 mod material;
 mod paramset;
 mod primitive;
+mod sampler;
 mod sampling;
 mod shapes;
 mod spectrum;
