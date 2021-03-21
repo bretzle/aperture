@@ -1,8 +1,8 @@
 use log::debug;
 use num::One;
 use std::{
+    f32::consts::TAU,
     ops::{Add, Mul, Sub},
-    path::Path,
 };
 
 use crate::geometry::{Point3f, Vector3f};
@@ -145,4 +145,32 @@ where
     }
 
     clamp(first as isize - 1, 0, size as isize - 2) as usize
+}
+
+pub fn spherical_direction(sin_theta: f32, cos_theta: f32, phi: f32) -> Vector3f {
+    Vector3f::new(sin_theta * phi.cos(), sin_theta * phi.sin(), cos_theta)
+}
+
+pub fn spherical_direction_vecs(
+    sin_theta: f32,
+    cos_theta: f32,
+    phi: f32,
+    x: &Vector3f,
+    y: &Vector3f,
+    z: &Vector3f,
+) -> Vector3f {
+    *x * (sin_theta * phi.cos()) + *y * (sin_theta * phi.sin()) + *z * cos_theta
+}
+
+pub fn SphericalTheta(v: &Vector3f) -> f32 {
+    clamp(v.z, -1.0, 1.0).acos()
+}
+
+pub fn SphericalPhi(v: &Vector3f) -> f32 {
+    let p = v.y.atan2(v.x);
+    if p < 0.0 {
+        p + TAU
+    } else {
+        p
+    }
 }
