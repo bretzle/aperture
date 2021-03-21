@@ -9,7 +9,7 @@ use num::{Num, Signed};
 
 use crate::utils::{next_float_down, next_float_up};
 
-pub use self::{bounds::Axis, matrix::*, ray::Ray};
+pub use self::{bounds::Axis, matrix::*, ray::*};
 use self::{bounds::*, normal::*, point::*, vector::*};
 
 pub type Vector2f = Vector2<f32>;

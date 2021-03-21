@@ -4,8 +4,10 @@ use efloat::EFloat;
 
 mod bsdf;
 mod bvh;
+mod camera;
 mod cie;
 mod efloat;
+mod film;
 mod geometry;
 mod interaction;
 mod material;
