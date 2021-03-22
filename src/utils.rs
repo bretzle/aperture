@@ -1,12 +1,14 @@
+use crate::geometry::{Bounds2i, Point2i, Point3f, Vector3f};
+use anyhow::Result;
 use log::debug;
 use num::One;
 use std::{
     f32::consts::TAU,
     num::Wrapping,
     ops::{Add, Mul, Sub},
+    path::Path,
+    sync::atomic::{AtomicU32, Ordering},
 };
-
-use crate::geometry::{Point3f, Vector3f};
 
 pub const MACHINE_EPSILON: f32 = f32::EPSILON * 0.5;
 
@@ -231,4 +233,30 @@ impl Default for Rng {
     fn default() -> Rng {
         Rng::new()
     }
+}
+
+#[derive(Default)]
+pub struct AtomicFloat {
+    bits: AtomicU32,
+}
+
+impl AtomicFloat {
+    pub fn as_float(&self) -> f32 {
+        f32::from_bits(self.bits.load(Ordering::Relaxed))
+    }
+
+    pub fn add(&mut self, v: f32) {
+        let f = self.as_float() + v;
+        let bits = f.to_bits();
+        self.bits.store(bits, Ordering::Relaxed)
+    }
+}
+
+pub fn write_image<P: AsRef<Path>>(
+    _name: P,
+    _rgb: &[f32],
+    _output_bounds: &Bounds2i,
+    _total_resolution: Point2i,
+) -> Result<()> {
+    todo!()
 }

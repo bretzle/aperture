@@ -3,7 +3,7 @@ use std::f32::consts::PI;
 use crate::geometry::{Point2f, Vector2f};
 
 pub trait Filter: Send + Sync {
-    fn evaluate(&self, p: &Point2f) -> f32;
+    fn evaluate(&self, x: f32, y: f32) -> f32;
     fn radius(&self) -> &Vector2f;
     fn inv_radius(&self) -> &Vector2f;
 }
@@ -23,7 +23,7 @@ impl BoxFilter {
 }
 
 impl Filter for BoxFilter {
-    fn evaluate(&self, _: &Point2f) -> f32 {
+    fn evaluate(&self, _: f32, _: f32) -> f32 {
         1.0
     }
 
@@ -51,8 +51,8 @@ impl TriangleFilter {
 }
 
 impl Filter for TriangleFilter {
-    fn evaluate(&self, p: &Point2f) -> f32 {
-        (self.radius.x - p.x.abs()).max(0.0) * (self.radius.y - p.y.abs()).max(0.0)
+    fn evaluate(&self, x: f32, y: f32) -> f32 {
+        (self.radius.x - x.abs()).max(0.0) * (self.radius.y - y.abs()).max(0.0)
     }
 
     fn radius(&self) -> &Vector2f {
@@ -89,8 +89,8 @@ impl GaussianFilter {
 }
 
 impl Filter for GaussianFilter {
-    fn evaluate(&self, p: &Point2f) -> f32 {
-        self.gaussian(p.x, self.expx) * self.gaussian(p.y, self.expy)
+    fn evaluate(&self, x: f32, y: f32) -> f32 {
+        self.gaussian(x, self.expx) * self.gaussian(y, self.expy)
     }
 
     fn radius(&self) -> &Vector2f {
@@ -137,8 +137,8 @@ impl MitchellNetravali {
 }
 
 impl Filter for MitchellNetravali {
-    fn evaluate(&self, p: &Point2f) -> f32 {
-        self.mitchell_1d(p.x * self.inv_radius.x) * self.mitchell_1d(p.y * self.inv_radius.y)
+    fn evaluate(&self, x: f32, y: f32) -> f32 {
+        self.mitchell_1d(x * self.inv_radius.x) * self.mitchell_1d(y * self.inv_radius.y)
     }
 
     fn radius(&self) -> &Vector2f {
@@ -191,8 +191,8 @@ impl LanczosSincFilter {
 }
 
 impl Filter for LanczosSincFilter {
-    fn evaluate(&self, p: &Point2f) -> f32 {
-        self.window_sinc(p.x, self.radius.x) * self.window_sinc(p.y, self.radius.y)
+    fn evaluate(&self, x: f32, y: f32) -> f32 {
+        self.window_sinc(x, self.radius.x) * self.window_sinc(y, self.radius.y)
     }
 
     fn radius(&self) -> &Vector2f {

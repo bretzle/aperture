@@ -7,7 +7,7 @@ use crate::{
 use num::Zero;
 use std::fmt::Debug;
 
-pub trait Camera: Debug + Send + Sync {
+pub trait Camera: Send + Sync {
     fn get_film(&self) -> &Film;
     fn generate_ray(&self, sample: CameraSample) -> Ray;
     fn generate_ray_differential(&self, sample: CameraSample) -> Ray;
@@ -26,7 +26,6 @@ pub struct ProjectiveCamera {}
 pub struct OrthographicCamera {}
 
 // TODO
-#[derive(Debug)]
 pub struct PerspectiveCamera {
     film: Box<Film>,
     camera_to_world: Transform,
