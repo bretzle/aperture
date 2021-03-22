@@ -4,6 +4,7 @@ use efloat::EFloat;
 
 mod bsdf;
 mod bvh;
+mod interpolation;
 mod camera;
 mod cie;
 mod efloat;

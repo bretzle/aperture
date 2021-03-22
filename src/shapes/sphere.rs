@@ -6,7 +6,7 @@ use crate::{
     paramset::ParamSet,
     sampling::{uniform_cone_pdf, uniform_sample_sphere},
     transform::Transform,
-    utils::*,
+    utils::{clamp, coordinate_system, gamma},
 };
 use std::{f32::consts, sync::Arc};
 

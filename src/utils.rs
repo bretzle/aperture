@@ -11,6 +11,7 @@ use std::{
 };
 
 pub const MACHINE_EPSILON: f32 = f32::EPSILON * 0.5;
+pub const INV_2_PI: f32 = 0.15915494309189533577;
 
 /// Linear interpolation between 2 values.
 ///

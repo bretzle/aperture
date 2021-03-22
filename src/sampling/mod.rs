@@ -38,3 +38,9 @@ pub fn uniform_sample_triangle(u: Point2f) -> Point2f {
     let su0 = u[0].sqrt();
     Point2f::new(1.0 - su0, u[1] * su0)
 }
+
+pub fn cosine_sample_hemisphere(u: Point2f) -> Vector3f {
+    let d = concentric_sample_disk(u);
+    let z = (1.0 - d.x * d.x - d.y * d.y).max(0.0).sqrt();
+    Vector3f::new(d.x, d.y, z)
+}
