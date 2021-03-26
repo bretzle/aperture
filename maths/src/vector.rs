@@ -24,21 +24,13 @@ impl<T: Num + Copy> Vector3<T> {
     pub fn dotn(&self, v: &Normal3<T>) -> T {
         self.x * v.x + self.y * v.y + self.z * v.z
     }
-
-    pub fn x() -> Self {
-        Self::new(T::one(), T::zero(), T::zero())
-    }
-
-    pub fn y() -> Self {
-        Self::new(T::zero(), T::one(), T::zero())
-    }
-
-    pub fn z() -> Self {
-        Self::new(T::zero(), T::zero(), T::one())
-    }
 }
 
 impl Vector3<f32> {
+    pub const X_COMPONENT: Self = Self { x: 1., y: 0., z: 0. };
+    pub const Y_COMPONENT: Self = Self { x: 0., y: 1., z: 0. };
+    pub const Z_COMPONENT: Self = Self { x: 0., y: 0., z: 1. };
+
     pub fn has_nan(&self) -> bool {
         self.x.is_nan() || self.y.is_nan() || self.z.is_nan()
     }
@@ -347,10 +339,7 @@ mod tests {
         let v2 = Vector3::new(1.0, 2.0, 3.0);
 
         assert_eq!(v1.normalize(), Vector3::new(1.0, 0.0, 0.0));
-        assert_eq!(
-            v2.normalize(),
-            Vector3::new(0.26726124, 0.5345225, 0.8017837)
-        )
+        assert_eq!(v2.normalize(), Vector3::new(0.26726124, 0.5345225, 0.8017837))
     }
 
     #[test]

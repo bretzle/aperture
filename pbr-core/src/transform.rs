@@ -16,10 +16,7 @@ impl Transform {
     }
 
     pub fn from_matrix(m: Matrix) -> Self {
-        Self {
-            m_inv: m.inverse(),
-            m,
-        }
+        Self { m_inv: m.inverse(), m }
     }
 
     pub fn rotate(theta: f32, axis: Vector3f) -> Self {
@@ -52,15 +49,15 @@ impl Transform {
     }
 
     pub fn rot_x(theta: f32) -> Self {
-        Self::rotate(theta, Vector3f::x())
+        Self::rotate(theta, Vector3f::X_COMPONENT)
     }
 
     pub fn rot_y(theta: f32) -> Self {
-        Self::rotate(theta, Vector3f::y())
+        Self::rotate(theta, Vector3f::Y_COMPONENT)
     }
 
     pub fn rot_z(theta: f32) -> Self {
-        Self::rotate(theta, Vector3f::z())
+        Self::rotate(theta, Vector3f::Z_COMPONENT)
     }
 
     pub fn translate(delta: &Vector3f) -> Self {
@@ -80,15 +77,15 @@ impl Transform {
     }
 
     pub fn translate_x(t: f32) -> Transform {
-        Self::translate(&(Vector3f::x() * t))
+        Self::translate(&(Vector3f::X_COMPONENT * t))
     }
 
     pub fn translate_y(t: f32) -> Transform {
-        Self::translate(&(Vector3f::y() * t))
+        Self::translate(&(Vector3f::Y_COMPONENT * t))
     }
 
     pub fn translate_z(t: f32) -> Transform {
-        Self::translate(&(Vector3f::z() * t))
+        Self::translate(&(Vector3f::Z_COMPONENT * t))
     }
 
     pub fn scale(sx: f32, sy: f32, sz: f32) -> Self {
@@ -166,43 +163,27 @@ impl Transform {
         let (x, y, z) = (p.x, p.y, p.z);
         let tp = self * p;
         let m = &self.m;
-        let x_abs_sum =
-            (m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs();
-        let y_abs_sum =
-            (m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs();
-        let z_abs_sum =
-            (m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs();
+        let x_abs_sum = (m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs();
+        let y_abs_sum = (m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs();
+        let z_abs_sum = (m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs();
         let p_err = gamma(3) * Vector3f::new(x_abs_sum, y_abs_sum, z_abs_sum);
 
         (tp, p_err)
     }
 
-    pub fn transform_point_with_error(
-        &self,
-        p: &Point3f,
-        p_error: &Vector3f,
-    ) -> (Point3f, Vector3f) {
+    pub fn transform_point_with_error(&self, p: &Point3f, p_error: &Vector3f) -> (Point3f, Vector3f) {
         let (x, y, z) = (p.x, p.y, p.z);
         let tp = self * p;
         let m = &self.m;
         let x_abs_err = (gamma(3) + 1.0)
-            * ((m[0][0] * p_error.x).abs()
-                + (m[0][1] * p_error.y).abs()
-                + (m[0][2] * p_error.z).abs())
-            + gamma(3)
-                * ((m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs());
+            * ((m[0][0] * p_error.x).abs() + (m[0][1] * p_error.y).abs() + (m[0][2] * p_error.z).abs())
+            + gamma(3) * ((m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs());
         let y_abs_err = (gamma(3) + 1.0)
-            * ((m[1][0] * p_error.x).abs()
-                + (m[1][1] * p_error.y).abs()
-                + (m[1][2] * p_error.z).abs())
-            + gamma(3)
-                * ((m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs());
+            * ((m[1][0] * p_error.x).abs() + (m[1][1] * p_error.y).abs() + (m[1][2] * p_error.z).abs())
+            + gamma(3) * ((m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs());
         let z_abs_err = (gamma(3) + 1.0)
-            * ((m[2][0] * p_error.x).abs()
-                + (m[2][1] * p_error.y).abs()
-                + (m[2][2] * p_error.z).abs())
-            + gamma(3)
-                * ((m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs());
+            * ((m[2][0] * p_error.x).abs() + (m[2][1] * p_error.y).abs() + (m[2][2] * p_error.z).abs())
+            + gamma(3) * ((m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs());
         let p_err = Vector3f::new(x_abs_err, y_abs_err, z_abs_err);
 
         (tp, p_err)
@@ -212,18 +193,9 @@ impl Transform {
         let (x, y, z) = (v.x, v.y, v.z);
         let tv = self * v;
         let m = &self.m;
-        let x_abs_sum = f32::abs(m[0][0] * x)
-            + f32::abs(m[0][1] * y)
-            + f32::abs(m[0][2] * z)
-            + f32::abs(m[0][3]);
-        let y_abs_sum = f32::abs(m[1][0] * x)
-            + f32::abs(m[1][1] * y)
-            + f32::abs(m[1][2] * z)
-            + f32::abs(m[1][3]);
-        let z_abs_sum = f32::abs(m[2][0] * x)
-            + f32::abs(m[2][1] * y)
-            + f32::abs(m[2][2] * z)
-            + f32::abs(m[2][3]);
+        let x_abs_sum = f32::abs(m[0][0] * x) + f32::abs(m[0][1] * y) + f32::abs(m[0][2] * z) + f32::abs(m[0][3]);
+        let y_abs_sum = f32::abs(m[1][0] * x) + f32::abs(m[1][1] * y) + f32::abs(m[1][2] * z) + f32::abs(m[1][3]);
+        let z_abs_sum = f32::abs(m[2][0] * x) + f32::abs(m[2][1] * y) + f32::abs(m[2][2] * z) + f32::abs(m[2][3]);
         let v_err = gamma(3) * Vector3f::new(x_abs_sum, y_abs_sum, z_abs_sum);
 
         (tv, v_err)
@@ -242,8 +214,7 @@ impl Transform {
 
     pub fn swaps_handedness(&self) -> bool {
         let m = &self.m.data;
-        let det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
-            - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+        let det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
             + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
         det < 0.0
     }
@@ -331,36 +302,14 @@ impl<'a, 'b> Mul<&'a Bounds3f> for &'b Transform {
     type Output = Bounds3f;
 
     fn mul(self, b: &'a Bounds3f) -> Bounds3f {
-        let mut ret =
-            Bounds3f::from_point(&(self * &Point3f::new(b.p_min.x, b.p_min.y, b.p_min.z)));
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_max.x, b.p_min.y, b.p_min.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_min.x, b.p_max.y, b.p_min.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_min.x, b.p_min.y, b.p_max.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_min.x, b.p_max.y, b.p_max.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_max.x, b.p_max.y, b.p_min.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_max.x, b.p_min.y, b.p_max.z)),
-        );
-        ret = Bounds3f::union_point(
-            &ret,
-            &(self * &Point3f::new(b.p_max.x, b.p_max.y, b.p_max.z)),
-        );
+        let mut ret = Bounds3f::from_point(&(self * &Point3f::new(b.p_min.x, b.p_min.y, b.p_min.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_max.x, b.p_min.y, b.p_min.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_min.x, b.p_max.y, b.p_min.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_min.x, b.p_min.y, b.p_max.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_min.x, b.p_max.y, b.p_max.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_max.x, b.p_max.y, b.p_min.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_max.x, b.p_min.y, b.p_max.z)));
+        ret = Bounds3f::union_point(&ret, &(self * &Point3f::new(b.p_max.x, b.p_max.y, b.p_max.z)));
 
         ret
     }
@@ -391,8 +340,8 @@ mod tests {
         let t = Transform::rotate(36.0, Vector3f::new(4.0, 5.0, 6.0));
         let t_inv = t.inverse();
 
-        let v = Vector3f::x();
-        let n = Vector3f::y();
+        let v = Vector3f::X_COMPONENT;
+        let n = Vector3f::Y_COMPONENT;
         println!("v = {}, n = {}", v, n);
         assert_eq!(v.dot(&n), 0.0);
 

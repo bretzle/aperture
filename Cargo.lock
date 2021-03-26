@@ -355,6 +355,7 @@ dependencies = [
 name = "pbr-cli"
 version = "0.1.0"
 dependencies = [
+ "maths",
  "pbr-core",
 ]
 

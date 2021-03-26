@@ -1,4 +1,4 @@
-max_width = 100
+max_width = 105
 newline_style = "Windows"
 imports_granularity = "Crate"
 reorder_imports = true

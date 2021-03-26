@@ -7,11 +7,11 @@ pub struct Matrix {
 }
 
 impl Matrix {
-    pub fn new(data: [[f32; 4]; 4]) -> Self {
+    pub const fn new(data: [[f32; 4]; 4]) -> Self {
         Self { data }
     }
 
-    pub fn identity() -> Self {
+    pub const fn identity() -> Self {
         Self::new([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],

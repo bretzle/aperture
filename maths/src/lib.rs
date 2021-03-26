@@ -1,4 +1,5 @@
 #![allow(clippy::excessive_precision)]
+#![feature(const_fn_floating_point_arithmetic)]
 
 pub use crate::{
     matrix::*,
@@ -12,6 +13,7 @@ use std::{
     ops::{Add, Mul, Sub},
 };
 
+pub mod cmatrix;
 mod macros;
 mod matrix;
 mod normal;
@@ -34,6 +36,9 @@ pub const ONE_MINUS_EPSILON: f32 = 0.99999994f32;
 macro_rules! matrix {
 	( $( $( $val:expr ),+ );* ; ) => {
 		$crate::Matrix::new([ $( [$( $val as f32 ),+] ),* ]);
+	};
+	(CC $( $( $val:expr ),+ );* ; ) => {
+		$crate::cmatrix::CMatrix::new([ $( [$( $val as f32 ),+] ),* ]);
 	};
 }
 
@@ -79,7 +84,7 @@ where
 
 // Common geometric functions
 #[inline]
-pub fn cos_theta(w: &Vector3f) -> f32 {
+pub const fn cos_theta(w: &Vector3f) -> f32 {
     w.z
 }
 
@@ -152,11 +157,7 @@ pub fn cos_d_phi(wa: &Vector3f, wb: &Vector3f) -> f32 {
         return 1.0;
     }
 
-    clamp(
-        (wa.x * wb.x + wa.y * wb.y) / (waxy * wbxy).sqrt(),
-        -1.0,
-        1.0,
-    )
+    clamp((wa.x * wb.x + wa.y * wb.y) / (waxy * wbxy).sqrt(), -1.0, 1.0)
 }
 
 #[inline]
@@ -386,12 +387,12 @@ where
 }
 
 #[inline]
-pub fn is_power_of_2(v: i32) -> bool {
+pub const fn is_power_of_2(v: i32) -> bool {
     (v != 0) && (v & (v - 1)) == 0
 }
 
 #[inline]
-pub fn round_up_pow_2(v: i32) -> i32 {
+pub const fn round_up_pow_2(v: i32) -> i32 {
     let mut v = v;
     v -= 1;
     v |= v >> 1;
