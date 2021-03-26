@@ -1,26 +1,5 @@
-[package]
-name = "pbrust"
-version = "0.1.0"
-authors = ["bretzle <johnfish218@gmail.com>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-num = "0.4.0"
-log = "0.4"
-approx = "0.4.0"
-light_arena = "1.0.1"
-itertools = "0.10.0"
-anyhow = "1.0"
-parking_lot = "0.11.1"
-bitflags = "1.2"
-byteorder = "1.4"
-lazy_static = "1.4"
-ndarray = { version = "0.14", features = ["rayon"] }
-
-[dev-dependencies]
-quickcheck = "1.0.3"
-
-[profile.release]
-lto = true
+[workspace]
+members = [
+	"maths",
+	"pbr-core"
+]

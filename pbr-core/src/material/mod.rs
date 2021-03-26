@@ -1,0 +1,81 @@
+mod fourier;
+mod glass;
+mod matte;
+mod metal;
+mod mirror;
+mod mixmat;
+mod plastic;
+mod substrate;
+mod translucent;
+mod uber;
+
+use crate::{interaction::SurfaceInteraction, texture::Texture};
+use light_arena::Allocator;
+use maths::*;
+use std::{fmt::Debug, sync::Arc};
+
+pub use self::{
+    fourier::FourierMaterial, glass::GlassMaterial, matte::MatteMaterial, metal::Metal,
+    mirror::MirrorMaterial, mixmat::MixMaterial, plastic::Plastic, substrate::SubstrateMaterial,
+    translucent::TranslucentMaterial, uber::UberMaterial,
+};
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum TransportMode {
+    RADIANCE,
+    IMPORTANCE,
+}
+
+pub trait Material: Debug + Send + Sync {
+    fn compute_scattering_functions<'a, 'b>(
+        &self,
+        isect: &mut SurfaceInteraction<'a, 'b>,
+        mode: TransportMode,
+        allow_multiple_lobes: bool,
+        arena: &'b Allocator<'_>,
+    );
+}
+
+pub fn bump(d: &Arc<dyn Texture<f32>>, si: &mut SurfaceInteraction) {
+    // Compute offset positions and evaluate displacement texture
+    let mut si_eval = si.clone();
+
+    // Shift si_eval du in the u direction
+    let mut du = 0.5 * (si.dudx.abs() + si.dudy.abs());
+    // The most common reason for du to be zero is for ray that start from
+    // light sources, where no differentials are available. In this case,
+    // we try to choose a small enough du so that we still get a decently
+    // accurate bump value.
+    if du == 0.0 {
+        du = 0.0005;
+    }
+    si_eval.hit.p = si.hit.p + du * si.shading.dpdu;
+    si_eval.uv = si.uv + Vector2f::new(du, 0.0);
+    si_eval.hit.n =
+        (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + du * si.dndu).normalize();
+    let u_displace = d.evaluate(&si_eval);
+
+    // Shift si_eval dv in the v direction
+    let mut dv = 0.5 * (si.dvdx.abs() + si.dvdy.abs());
+    if dv == 0.0 {
+        dv = 0.0005;
+    }
+    si_eval.hit.p = si.hit.p + dv * si.shading.dpdv;
+    si_eval.uv = si.uv + Vector2f::new(0.0, dv);
+    si_eval.hit.n =
+        (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + dv * si.dndv).normalize();
+    let v_displace = d.evaluate(&si_eval);
+
+    let displace = d.evaluate(si);
+
+    // Compute bump-mapped differential geometry
+    let dpdu = si.shading.dpdu
+        + (u_displace - displace) / du * Vector3f::from(si.shading.n)
+        + displace * Vector3f::from(si.shading.dndu);
+    let dpdv = si.shading.dpdv
+        + (v_displace - displace) / dv * Vector3f::from(si.shading.n)
+        + displace * Vector3f::from(si.shading.dndv);
+    let dndu = si.shading.dndu;
+    let dndv = si.shading.dndv;
+    si.set_shading_geometry(&dpdu, &dpdv, &dndu, &dndv, false);
+}
