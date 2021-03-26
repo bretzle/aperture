@@ -1,7 +1,7 @@
 use crate::{
     bsdf::{
-        BxDFHolder, Fresnel, LambertianReflection, MicrofacetReflection, SpecularReflection,
-        SpecularTransmission, TrowbridgeReitzDistribution, BSDF,
+        Bsdf, BxDFHolder, Fresnel, LambertianReflection, MicrofacetReflection, SpecularReflection,
+        SpecularTransmission, TrowbridgeReitzDistribution,
     },
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
@@ -89,7 +89,7 @@ impl Material for UberMaterial {
 
         let ks = op * self.ks.evaluate(si).clamp();
         if !ks.is_black() {
-            let fresnel = arena.alloc(Fresnel::dielectric(1.0, e));
+            let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.0, e));
             let mut roughu = self
                 .roughnessu
                 .as_ref()
@@ -110,7 +110,7 @@ impl Material for UberMaterial {
 
         let kr = op * self.kr.evaluate(si).clamp();
         if !kr.is_black() {
-            let fresnel = arena.alloc(Fresnel::dielectric(1.0, e));
+            let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.0, e));
             bxdfs.add(arena.alloc(SpecularReflection::new(kr, fresnel)));
         }
 
@@ -119,7 +119,7 @@ impl Material for UberMaterial {
             bxdfs.add(arena.alloc(SpecularTransmission::new(kt, 1.0, e, mode)));
         }
 
-        let bsdf: BSDF<'b> = BSDF::new(si, eta, bxdfs.into_slice());
+        let bsdf: Bsdf<'b> = Bsdf::new(si, eta, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

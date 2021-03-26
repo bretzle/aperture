@@ -1,7 +1,8 @@
 use crate::{
     bsdf::{
-        BxDF, BxDFHolder, Fresnel, FresnelSpecular, MicrofacetReflection, MicrofacetTransmission,
-        SpecularReflection, SpecularTransmission, TrowbridgeReitzDistribution, BSDF,
+        Bsdf, BxDF, BxDFHolder, Fresnel, FresnelSpecular, MicrofacetReflection,
+        MicrofacetTransmission, SpecularReflection, SpecularTransmission,
+        TrowbridgeReitzDistribution,
     },
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
@@ -77,7 +78,7 @@ impl Material for GlassMaterial {
                     v_rough = TrowbridgeReitzDistribution::roughness_to_alpha(v_rough);
                 }
                 if !r.is_black() {
-                    let fresnel = arena.alloc(Fresnel::dielectric(1.0, eta));
+                    let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.0, eta));
                     let bxdf: &'b dyn BxDF = if is_specular {
                         arena.alloc(SpecularReflection::new(r, fresnel))
                     } else {
@@ -100,7 +101,7 @@ impl Material for GlassMaterial {
             }
         }
 
-        let bsdf = BSDF::new(si, eta, bxdfs.into_slice());
+        let bsdf = Bsdf::new(si, eta, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

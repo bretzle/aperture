@@ -19,19 +19,19 @@ mod node;
 pub enum SplitMethod {
     Middle,
     EqualCounts,
-    SAH,
+    Sah,
 }
 
 /// Bounding Volume Hierarchies
 #[derive(Debug)]
-pub struct BVH {
+pub struct Bvh {
     max_prims_per_node: usize,
     primitives: Vec<Arc<dyn Primitive>>,
     nodes: Vec<LNode>,
 }
 
-impl BVH {
-    pub fn create(prims: &[Arc<dyn Primitive>], ps: &ParamSet) -> BVH {
+impl Bvh {
+    pub fn create(_prims: &[Arc<dyn Primitive>], _ps: &ParamSet) -> Bvh {
         todo!()
     }
 
@@ -39,7 +39,7 @@ impl BVH {
         max_prims_per_node: usize,
         prims: &[Arc<dyn Primitive>],
         split_method: SplitMethod,
-    ) -> BVH {
+    ) -> Bvh {
         info!("Generating BVH with method {:?}:", split_method);
 
         // 1. Get bounds info
@@ -122,7 +122,7 @@ impl BVH {
             // Choose split dimension
             let dimension = centroids_bounds.maximum_extent();
             // Partition primitives into 2 sets and build children
-            if centroids_bounds[0][dimension] == centroids_bounds[1][dimension] {
+            if approx!(centroids_bounds[0][dimension], == centroids_bounds[1][dimension]) {
                 let first_prim_offset = ordered_prims.len();
                 for pi in primitive_info[start..end].iter() {
                     let prim_num = pi.prim_number;
@@ -152,7 +152,7 @@ impl BVH {
                     }
                 }
                 SplitMethod::EqualCounts => unimplemented!(),
-                SplitMethod::SAH => {
+                SplitMethod::Sah => {
                     // Partition primitives using approximate SAH
                     if n_primitives <= 2 {
                         // Partition primitives into equally-sized subsets
@@ -240,7 +240,7 @@ impl BVH {
                 }
             }
 
-            let right = Box::new(BVH::build(
+            let right = Box::new(Bvh::build(
                 primitives,
                 primitive_info,
                 mid,
@@ -250,7 +250,7 @@ impl BVH {
                 ordered_prims,
                 split_method,
             ));
-            let left = Box::new(BVH::build(
+            let left = Box::new(Bvh::build(
                 primitives,
                 primitive_info,
                 start,
@@ -296,7 +296,7 @@ impl BVH {
                 };
                 nodes.push(linear_node);
                 Self::flatten(&*children[0], nodes);
-                let second_offset = BVH::flatten(&*children[1], nodes);
+                let second_offset = Bvh::flatten(&*children[1], nodes);
                 let _prev = replace(
                     &mut nodes[offset].data,
                     LNodeData::Interior {
@@ -311,7 +311,7 @@ impl BVH {
     }
 }
 
-impl Primitive for BVH {
+impl Primitive for Bvh {
     fn world_bounds(&self) -> Bounds3f {
         self.nodes[0].bounds
     }

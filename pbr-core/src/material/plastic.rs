@@ -1,7 +1,7 @@
 use crate::{
     bsdf::{
-        BxDFHolder, Fresnel, LambertianReflection, MicrofacetReflection,
-        TrowbridgeReitzDistribution, BSDF,
+        Bsdf, BxDFHolder, Fresnel, LambertianReflection, MicrofacetReflection,
+        TrowbridgeReitzDistribution,
     },
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
@@ -59,7 +59,7 @@ impl Material for Plastic {
             bxdfs.add(arena.alloc(LambertianReflection::new(kd)));
         }
         if !ks.is_black() {
-            let fresnel = arena.alloc(Fresnel::dielectric(1.5, 1.0));
+            let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.5, 1.0));
             let mut roughness = self.roughness.evaluate(si);
             if self.remap_roughness {
                 roughness = TrowbridgeReitzDistribution::roughness_to_alpha(roughness);
@@ -68,7 +68,7 @@ impl Material for Plastic {
             bxdfs.add(arena.alloc(MicrofacetReflection::new(ks, distrib, fresnel)));
         }
 
-        let bsdf: BSDF<'b> = BSDF::new(si, 1.0, bxdfs.into_slice());
+        let bsdf: Bsdf<'b> = Bsdf::new(si, 1.0, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

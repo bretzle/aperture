@@ -1,4 +1,4 @@
-use crate::{blockedarray::BlockedArray, utils::*};
+use crate::blockedarray::BlockedArray;
 use lazy_static::lazy_static;
 use log::{debug, info, trace};
 use maths::*;

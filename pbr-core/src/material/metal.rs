@@ -1,5 +1,5 @@
 use crate::{
-    bsdf::{BxDFHolder, Fresnel, MicrofacetReflection, TrowbridgeReitzDistribution, BSDF},
+    bsdf::{Bsdf, BxDFHolder, Fresnel, MicrofacetReflection, TrowbridgeReitzDistribution},
     interaction::SurfaceInteraction,
     material::{self, Material, TransportMode},
     spectrum::{Colors, Spectrum},
@@ -63,7 +63,7 @@ impl Material for Metal {
             urough = TrowbridgeReitzDistribution::roughness_to_alpha(urough);
             vrough = TrowbridgeReitzDistribution::roughness_to_alpha(vrough);
         }
-        let fresnel = arena.alloc(Fresnel::conductor(
+        let fresnel = arena.alloc(<dyn Fresnel>::conductor(
             Colors::WHITE,
             self.eta.evaluate(si),
             self.k.evaluate(si),
@@ -71,7 +71,7 @@ impl Material for Metal {
         let distrib = arena.alloc(TrowbridgeReitzDistribution::new(urough, vrough));
         bxdfs.add(arena.alloc(MicrofacetReflection::new(Colors::WHITE, distrib, fresnel)));
 
-        let bsdf = BSDF::new(si, 1.0, bxdfs.into_slice());
+        let bsdf = Bsdf::new(si, 1.0, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

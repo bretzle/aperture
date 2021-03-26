@@ -115,7 +115,7 @@ impl<'a> MicrofacetTransmission<'a> {
             distribution,
             eta_a,
             eta_b,
-            fresnel: Fresnel::dielectric(eta_a, eta_b),
+            fresnel: <dyn Fresnel>::dielectric(eta_a, eta_b),
             mode,
         }
     }
@@ -150,7 +150,7 @@ impl<'a> BxDF for MicrofacetTransmission<'a> {
 
         let sqrt_denom = wo.dot(&wh) + eta * wi.dot(&wh);
         let factor = match self.mode {
-            TransportMode::RADIANCE => 1.0 / eta,
+            TransportMode::Radiance => 1.0 / eta,
             _ => 1.0,
         };
 
@@ -414,7 +414,7 @@ impl MicrofacetDistribution for BeckmannDistribution {
     fn sample_wh(&self, wo: &Vector3f, u: Point2f) -> Vector3f {
         if !self.sample_visible_area {
             // Sample full distribution of normals
-            let (tan_2_theta, phi) = if self.alpha_x == self.alpha_y {
+            let (tan_2_theta, phi) = if approx!(self.alpha_x, == self.alpha_y) {
                 let mut log_sample = u[0].ln();
                 if log_sample.is_infinite() {
                     log_sample = 0.0;
@@ -610,7 +610,7 @@ impl MicrofacetDistribution for TrowbridgeReitzDistribution {
             let cos_theta;
             let mut phi = (2.0 * consts::PI) * u[1];
 
-            if self.alpha_x == self.alpha_y {
+            if approx!(self.alpha_x, == self.alpha_y) {
                 let tan_theta2 = self.alpha_x * self.alpha_x * u[0] / (1.0 - u[0]);
                 cos_theta = 1.0 / (1.0 + tan_theta2).sqrt();
             } else {

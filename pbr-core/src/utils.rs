@@ -1,12 +1,9 @@
 use crate::{bounds::Bounds2i, spectrum::Spectrum};
 use anyhow::Result;
 use log::debug;
-use maths::{Clampable, Point2i};
-use num::One;
+use maths::Point2i;
 use std::{
-    f32::consts::TAU,
     num::Wrapping,
-    ops::{Add, Mul, Sub},
     path::Path,
     sync::atomic::{AtomicU32, Ordering},
 };
@@ -56,7 +53,7 @@ impl Rng {
     }
 
     pub fn uniform_f32(&mut self) -> f32 {
-        (self.uniform_u32() as f32 * 2.3283064365386963E-10).min(ONE_MINUS_EPSILON)
+        ((self.uniform_u32() as f64 * 2.3283064365386963E-10) as f32).min(ONE_MINUS_EPSILON)
     }
 
     pub fn set_sequence(&mut self, seed: u64) {
@@ -108,6 +105,6 @@ pub fn has_extension<P: AsRef<Path>>(filename: P, extension: &str) -> bool {
         .unwrap_or(false)
 }
 
-pub fn read_image<P: AsRef<Path>>(path: P) -> Result<(Vec<Spectrum>, Point2i)> {
+pub fn read_image<P: AsRef<Path>>(_path: P) -> Result<(Vec<Spectrum>, Point2i)> {
     todo!()
 }

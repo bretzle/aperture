@@ -19,11 +19,11 @@ pub use self::{bxdf::*, fourier::*, fresnel::*, lambertian::*, microfacet::*, or
 
 bitflags! {
     pub struct BxDFType: u32 {
-        const BSDF_REFLECTION   = 0b_00000001;
-        const BSDF_TRANSMISSION = 0b_00000010;
-        const BSDF_DIFFUSE      = 0b_00000100;
-        const BSDF_GLOSSY       = 0b_00001000;
-        const BSDF_SPECULAR     = 0b_00010000;
+        const BSDF_REFLECTION   = 0b0000_0001;
+        const BSDF_TRANSMISSION = 0b0000_0010;
+        const BSDF_DIFFUSE      = 0b0000_0100;
+        const BSDF_GLOSSY       = 0b0000_1000;
+        const BSDF_SPECULAR     = 0b0001_0000;
     }
 }
 
@@ -57,7 +57,7 @@ impl<'a> BxDFHolder<'a> {
 
 /// Represents the Bidirectional Scattering Distribution Function.
 /// It represents the properties of a material at a given point.
-pub struct BSDF<'a> {
+pub struct Bsdf<'a> {
     /// Index of refraction of the surface
     pub eta: f32,
     /// Shading normal (i.e. potentially affected by bump-mapping)
@@ -69,7 +69,7 @@ pub struct BSDF<'a> {
     pub bxdfs: &'a [&'a dyn BxDF],
 }
 
-impl<'a> BSDF<'a> {
+impl<'a> Bsdf<'a> {
     pub fn new<'b>(
         isect: &'b SurfaceInteraction<'_, '_>,
         eta: f32,

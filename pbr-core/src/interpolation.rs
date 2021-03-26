@@ -1,4 +1,3 @@
-use crate::utils::*;
 use maths::*;
 use std::f32::consts::PI;
 
@@ -61,7 +60,7 @@ pub fn sample_catmull_rom_2d(
     // Invert definite integral over spline segment and return solution
 
     // Set initial guess for $t$ by importance sampling a linear interpolant
-    let mut t = if f0 != f1 {
+    let mut t = if approx!(f0, != f1) {
         (f0 - f32::sqrt(f32::max(0.0, f0 * f0 + 2.0 * u * (f1 - f0)))) / (f0 - f1)
     } else {
         u / f0

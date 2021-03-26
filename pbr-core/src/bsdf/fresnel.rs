@@ -186,7 +186,7 @@ impl SpecularTransmission {
             t,
             eta_a,
             eta_b,
-            fresnel: Fresnel::dielectric(eta_a, eta_b),
+            fresnel: <dyn Fresnel>::dielectric(eta_a, eta_b),
             mode,
         }
     }
@@ -214,7 +214,7 @@ impl BxDF for SpecularTransmission {
             let mut ft = self.t * (Colors::WHITE - self.fresnel.evaluate(cos_theta(&wi)));
 
             // Account for non-symmetry with transmission to different medium
-            if self.mode == TransportMode::RADIANCE {
+            if self.mode == TransportMode::Radiance {
                 ft = ft * (eta_i * eta_i) / (eta_t * eta_t);
             }
 
@@ -303,7 +303,7 @@ impl BxDF for FresnelSpecular {
                 let mut ft = self.t * (1.0 - fr);
 
                 // Account for non-symmetry with transmission to different medium
-                if self.mode == TransportMode::RADIANCE {
+                if self.mode == TransportMode::Radiance {
                     ft *= (eta_i * eta_i) / (eta_t * eta_t);
                 }
                 (
@@ -420,7 +420,6 @@ fn pow5(v: f32) -> f32 {
 mod tests {
     use super::*;
     use crate::{bsdf::TrowbridgeReitzDistribution, spectrum::Colors};
-    use maths::*;
     use quickcheck::quickcheck;
 
     quickcheck! {

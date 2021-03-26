@@ -61,7 +61,7 @@ impl Paraboloid {
 }
 
 impl Shape for Paraboloid {
-    fn intersect(&self, ray: &Ray) -> Option<(SurfaceInteraction, f32)> {
+    fn intersect(&self, _ray: &Ray) -> Option<(SurfaceInteraction, f32)> {
         todo!()
     }
 
@@ -83,7 +83,7 @@ impl Shape for Paraboloid {
         todo!()
     }
 
-    fn sample(&self, u: Point2f) -> (Interaction, f32) {
+    fn sample(&self, _u: Point2f) -> (Interaction, f32) {
         todo!()
     }
 

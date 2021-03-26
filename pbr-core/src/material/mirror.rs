@@ -1,5 +1,5 @@
 use crate::{
-    bsdf::{BxDFHolder, Fresnel, SpecularReflection, BSDF},
+    bsdf::{Bsdf, BxDFHolder, Fresnel, SpecularReflection},
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
     spectrum::Spectrum,
@@ -39,10 +39,10 @@ impl Material for MirrorMaterial {
         let mut bxdfs = BxDFHolder::new(arena);
         let R = self.kr.evaluate(si).clamp();
         if !R.is_black() {
-            let fresnel = arena.alloc(Fresnel::no_op());
+            let fresnel = arena.alloc(<dyn Fresnel>::no_op());
             bxdfs.add(arena.alloc(SpecularReflection::new(R, fresnel)));
         }
 
-        si.bsdf = Some(Arc::new(BSDF::new(si, 1.0, bxdfs.into_slice())));
+        si.bsdf = Some(Arc::new(Bsdf::new(si, 1.0, bxdfs.into_slice())));
     }
 }

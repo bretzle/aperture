@@ -224,7 +224,7 @@ fn van_der_corput(
 ) {
     let scramble = rng.uniform_u32();
     let total_samples = n_samples_per_pixel_sample * n_pixel_samples;
-    gray_code_sample(&CVAN_DER_CORPUT, total_samples, scramble, &mut samples[..]);
+    gray_code_sample(&CVAN_DER_CORPUT, total_samples, scramble, samples);
     // Randomly shuffle 1D points
     for i in 0..n_pixel_samples {
         shuffle(
@@ -234,12 +234,7 @@ fn van_der_corput(
             rng,
         );
     }
-    shuffle(
-        &mut samples[..],
-        n_pixel_samples,
-        n_samples_per_pixel_sample,
-        rng,
-    );
+    shuffle(samples, n_pixel_samples, n_samples_per_pixel_sample, rng);
 }
 
 fn sobol_2d(
@@ -255,7 +250,7 @@ fn sobol_2d(
         &CSOBOL[1],
         n_samples_per_pixel_sample * n_pixel_samples,
         scramble,
-        &mut samples[..],
+        samples,
     );
     // Randomly shuffle 2D points
     for i in 0..n_pixel_samples {
@@ -266,12 +261,7 @@ fn sobol_2d(
             rng,
         );
     }
-    shuffle(
-        &mut samples[..],
-        n_pixel_samples,
-        n_samples_per_pixel_sample,
-        rng,
-    );
+    shuffle(samples, n_pixel_samples, n_samples_per_pixel_sample, rng);
 }
 
 // fn radical_inverse(base: u32, a: u64) -> f32 {
@@ -349,38 +339,38 @@ fn shuffle<T>(samp: &mut [T], count: u32, n_dimensions: u32, rng: &mut Rng) {
 }
 
 const CVAN_DER_CORPUT: [u32; 32] = [
-    0b_10000000000000000000000000000000,
-    0b_1000000000000000000000000000000,
-    0b_100000000000000000000000000000,
-    0b_10000000000000000000000000000,
-    0b_1000000000000000000000000000,
-    0b_100000000000000000000000000,
-    0b_10000000000000000000000000,
-    0b_1000000000000000000000000,
-    0b_100000000000000000000000,
-    0b_10000000000000000000000,
-    0b_1000000000000000000000,
-    0b_100000000000000000000,
-    0b_10000000000000000000,
-    0b_1000000000000000000,
-    0b_100000000000000000,
-    0b_10000000000000000,
-    0b_1000000000000000,
-    0b_100000000000000,
-    0b_10000000000000,
-    0b_1000000000000,
-    0b_100000000000,
-    0b_10000000000,
-    0b_1000000000,
-    0b_100000000,
-    0b_10000000,
-    0b_1000000,
-    0b_100000,
-    0b_10000,
-    0b_1000,
-    0b_100,
-    0b_10,
-    0b_1,
+    0b10000000000000000000000000000000,
+    0b1000000000000000000000000000000,
+    0b100000000000000000000000000000,
+    0b10000000000000000000000000000,
+    0b1000000000000000000000000000,
+    0b100000000000000000000000000,
+    0b10000000000000000000000000,
+    0b1000000000000000000000000,
+    0b100000000000000000000000,
+    0b10000000000000000000000,
+    0b1000000000000000000000,
+    0b100000000000000000000,
+    0b10000000000000000000,
+    0b1000000000000000000,
+    0b100000000000000000,
+    0b10000000000000000,
+    0b1000000000000000,
+    0b100000000000000,
+    0b10000000000000,
+    0b1000000000000,
+    0b100000000000,
+    0b10000000000,
+    0b1000000000,
+    0b100000000,
+    0b10000000,
+    0b1000000,
+    0b100000,
+    0b10000,
+    0b1000,
+    0b100,
+    0b10,
+    0b1,
 ];
 /// Generator matrices for Sobol 2D
 const CSOBOL: [[u32; 32]; 2] = [

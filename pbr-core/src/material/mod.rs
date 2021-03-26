@@ -22,8 +22,8 @@ pub use self::{
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TransportMode {
-    RADIANCE,
-    IMPORTANCE,
+    Radiance,
+    Importance,
 }
 
 pub trait Material: Debug + Send + Sync {

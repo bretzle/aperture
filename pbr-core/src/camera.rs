@@ -7,7 +7,6 @@ use crate::{
 };
 use maths::*;
 use num::Zero;
-use std::fmt::Debug;
 
 pub trait Camera: Send + Sync {
     fn get_film(&self) -> &Film;

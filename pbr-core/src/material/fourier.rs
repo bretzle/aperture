@@ -1,5 +1,5 @@
 use crate::{
-    bsdf::{BxDFHolder, FourierBSDF, FourierBSDFTable, BSDF},
+    bsdf::{Bsdf, BxDFHolder, FourierBSDF, FourierBSDFTable},
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
     texture::{TextureFloat, TextureParams},
@@ -39,7 +39,7 @@ impl Material for FourierMaterial {
             super::bump(bump, si);
         }
         bxdfs.add(arena.alloc(FourierBSDF::new(&self.bsdf_table, mode)));
-        let bsdf = BSDF::new(si, 1.0, bxdfs.into_slice());
+        let bsdf = Bsdf::new(si, 1.0, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

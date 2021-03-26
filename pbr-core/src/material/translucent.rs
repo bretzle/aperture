@@ -1,7 +1,7 @@
 use crate::{
     bsdf::{
-        BxDFHolder, Fresnel, LambertianReflection, LambertianTransmission, MicrofacetReflection,
-        MicrofacetTransmission, TrowbridgeReitzDistribution, BSDF,
+        Bsdf, BxDFHolder, Fresnel, LambertianReflection, LambertianTransmission,
+        MicrofacetReflection, MicrofacetTransmission, TrowbridgeReitzDistribution,
     },
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
@@ -35,9 +35,9 @@ impl TranslucentMaterial {
         Arc::new(TranslucentMaterial {
             kd,
             ks,
+            roughness,
             reflect,
             transmit,
-            roughness,
             bumpmap,
             remap_roughness,
         })
@@ -80,7 +80,7 @@ impl Material for TranslucentMaterial {
                 }
                 let distrib = arena.alloc(TrowbridgeReitzDistribution::new(rough, rough));
                 if !r.is_black() {
-                    let fresnel = arena.alloc(Fresnel::dielectric(1.0, eta));
+                    let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.0, eta));
                     bxdfs.add(arena.alloc(MicrofacetReflection::new(r * ks, distrib, fresnel)));
                 }
                 if !t.is_black() {
@@ -95,7 +95,7 @@ impl Material for TranslucentMaterial {
             }
         }
 
-        let bsdf: BSDF<'b> = BSDF::new(si, eta, bxdfs.into_slice());
+        let bsdf: Bsdf<'b> = Bsdf::new(si, eta, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }

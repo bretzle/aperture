@@ -1,5 +1,5 @@
 use super::BxDFType;
-use crate::{sampling::cosine_sample_hemisphere, spectrum::Spectrum, utils::*};
+use crate::{sampling::cosine_sample_hemisphere, spectrum::Spectrum};
 use maths::*;
 use std::{f32::consts, fmt::Debug};
 

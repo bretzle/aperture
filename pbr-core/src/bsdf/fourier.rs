@@ -91,7 +91,7 @@ impl BxDF for FourierBSDF {
         let mut scale = if muI != 0.0 { 1.0 / f32::abs(muI) } else { 0.0 };
 
         // Update _scale_ to account for adjoint light transport
-        if self.mode == TransportMode::RADIANCE && muI * muO > 0.0 {
+        if self.mode == TransportMode::Radiance && muI * muO > 0.0 {
             let eta = if muI > 0.0 {
                 1.0 / bsdf_table.eta
             } else {
@@ -191,7 +191,7 @@ impl BxDF for FourierBSDF {
 
         // Evaluate remaining Fourier expansions for angle $\phi$
         let mut scale = if muI != 0.0 { 1.0 / f32::abs(muI) } else { 0.0 };
-        if self.mode == TransportMode::RADIANCE && muI * muO > 0.0 {
+        if self.mode == TransportMode::Radiance && muI * muO > 0.0 {
             let eta = if muI > 0.0 {
                 1.0 / bsdf_table.eta
             } else {

@@ -1,4 +1,4 @@
-use crate::{cie, utils::*};
+use crate::cie;
 use maths::*;
 use num::{One, Zero};
 use std::{

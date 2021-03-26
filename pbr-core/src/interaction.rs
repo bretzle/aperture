@@ -1,5 +1,5 @@
 use crate::{
-    bsdf::BSDF,
+    bsdf::Bsdf,
     material::TransportMode,
     primitive::Primitive,
     ray::Ray,
@@ -123,7 +123,7 @@ pub struct SurfaceInteraction<'a, 'b> {
     /// Shading information
     pub shading: Shading,
     /// BSDF of the surface at the intersection point
-    pub bsdf: Option<Arc<BSDF<'b>>>,
+    pub bsdf: Option<Arc<Bsdf<'b>>>,
 }
 
 impl<'a, 'b> SurfaceInteraction<'a, 'b> {

@@ -263,9 +263,9 @@ impl<'a, 'b> Mul<&'a Point3f> for &'b Transform {
         let zp = m[2][0] * x + m[2][1] * y + m[2][2] * z + m[2][3];
         let wp = m[3][0] * x + m[3][1] * y + m[3][2] * z + m[3][3];
 
-        assert_ne!(wp, 0.0);
+        assert!(approx!(wp, != 0.0));
 
-        if wp == 1.0 {
+        if approx!(wp, == 1.0) {
             Point3f::new(xp, yp, zp)
         } else {
             Point3f::new(xp, yp, zp) / wp
@@ -384,7 +384,7 @@ pub fn solve_linear_system2x2(A: &[[f32; 2]; 2], B: Vector2f) -> Option<(f32, f3
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::relative_eq;
+    use approx::*;
 
     #[test]
     fn test_normal_transform() {
@@ -399,6 +399,6 @@ mod tests {
         let v2 = &t * &v;
         let n2 = t_inv.transform_normal(&Normal3f::from(n));
         println!("v = {}, n = {}", v2, n2);
-        relative_eq!(v2.dotn(&n2), 0.0);
+        assert_relative_eq!(v2.dotn(&n2), 0.0);
     }
 }

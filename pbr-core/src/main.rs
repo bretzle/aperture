@@ -1,6 +1,11 @@
-#![allow(clippy::many_single_char_names, non_snake_case)]
-
-use std::mem::size_of;
+#![allow(
+    clippy::many_single_char_names,
+    non_snake_case,
+    dead_code,
+    clippy::excessive_precision,
+    clippy::too_many_arguments,
+    clippy::suspicious_operation_groupings // <-- maybe bugs?
+)]
 
 use efloat::EFloat;
 
@@ -33,5 +38,5 @@ fn main() {
 
     let a = dbg!(EFloat::from(1.0));
     let b = dbg!(EFloat::from(5.0));
-    let c = dbg!(a / b);
+    let _c = dbg!(a / b);
 }

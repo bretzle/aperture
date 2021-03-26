@@ -7,7 +7,6 @@ use crate::{
     sampling,
     texture::{ConstantTexture, Texture, TextureFloat},
     transform::Transform,
-    utils::*,
 };
 use log::error;
 use maths::*;
@@ -114,7 +113,7 @@ impl TriangleMesh {
         // TODO implement rest of the validation / sanity checking
         let mut alpha_mask = None;
         let alpha_tex_name = params.find_texture("alpha", String::from(""));
-        if &alpha_tex_name != "" {
+        if !&alpha_tex_name.is_empty() {
             if let Some(tex) = float_textures.get(&alpha_tex_name) {
                 alpha_mask = Some(tex.clone());
             } else {
@@ -126,7 +125,7 @@ impl TriangleMesh {
 
         let mut shadow_alpha_mask = None;
         let shadow_alpha_tex_name = params.find_texture("shadowalpha", String::from(""));
-        if &shadow_alpha_tex_name != "" {
+        if !&shadow_alpha_tex_name.is_empty() {
             if let Some(tex) = float_textures.get(&shadow_alpha_tex_name) {
                 shadow_alpha_mask = Some(tex.clone());
             } else {
@@ -169,15 +168,12 @@ pub struct Triangle {
 impl Triangle {
     pub fn new(mesh: Arc<TriangleMesh>, tri_number: usize, reverse_orientation: bool) -> Triangle {
         let swaps_handedness = mesh.object_to_world.swaps_handedness();
-        let tri = Triangle {
+        Triangle {
             mesh,
             v_start_index: tri_number * 3,
             reverse_orientation,
             swaps_handedness,
-        };
-        // tri_mesh_bytes::add(::std::mem::size_of_val(&tri) as u64);
-
-        tri
+        }
     }
 
     #[inline(always)]
@@ -239,12 +235,12 @@ impl Shape for Triangle {
         p2t.x += sx * p2t.z;
         p2t.y += sy * p2t.z;
 
-        // 
+        //
         // - compute edge function coefficients
         let mut e0 = p1t.x * p2t.y - p1t.y * p2t.x;
         let mut e1 = p2t.x * p0t.y - p2t.y * p0t.x;
         let mut e2 = p0t.x * p1t.y - p0t.y * p1t.x;
-        // 
+        //
         // - fall back to double precision at edges
         if e0 == 0.0 || e1 == 0.0 || e2 == 0.0 {
             let p2txp1ty = f64::from(p2t.x) * f64::from(p1t.y);
@@ -258,7 +254,7 @@ impl Shape for Triangle {
             e2 = (p1typ0tx - p1txp0ty) as f32;
         }
 
-        // 
+        //
         // - perform triangle edge and determinant test
         if (e0 < 0.0 || e1 < 0.0 || e2 < 0.0) && (e0 > 0.0 || e1 > 0.0 || e2 > 0.0) {
             return None;
@@ -268,7 +264,7 @@ impl Shape for Triangle {
             return None;
         }
 
-        // 
+        //
         // - compute scaled hit distance to triangle and test against ray t range
         p0t.z *= sz;
         p1t.z *= sz;
@@ -279,7 +275,7 @@ impl Shape for Triangle {
         {
             return None;
         }
-        // 
+        //
         // - compute barycentric coordinates and t value for triangle intersection
         let inv_det = 1.0 / det;
         let b0 = e0 * inv_det;
@@ -287,7 +283,7 @@ impl Shape for Triangle {
         let b2 = e2 * inv_det;
         let t = t_scaled * inv_det;
 
-        // 
+        //
         // - ensure that computed triangle t is conservatively greater than zero
 
         // Compute `delta_z` term for triangle t error bounds
@@ -315,7 +311,7 @@ impl Shape for Triangle {
         let mut dpdu = Vector3f::new(0.0, 0.0, 0.0);
         let mut dpdv = Vector3f::new(0.0, 0.0, 0.0);
         let uv = self.get_uvs();
-        // 
+        //
         // - compute deltas for partial derivatives
         let duv02 = uv[0] - uv[2];
         let duv12 = uv[1] - uv[2];
@@ -375,7 +371,7 @@ impl Shape for Triangle {
             zero(),
             self,
         );
-        // 
+        //
         // - Override surface normal
         let n = Normal3f::from(dp02.cross(&dp12).normalize());
         isect.hit.n = n;
@@ -387,14 +383,14 @@ impl Shape for Triangle {
         } else {
             isect.hit.n
         };
-        // 
+        //
         // - shading tangent
         let mut ss = if let Some(ref s) = self.mesh.s {
             (s[self.v(0)] * b0 + s[self.v(1)] * b1 + s[self.v(2)] * b2).normalize()
         } else {
             isect.dpdu.normalize()
         };
-        // 
+        //
         // - shading bitangent
         let mut ts = ss.cross(&Vector3f::from(ns));
         if ts.length_sq() > 0.0 {
@@ -462,12 +458,12 @@ impl Shape for Triangle {
         p2t.x += sx * p2t.z;
         p2t.y += sy * p2t.z;
 
-        // 
+        //
         // - compute edge function coefficients
         let mut e0 = p1t.x * p2t.y - p1t.y * p2t.x;
         let mut e1 = p2t.x * p0t.y - p2t.y * p0t.x;
         let mut e2 = p0t.x * p1t.y - p0t.y * p1t.x;
-        // 
+        //
         // - fall back to double precision at edges
         if e0 == 0.0 || e1 == 0.0 || e2 == 0.0 {
             let p2txp1ty = f64::from(p2t.x) * f64::from(p1t.y);
@@ -481,7 +477,7 @@ impl Shape for Triangle {
             e2 = (p1typ0tx - p1txp0ty) as f32;
         }
 
-        // 
+        //
         // - perform triangle edge and determinant test
         if (e0 < 0.0 || e1 < 0.0 || e2 < 0.0) && (e0 > 0.0 || e1 > 0.0 || e2 > 0.0) {
             return false;
@@ -491,7 +487,7 @@ impl Shape for Triangle {
             return false;
         }
 
-        // 
+        //
         // - compute scaled hit distance to triangle and test against ray t range
         p0t.z *= sz;
         p1t.z *= sz;
@@ -502,7 +498,7 @@ impl Shape for Triangle {
         {
             return false;
         }
-        // 
+        //
         // - compute barycentric coordinates and t value for triangle intersection
         let inv_det = 1.0 / det;
         let b0 = e0 * inv_det;
@@ -510,7 +506,7 @@ impl Shape for Triangle {
         let b2 = e2 * inv_det;
         let t = t_scaled * inv_det;
 
-        // 
+        //
         // - ensure that computed triangle t is conservatively greater than zero
 
         // Compute `delta_z` term for triangle t error bounds
@@ -540,7 +536,7 @@ impl Shape for Triangle {
             let mut dpdu = Vector3f::new(0.0, 0.0, 0.0);
             let mut dpdv = Vector3f::new(0.0, 0.0, 0.0);
             let uv = self.get_uvs();
-            // 
+            //
             // - compute deltas for partial derivatives
             let duv02 = uv[0] - uv[2];
             let duv12 = uv[1] - uv[2];

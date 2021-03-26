@@ -168,8 +168,9 @@ impl Film {
         }
         let xyz = v.to_xyz();
         let pixel = &mut self.pixels.lock()[self.get_pixel_idx(&p)];
-        for i in 0..3 {
-            pixel.splat_xyz[i].add(xyz[i]);
+
+        for (pixel_color, to_add) in pixel.splat_xyz.iter_mut().zip(xyz.iter()) {
+            pixel_color.add(*to_add)
         }
     }
 
@@ -285,10 +286,11 @@ impl FilmTile {
 
         assert!(
             p1.x >= p0.x && p1.y >= p0.y,
-            format!(
-                "p_film={}, p0={}, p1={}, pixel_bounds={:?}",
-                p, p0, p1, self.pixel_bounds
-            )
+            "p_film={}, p0={}, p1={}, pixel_bounds={:?}",
+            p,
+            p0,
+            p1,
+            self.pixel_bounds
         );
 
         let filter_table_size = FILTER_SIZE as f32;

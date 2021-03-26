@@ -68,7 +68,7 @@ impl ParamSet {
 
     pub fn find_one_filename(&self, name: &str, d: String) -> String {
         let filename = self.find_one_string(name, "".to_owned());
-        if filename == "" {
+        if filename.is_empty() {
             d
         } else {
             resolve_filename(&filename)

@@ -1,5 +1,5 @@
 use crate::{
-    bsdf::{BxDFHolder, FresnelBlend, TrowbridgeReitzDistribution, BSDF},
+    bsdf::{Bsdf, BxDFHolder, FresnelBlend, TrowbridgeReitzDistribution},
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
     spectrum::Spectrum,
@@ -65,7 +65,7 @@ impl Material for SubstrateMaterial {
             bxdfs.add(arena.alloc(FresnelBlend::new(s, d, distrib)));
         }
 
-        let bsdf = BSDF::new(si, 1.0, bxdfs.into_slice());
+        let bsdf = Bsdf::new(si, 1.0, bxdfs.into_slice());
         si.bsdf = Some(Arc::new(bsdf));
     }
 }
