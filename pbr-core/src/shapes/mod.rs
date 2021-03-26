@@ -6,12 +6,12 @@ use crate::{
 use maths::*;
 use std::fmt::Debug;
 
-mod cone;
-mod cylinder;
-mod disk;
-mod mesh;
-mod paraboloid;
-mod sphere;
+pub mod cone;
+pub mod cylinder;
+pub mod disk;
+pub mod mesh;
+pub mod paraboloid;
+pub mod sphere;
 
 pub trait Shape: Debug + Send + Sync {
     fn intersect(&self, ray: &Ray) -> Option<(SurfaceInteraction, f32)>;

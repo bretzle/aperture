@@ -1,7 +1,7 @@
 use crate::{bounds::Bounds2i, spectrum::Spectrum};
 use anyhow::Result;
 use log::debug;
-use maths::Point2i;
+use maths::{Point2i, ONE_MINUS_EPSILON};
 use std::{
     num::Wrapping,
     path::Path,
@@ -17,7 +17,6 @@ pub fn resolve_filename(filename: &str) -> String {
 const PCG32_DEFAULT_STATE: Wrapping<u64> = Wrapping(0x853c49e6748fea9b);
 const PCG32_DEFAULT_STREAM: Wrapping<u64> = Wrapping(0xda3e39cb94b95bdb);
 const PCG32_MULT: Wrapping<u64> = Wrapping(0x5851f42d4c957f2d);
-pub const ONE_MINUS_EPSILON: f32 = 0.99999994f32;
 
 #[derive(Copy, Clone)]
 pub struct Rng {
@@ -26,7 +25,7 @@ pub struct Rng {
 }
 
 impl Rng {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Rng {
             state: PCG32_DEFAULT_STATE,
             inc: PCG32_DEFAULT_STREAM,

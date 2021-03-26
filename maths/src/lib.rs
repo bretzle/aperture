@@ -28,6 +28,7 @@ pub type Normal3f = Normal3<f32>;
 
 pub const MACHINE_EPSILON: f32 = f32::EPSILON * 0.5;
 pub const INV_2_PI: f32 = 0.15915494309189533577;
+pub const ONE_MINUS_EPSILON: f32 = 0.99999994f32;
 
 #[macro_export]
 macro_rules! matrix {

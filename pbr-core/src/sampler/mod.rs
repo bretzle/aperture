@@ -1,7 +1,4 @@
-use crate::{
-    camera::CameraSample,
-    utils::{Rng, ONE_MINUS_EPSILON},
-};
+use crate::{camera::CameraSample, utils::Rng};
 use log::info;
 use maths::*;
 use num::Zero;

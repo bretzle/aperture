@@ -41,7 +41,7 @@ impl BuildNode {
         }
     }
 
-    pub fn leaf(first_prim_offset: usize, num_prims: usize, bbox: Bounds3f) -> BuildNode {
+    pub const fn leaf(first_prim_offset: usize, num_prims: usize, bbox: Bounds3f) -> BuildNode {
         BuildNode::Leaf {
             bounds: bbox,
             first_prim_offset,
@@ -49,7 +49,7 @@ impl BuildNode {
         }
     }
 
-    pub fn bounds(&self) -> &Bounds3f {
+    pub const fn bounds(&self) -> &Bounds3f {
         match self {
             BuildNode::Interior { ref bounds, .. } | BuildNode::Leaf { ref bounds, .. } => bounds,
         }

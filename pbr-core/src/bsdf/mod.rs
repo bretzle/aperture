@@ -8,7 +8,6 @@ mod oren_nayar;
 use crate::{
     interaction::SurfaceInteraction,
     spectrum::{Colors, Spectrum},
-    utils::ONE_MINUS_EPSILON,
 };
 use bitflags::bitflags;
 use light_arena::Allocator;

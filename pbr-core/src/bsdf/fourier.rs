@@ -34,7 +34,7 @@ unsafe impl Send for FourierBSDF {}
 unsafe impl Sync for FourierBSDF {}
 
 impl FourierBSDF {
-    pub fn new(bsdf_table: &FourierBSDFTable, mode: TransportMode) -> FourierBSDF {
+    pub const fn new(bsdf_table: &FourierBSDFTable, mode: TransportMode) -> FourierBSDF {
         FourierBSDF {
             bsdf_table: bsdf_table as *const FourierBSDFTable,
             mode,

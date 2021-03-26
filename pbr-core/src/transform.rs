@@ -155,7 +155,7 @@ impl Transform {
         &Transform::scale(inv_tan_ang, inv_tan_ang, 1.0) * &Transform::from_matrix(persp)
     }
 
-    pub fn inverse(&self) -> Self {
+    pub const fn inverse(&self) -> Self {
         Self {
             m: self.m_inv,
             m_inv: self.m,

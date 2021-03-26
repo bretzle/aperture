@@ -406,7 +406,7 @@ struct ResampleWeight {
     pub weights: [f32; 4],
 }
 
-fn modulo(a: isize, b: isize) -> isize {
+const fn modulo(a: isize, b: isize) -> isize {
     let result = a % b;
     if result < 0 {
         result + b

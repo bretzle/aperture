@@ -1,13 +1,13 @@
-mod fourier;
-mod glass;
-mod matte;
-mod metal;
-mod mirror;
-mod mixmat;
-mod plastic;
-mod substrate;
-mod translucent;
-mod uber;
+pub mod fourier;
+pub mod glass;
+pub mod matte;
+pub mod metal;
+pub mod mirror;
+pub mod mixmat;
+pub mod plastic;
+pub mod substrate;
+pub mod translucent;
+pub mod uber;
 
 use crate::{interaction::SurfaceInteraction, texture::Texture};
 use light_arena::Allocator;

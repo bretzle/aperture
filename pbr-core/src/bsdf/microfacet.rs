@@ -259,8 +259,7 @@ pub struct BeckmannDistribution {
 }
 
 impl BeckmannDistribution {
-    #[allow(dead_code)]
-    pub fn new(ax: f32, ay: f32) -> BeckmannDistribution {
+    pub const fn new(ax: f32, ay: f32) -> BeckmannDistribution {
         BeckmannDistribution {
             alpha_x: ax,
             alpha_y: ay,
@@ -476,7 +475,7 @@ pub struct TrowbridgeReitzDistribution {
 }
 
 impl TrowbridgeReitzDistribution {
-    pub fn new(ax: f32, ay: f32) -> TrowbridgeReitzDistribution {
+    pub const fn new(ax: f32, ay: f32) -> TrowbridgeReitzDistribution {
         TrowbridgeReitzDistribution {
             alpha_x: ax,
             alpha_y: ay,

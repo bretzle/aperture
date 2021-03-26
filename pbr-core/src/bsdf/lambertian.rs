@@ -11,7 +11,7 @@ pub struct LambertianReflection {
 }
 
 impl LambertianReflection {
-    pub fn new(r: Spectrum) -> LambertianReflection {
+    pub const fn new(r: Spectrum) -> LambertianReflection {
         LambertianReflection { r }
     }
 }
@@ -32,7 +32,7 @@ pub struct LambertianTransmission {
 }
 
 impl LambertianTransmission {
-    pub fn new(t: Spectrum) -> LambertianTransmission {
+    pub const fn new(t: Spectrum) -> LambertianTransmission {
         LambertianTransmission { t }
     }
 }

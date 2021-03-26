@@ -28,7 +28,7 @@ struct Pixel {
     xyz: [f32; 3],
     filter_weight_sum: f32,
     splat_xyz: [AtomicFloat; 3],
-    pad: f32,
+    _pad: f32,
 }
 
 impl Film {
@@ -328,11 +328,11 @@ impl FilmTile {
         &self.pixels[self.get_pixel_index(p)]
     }
 
-    pub fn get_pixel_bounds(&self) -> Bounds2i {
+    pub const fn get_pixel_bounds(&self) -> Bounds2i {
         self.pixel_bounds
     }
 
-    fn get_pixel_index(&self, p: Point2i) -> usize {
+    const fn get_pixel_index(&self, p: Point2i) -> usize {
         let width = self.pixel_bounds.p_max.x - self.pixel_bounds.p_min.x;
         let pidx = (p.y - self.pixel_bounds.p_min.y) * width + (p.x - self.pixel_bounds.p_min.x);
         pidx as usize

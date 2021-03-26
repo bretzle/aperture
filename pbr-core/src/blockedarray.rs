@@ -69,7 +69,7 @@ where
     }
 }
 
-fn round_up(x: usize) -> usize {
+const fn round_up(x: usize) -> usize {
     (x + BLOCK_SIZE - 1) & !(BLOCK_SIZE - 1)
 }
 

@@ -191,7 +191,7 @@ pub struct UVMapping2D {
 }
 
 impl UVMapping2D {
-    pub fn new(su: f32, sv: f32, du: f32, dv: f32) -> Self {
+    pub const fn new(su: f32, sv: f32, du: f32, dv: f32) -> Self {
         Self { su, sv, du, dv }
     }
 }
@@ -215,7 +215,7 @@ pub struct SphericalMapping2D {
 }
 
 impl SphericalMapping2D {
-    pub fn new(su: f32, sv: f32, du: f32, dv: f32, world_to_tex: Transform) -> Self {
+    pub const fn new(su: f32, sv: f32, du: f32, dv: f32, world_to_tex: Transform) -> Self {
         Self {
             inner: UVMapping2D::new(su, sv, du, dv),
             world_to_tex,
@@ -529,7 +529,8 @@ impl ImageTexture<f32> {
         )
     }
 }
-fn convert_to_spectrum(from: &Spectrum) -> Spectrum {
+
+const fn convert_to_spectrum(from: &Spectrum) -> Spectrum {
     *from
 }
 

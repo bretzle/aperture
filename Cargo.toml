@@ -1,5 +1,6 @@
 [workspace]
 members = [
 	"maths",
-	"pbr-core"
+	"pbr-core",
+	"pbr-cli"
 ]

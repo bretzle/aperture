@@ -352,6 +352,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "pbr-cli"
+version = "0.1.0"
+dependencies = [
+ "pbr-core",
+]
+
+[[package]]
 name = "pbr-core"
 version = "0.1.0"
 dependencies = [

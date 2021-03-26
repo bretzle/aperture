@@ -3,7 +3,6 @@ use crate::{
     material::TransportMode,
     sampling::cosine_sample_hemisphere,
     spectrum::{Colors, Spectrum},
-    utils::*,
 };
 use maths::*;
 use std::{f32, fmt::Debug, mem};
@@ -85,15 +84,15 @@ pub trait Fresnel: Debug {
 }
 
 impl dyn Fresnel {
-    pub fn conductor(eta_i: Spectrum, eta_t: Spectrum, k: Spectrum) -> FresnelConductor {
+    pub const fn conductor(eta_i: Spectrum, eta_t: Spectrum, k: Spectrum) -> FresnelConductor {
         FresnelConductor { eta_i, eta_t, k }
     }
 
-    pub fn dielectric(eta_i: f32, eta_t: f32) -> FresnelDielectric {
+    pub const fn dielectric(eta_i: f32, eta_t: f32) -> FresnelDielectric {
         FresnelDielectric { eta_i, eta_t }
     }
 
-    pub fn no_op() -> FresnelNoOp {
+    pub const fn no_op() -> FresnelNoOp {
         FresnelNoOp {}
     }
 }
@@ -181,7 +180,12 @@ pub struct SpecularTransmission {
 }
 
 impl SpecularTransmission {
-    pub fn new(t: Spectrum, eta_a: f32, eta_b: f32, mode: TransportMode) -> SpecularTransmission {
+    pub const fn new(
+        t: Spectrum,
+        eta_a: f32,
+        eta_b: f32,
+        mode: TransportMode,
+    ) -> SpecularTransmission {
         SpecularTransmission {
             t,
             eta_a,
@@ -248,7 +252,7 @@ pub struct FresnelSpecular {
 }
 
 impl FresnelSpecular {
-    pub fn new(
+    pub const fn new(
         r: Spectrum,
         t: Spectrum,
         eta_a: f32,

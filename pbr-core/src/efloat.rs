@@ -28,11 +28,11 @@ impl EFloat {
         r
     }
 
-    pub fn lower_bound(&self) -> f32 {
+    pub const fn lower_bound(&self) -> f32 {
         self.low
     }
 
-    pub fn upper_bound(&self) -> f32 {
+    pub const fn upper_bound(&self) -> f32 {
         self.high
     }
 
