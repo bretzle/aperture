@@ -3,8 +3,8 @@ use std::{mem, ops::*};
 
 /// Special Float that can be used for error analysis
 ///
-/// EFloat keeps track of an interval that describes the uncertainty of errors in
-/// intermediate floating-point arithmetic.
+/// EFloat keeps track of an interval that describes the uncertainty of errors
+/// in intermediate floating-point arithmetic.
 #[derive(Debug, Clone, Copy)]
 pub struct EFloat {
     /// The value

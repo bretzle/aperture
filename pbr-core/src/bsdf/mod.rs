@@ -86,7 +86,8 @@ impl<'a> BSDF<'a> {
         }
     }
 
-    /// Evaluate the BSDF for the given incoming light direction and outgoing light direction.
+    /// Evaluate the BSDF for the given incoming light direction and outgoing
+    /// light direction.
     pub fn f(&self, wo_w: &Vector3f, wi_w: &Vector3f, flags: BxDFType) -> Spectrum {
         let wi = self.world_to_local(wi_w);
         let wo = self.world_to_local(wo_w);
@@ -97,8 +98,8 @@ impl<'a> BSDF<'a> {
         self.bxdfs
             .iter()
             .filter(|b| {
-                // Make sure we only evaluate reflection or transmission based on whether wi and wo
-                // lie in the same hemisphere.
+                // Make sure we only evaluate reflection or transmission based on whether wi and
+                // wo lie in the same hemisphere.
                 b.matches(flags)
                     && ((reflect && (b.get_type().contains(BxDFType::BSDF_REFLECTION)))
                         || (!reflect && (b.get_type().contains(BxDFType::BSDF_TRANSMISSION))))

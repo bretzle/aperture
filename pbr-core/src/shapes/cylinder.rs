@@ -1,5 +1,12 @@
 use super::Shape;
-use crate::{bounds::Bounds3f, efloat::{solve_quadratic, EFloat}, interaction::{Interaction, SurfaceInteraction}, paramset::ParamSet, ray::Ray, transform::Transform};
+use crate::{
+    bounds::Bounds3f,
+    efloat::{solve_quadratic, EFloat},
+    interaction::{Interaction, SurfaceInteraction},
+    paramset::ParamSet,
+    ray::Ray,
+    transform::Transform,
+};
 use maths::*;
 use num::zero;
 use std::sync::Arc;

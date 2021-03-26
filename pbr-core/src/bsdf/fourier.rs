@@ -16,12 +16,13 @@ use std::{
     path::Path,
 };
 
-// This is ugly, but FourierBSDF has to be Copy, because it implements BxDF and needs to be
-// allocated from the arena, but I can't make it work with FourierBSDFTable... There must be a way
-// to do it with proper lifetime annotations but I couldn't figure it out, so I resorted to using
-// a raw pointer. It *should* be safe, since FourierBSDFTable lives for the duration of the
-// material (i.e the whole render), while FourierBSDF lives for a single ray trace. But TODO
-// revisit this at some point.
+// This is ugly, but FourierBSDF has to be Copy, because it implements BxDF and
+// needs to be allocated from the arena, but I can't make it work with
+// FourierBSDFTable... There must be a way to do it with proper lifetime
+// annotations but I couldn't figure it out, so I resorted to using
+// a raw pointer. It *should* be safe, since FourierBSDFTable lives for the
+// duration of the material (i.e the whole render), while FourierBSDF lives for
+// a single ray trace. But TODO revisit this at some point.
 
 #[derive(Debug, Copy, Clone)]
 pub struct FourierBSDF {
@@ -316,27 +317,27 @@ impl FourierBSDFTable {
     //
     //     int nCoeffs;               // Total number of Fourier series coefficients
     // stored in the file
-    //     int mMax;                  // Coeff. count for the longest series occurring
-    // in the file
+    //     int mMax;                  // Coeff. count for the longest series
+    // occurring in the file
     //     int nChannels;             // Number of color channels (usually 1 or 3)
-    //     int nBases;                // Number of BSDF basis functions (relevant for
-    // texturing)
+    //     int nBases;                // Number of BSDF basis functions (relevant
+    // for texturing)
     //
-    //     int nMetadataBytes;        // Size of descriptive metadata that follows the
-    // BSDF data
+    //     int nMetadataBytes;        // Size of descriptive metadata that follows
+    // the BSDF data
     //     int nParameters;           // Number of textured material parameters
-    //     int nParameterValues;      // Total number of BSDF samples for all textured
-    // parameters
+    //     int nParameterValues;      // Total number of BSDF samples for all
+    // textured parameters
     //     float eta;                 // Relative IOR through the material
     // (eta(bottom) / eta(top))
     //
-    //     float alpha[2];            // Beckmann-equiv. roughness on the top (0) and
-    // bottom (1) side
+    //     float alpha[2];            // Beckmann-equiv. roughness on the top (0)
+    // and bottom (1) side
     //     float unused[2];           // Unused fields to pad the header to 64 bytes
     // };
     //
-    //  Due to space constraints, two features are not currently implemented in PBRT,
-    //  namely texturing and harmonic extrapolation (though it would be
+    //  Due to space constraints, two features are not currently implemented in
+    // PBRT,  namely texturing and harmonic extrapolation (though it would be
     // straightforward
     //  to port them from Mitsuba.)
     pub fn read<P: AsRef<Path>>(filename: P) -> Result<FourierBSDFTable> {

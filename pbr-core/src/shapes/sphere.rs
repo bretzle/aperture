@@ -1,5 +1,13 @@
 use super::Shape;
-use crate::{bounds::Bounds3f, efloat::{self, EFloat}, interaction::{Interaction, SurfaceInteraction}, paramset::ParamSet, ray::Ray, sampling::{uniform_cone_pdf, uniform_sample_sphere}, transform::Transform};
+use crate::{
+    bounds::Bounds3f,
+    efloat::{self, EFloat},
+    interaction::{Interaction, SurfaceInteraction},
+    paramset::ParamSet,
+    ray::Ray,
+    sampling::{uniform_cone_pdf, uniform_sample_sphere},
+    transform::Transform,
+};
 use maths::*;
 use std::{f32::consts, sync::Arc};
 
@@ -244,7 +252,8 @@ impl Shape for Sphere {
             if wi.length_sq() == 0.0 {
                 pdf = 0.0;
             } else {
-                // Convert from area measure returned by sample() call above to solid angle measure.
+                // Convert from area measure returned by sample() call above to solid angle
+                // measure.
                 wi = wi.normalize();
                 pdf *= distance_squared(&si.p, &intr.p) / intr.n.dot(&(-wi)).abs();
             }
@@ -303,9 +312,9 @@ impl Shape for Sphere {
         // Return uniform PDF if point is inside the sphere
         let p_origin = offset_ray_origin(&si.p, &si.p_error, &si.n, &(p_center - si.p));
         if distance_squared(&p_origin, &p_center) <= self.radius * self.radius {
-            // FIXME We can't access the default method implementation of the Shape trait from
-            // within the overriding method :( So we duplicate the implementation here for now,
-            // until I find a better way.
+            // FIXME We can't access the default method implementation of the Shape trait
+            // from within the overriding method :( So we duplicate the
+            // implementation here for now, until I find a better way.
             // return Shape::pdf_wi(self, si, wi);
             let ray = si.spawn_ray(wi);
 

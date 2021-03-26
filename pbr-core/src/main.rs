@@ -5,9 +5,9 @@ use std::mem::size_of;
 use efloat::EFloat;
 
 mod blockedarray;
+mod bounds;
 mod bsdf;
 mod bvh;
-mod bounds;
 mod camera;
 mod cie;
 mod efloat;

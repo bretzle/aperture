@@ -195,7 +195,8 @@ where
 }
 
 impl Bounds3<f32> {
-    /// Compute the bounding sphere of the current bounding box, and returns its center and radius.
+    /// Compute the bounding sphere of the current bounding box, and returns its
+    /// center and radius.
     pub fn bounding_sphere(&self) -> (Point3f, f32) {
         let center = Point3f::new(
             (self.p_min.x + self.p_max.x) / 2.0,

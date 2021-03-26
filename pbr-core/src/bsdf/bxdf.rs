@@ -7,10 +7,11 @@ pub trait BxDF: Debug {
     /// Evaluate the BxDF for the given incoming and outgoing directions.
     fn f(&self, wo: &Vector3f, wi: &Vector3f) -> Spectrum;
 
-    /// Sample the BxDF for the given outgoing direction, using the given pair of uniform samples.
+    /// Sample the BxDF for the given outgoing direction, using the given pair
+    /// of uniform samples.
     ///
-    /// The default implementation uses importance sampling by using a cosine-weighted
-    /// distribution.
+    /// The default implementation uses importance sampling by using a
+    /// cosine-weighted distribution.
     fn sample_f(&self, wo: &Vector3f, u: Point2f) -> (Spectrum, Vector3f, f32, BxDFType) {
         let mut wi = cosine_sample_hemisphere(u);
         if wo.z < 0.0 {

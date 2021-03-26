@@ -54,8 +54,8 @@ impl<'a> BxDF for MicrofacetReflection<'a> {
         BxDFType::BSDF_REFLECTION | BxDFType::BSDF_GLOSSY
     }
 
-    /// Override sample_f() to use a better importance sampling method than weighted cosine based
-    /// on the microface distribution
+    /// Override sample_f() to use a better importance sampling method than
+    /// weighted cosine based on the microface distribution
     fn sample_f(&self, wo: &Vector3f, u: Point2f) -> (Spectrum, Vector3f, f32, BxDFType) {
         if wo.z == 0.0 {
             return (
@@ -173,8 +173,8 @@ impl<'a> BxDF for MicrofacetTransmission<'a> {
         BxDFType::BSDF_TRANSMISSION | BxDFType::BSDF_GLOSSY
     }
 
-    /// Override sample_f() to use a better importance sampling method than weighted cosine based
-    /// on the microface distribution
+    /// Override sample_f() to use a better importance sampling method than
+    /// weighted cosine based on the microface distribution
     fn sample_f(&self, wo: &Vector3f, u: Point2f) -> (Spectrum, Vector3f, f32, BxDFType) {
         if wo.z == 0.0 {
             return (

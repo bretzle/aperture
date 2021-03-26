@@ -1,5 +1,12 @@
 use super::Shape;
-use crate::{bounds::Bounds3f, interaction::{Interaction, SurfaceInteraction}, paramset::ParamSet, ray::Ray, sampling::concentric_sample_disk, transform::Transform};
+use crate::{
+    bounds::Bounds3f,
+    interaction::{Interaction, SurfaceInteraction},
+    paramset::ParamSet,
+    ray::Ray,
+    sampling::concentric_sample_disk,
+    transform::Transform,
+};
 use maths::*;
 use std::{f32::consts::PI, sync::Arc};
 

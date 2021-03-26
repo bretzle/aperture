@@ -1,4 +1,12 @@
-use crate::{bsdf::BSDF, material::TransportMode, primitive::Primitive, ray::Ray, shapes::Shape, spectrum::{Colors, Spectrum}, transform::{solve_linear_system2x2, Transform}};
+use crate::{
+    bsdf::BSDF,
+    material::TransportMode,
+    primitive::Primitive,
+    ray::Ray,
+    shapes::Shape,
+    spectrum::{Colors, Spectrum},
+    transform::{solve_linear_system2x2, Transform},
+};
 use light_arena::Allocator;
 use maths::*;
 use num::zero;
@@ -10,7 +18,8 @@ pub struct Interaction {
     pub p: Point3f,
     /// Error bound for the intersection point
     pub p_error: Vector3f,
-    /// Outgoing direction of the light at the intersection point (usually `-ray.d`)
+    /// Outgoing direction of the light at the intersection point (usually
+    /// `-ray.d`)
     pub wo: Vector3f,
     /// Normal
     pub n: Normal3f,
@@ -65,8 +74,8 @@ impl Interaction {
     }
 }
 
-/// Normal and partial derivatives used for shading. Can be different from geometric ones due to
-/// bump mapping, etc.
+/// Normal and partial derivatives used for shading. Can be different from
+/// geometric ones due to bump mapping, etc.
 #[derive(Clone)]
 pub struct Shading {
     pub n: Normal3f,

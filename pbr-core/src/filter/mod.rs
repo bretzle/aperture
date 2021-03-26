@@ -1,5 +1,5 @@
-use std::f32::consts::PI;
 use maths::*;
+use std::f32::consts::PI;
 
 pub trait Filter: Send + Sync {
     fn evaluate(&self, x: f32, y: f32) -> f32;

@@ -1,6 +1,6 @@
 use crate::utils::*;
-use std::f32::consts::PI;
 use maths::*;
+use std::f32::consts::PI;
 
 pub fn sample_catmull_rom_2d(
     nodes1: &[f32],

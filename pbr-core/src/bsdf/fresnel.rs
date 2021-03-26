@@ -149,13 +149,14 @@ impl<'a> SpecularReflection<'a> {
 
 impl<'a> BxDF for SpecularReflection<'a> {
     fn f(&self, _wo: &Vector3f, _wi: &Vector3f) -> Spectrum {
-        // The probability to call f() with the exact (wo, wi) for specular reflection is 0, so we
-        // return black here. Use sample_f() instead.
+        // The probability to call f() with the exact (wo, wi) for specular reflection
+        // is 0, so we return black here. Use sample_f() instead.
         Colors::BLACK
     }
 
     fn sample_f(&self, wo: &Vector3f, _sample: Point2f) -> (Spectrum, Vector3f, f32, BxDFType) {
-        // There's only one possible wi for a given wo, so we always return it with a pdf of 1.
+        // There's only one possible wi for a given wo, so we always return it with a
+        // pdf of 1.
         let wi = Vector3f::new(-wo.x, -wo.y, wo.z);
         let spectrum = self.fresnel.evaluate(cos_theta(&wi)) * self.r / abs_cos_theta(&wi);
         (spectrum, wi, 1.0, self.get_type())
@@ -193,8 +194,8 @@ impl SpecularTransmission {
 
 impl BxDF for SpecularTransmission {
     fn f(&self, _wo: &Vector3f, _wi: &Vector3f) -> Spectrum {
-        // The probability to call f() with the exact (wo, wi) for specular transmission is 0, so we
-        // return black here. Use sample_f() instead.
+        // The probability to call f() with the exact (wo, wi) for specular transmission
+        // is 0, so we return black here. Use sample_f() instead.
         Colors::BLACK
     }
 
@@ -266,8 +267,8 @@ impl FresnelSpecular {
 
 impl BxDF for FresnelSpecular {
     fn f(&self, _wo: &Vector3f, _wi: &Vector3f) -> Spectrum {
-        // The probability to call f() with the exact (wo, wi) for specular reflection is 0, so we
-        // return black here. Use sample_f() instead.
+        // The probability to call f() with the exact (wo, wi) for specular reflection
+        // is 0, so we return black here. Use sample_f() instead.
         Colors::BLACK
     }
 

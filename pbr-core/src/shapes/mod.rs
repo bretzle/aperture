@@ -1,4 +1,9 @@
-use crate::{bounds::Bounds3f, interaction::{Interaction, SurfaceInteraction}, ray::Ray, utils};
+use crate::{
+    bounds::Bounds3f,
+    interaction::{Interaction, SurfaceInteraction},
+    ray::Ray,
+    utils,
+};
 use maths::*;
 use std::fmt::Debug;
 

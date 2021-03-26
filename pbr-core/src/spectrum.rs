@@ -8,8 +8,8 @@ use std::{
 };
 
 /// Represents a linear RGB spectrum.
-/// TODO Rename this to `RGBSpectrum` and make `Spectrum` a type alias to this so we can also support
-/// full spectral rendering.
+/// TODO Rename this to `RGBSpectrum` and make `Spectrum` a type alias to this
+/// so we can also support full spectral rendering.
 #[derive(Debug, Copy, PartialEq, Clone, Default)]
 pub struct Spectrum {
     pub r: f32,
@@ -30,8 +30,8 @@ impl Spectrum {
         Self { r: v, g: v, b: v }
     }
 
-    /// Convert this linear RGB spectrum to non-linear sRGB and return the result as an array of
-    /// bytes.
+    /// Convert this linear RGB spectrum to non-linear sRGB and return the
+    /// result as an array of bytes.
     pub fn to_srgb(&self) -> [u8; 3] {
         let a = 0.055f32;
         let b = 1f32 / 2.4;
@@ -86,8 +86,8 @@ impl Spectrum {
         xyz
     }
 
-    /// Create a spectrum from a series of (wavelength, value) samples from an SPD (Spectral Power
-    /// Distribution).
+    /// Create a spectrum from a series of (wavelength, value) samples from an
+    /// SPD (Spectral Power Distribution).
     pub fn from_sampled(lambda: &[f32], v: &[f32], n: usize) -> Self {
         // TODO sort by wavelength if needed
         let mut xyz = [0.0; 3];
@@ -121,7 +121,8 @@ impl Spectrum {
         self.r.is_infinite() || self.g.is_infinite() || self.b.is_infinite()
     }
 
-    /// Return a spectrum where each component is the square root of the original component.
+    /// Return a spectrum where each component is the square root of the
+    /// original component.
     pub fn sqrt(&self) -> Self {
         Self::rgb(self.r.sqrt(), self.g.sqrt(), self.b.sqrt())
     }

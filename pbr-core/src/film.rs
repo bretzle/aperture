@@ -1,4 +1,9 @@
-use crate::{bounds::{Bounds2f, Bounds2i}, filter::Filter, spectrum::Spectrum, utils::{self, AtomicFloat}};
+use crate::{
+    bounds::{Bounds2f, Bounds2i},
+    filter::Filter,
+    spectrum::Spectrum,
+    utils::{self, AtomicFloat},
+};
 use log::{info, warn};
 use maths::*;
 use parking_lot::Mutex;
@@ -96,8 +101,9 @@ impl Film {
         let float_bounds = Bounds2f::from(*sample_bounds);
         let float_cropped_pixel_bounds = Bounds2f::from(self.cropped_pixel_bounds);
 
-        // This is a bit clunky but we need to do all the computations as floats as the numbers can
-        // temporarily be negative which would cause u32 to wrap around.
+        // This is a bit clunky but we need to do all the computations as floats as the
+        // numbers can temporarily be negative which would cause u32 to wrap
+        // around.
         let p0 = ceil(float_bounds.p_min - half_pixel - self.filter_radius);
         let p1 =
             floor(float_bounds.p_max - half_pixel + self.filter_radius + Vector2f::new(1.0, 1.0));

@@ -4,8 +4,8 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-/// The logarithm (in base-2) of the block size. This ensures that the block size is a power of 2.
-/// In this case, 3 means a block size of 8.
+/// The logarithm (in base-2) of the block size. This ensures that the block
+/// size is a power of 2. In this case, 3 means a block size of 8.
 const LOG_BLOCK_SIZE: usize = 3;
 const BLOCK_SIZE: usize = 1 << LOG_BLOCK_SIZE;
 

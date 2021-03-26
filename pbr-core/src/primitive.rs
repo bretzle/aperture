@@ -1,4 +1,12 @@
-use crate::{bounds::Bounds3f, interaction::{Interaction, SurfaceInteraction}, material::{Material, TransportMode}, ray::Ray, shapes::Shape, spectrum::Spectrum, transform::Transform};
+use crate::{
+    bounds::Bounds3f,
+    interaction::{Interaction, SurfaceInteraction},
+    material::{Material, TransportMode},
+    ray::Ray,
+    shapes::Shape,
+    spectrum::Spectrum,
+    transform::Transform,
+};
 use light_arena::Allocator;
 use maths::*;
 use std::{fmt::Debug, sync::Arc};
@@ -16,8 +24,9 @@ pub trait Primitive: Debug + Send + Sync {
     fn area_light(&self) -> Option<Arc<dyn AreaLight>>;
 
     /// The primitive's material
-    /// if material is None the primitive only serves to delineate a volume of space
-    /// Can test if two rays have intersected the same object by comparing material ptrs
+    /// if material is None the primitive only serves to delineate a volume of
+    /// space Can test if two rays have intersected the same object by
+    /// comparing material ptrs
     fn material(&self) -> Option<Arc<dyn Material>>;
 
     fn compute_scattering_functions<'a, 'b>(
