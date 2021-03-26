@@ -16,6 +16,7 @@ mod matrix;
 mod normal;
 mod point;
 mod vector;
+mod macros;
 
 pub type Vector2f = Vector2<f32>;
 pub type Vector3f = Vector3<f32>;
