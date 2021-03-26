@@ -1,4 +1,7 @@
-use crate::geometry::{Bounds2i, Point2i, Point3f, Vector3f};
+use crate::{
+    geometry::{Bounds2i, Point2i, Point3f, Vector3f},
+    spectrum::Spectrum,
+};
 use anyhow::Result;
 use log::debug;
 use num::One;
@@ -260,4 +263,53 @@ pub fn write_image<P: AsRef<Path>>(
     _total_resolution: Point2i,
 ) -> Result<()> {
     todo!()
+}
+
+pub trait Clampable {
+    fn clamp(self, min: f32, max: f32) -> Self;
+}
+
+impl Clampable for f32 {
+    fn clamp(self, min: f32, max: f32) -> f32 {
+        clamp(self, min, max)
+    }
+}
+
+impl Clampable for Spectrum {
+    fn clamp(self, min: f32, max: f32) -> Spectrum {
+        Spectrum::rgb(
+            Clampable::clamp(self.r, min, max),
+            Clampable::clamp(self.g, min, max),
+            Clampable::clamp(self.b, min, max),
+        )
+    }
+}
+
+pub fn has_extension<P: AsRef<Path>>(filename: P, extension: &str) -> bool {
+    filename
+        .as_ref()
+        .extension()
+        .map(|e| e == extension)
+        .unwrap_or(false)
+}
+
+pub fn read_image<P: AsRef<Path>>(path: P) -> Result<(Vec<Spectrum>, Point2i)> {
+    todo!()
+}
+
+#[inline]
+pub fn is_power_of_2(v: i32) -> bool {
+    (v != 0) && (v & (v - 1)) == 0
+}
+
+#[inline]
+pub fn round_up_pow_2(v: i32) -> i32 {
+    let mut v = v;
+    v -= 1;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v + 1
 }
