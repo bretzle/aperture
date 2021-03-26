@@ -1,20 +1,21 @@
-mod matrix;
-mod normal;
-mod point;
-mod vector;
+#![allow(clippy::excessive_precision)]
 
+pub use crate::{
+    matrix::*,
+    normal::Normal3,
+    point::{Point2, Point3},
+    vector::{Vector2, Vector3},
+};
 use num::{Num, One, Signed};
 use std::{
     f32::consts::PI,
     ops::{Add, Mul, Sub},
 };
 
-pub use self::{
-    matrix::*,
-    normal::Normal3,
-    point::{Point2, Point3},
-    vector::{Vector2, Vector3},
-};
+mod matrix;
+mod normal;
+mod point;
+mod vector;
 
 pub type Vector2f = Vector2<f32>;
 pub type Vector3f = Vector3<f32>;
@@ -56,7 +57,8 @@ pub fn max_component(v: &Vector3f) -> f32 {
     f32::max(v.x, f32::max(v.y, v.z))
 }
 
-/// Permute the components of this vector based on the given indices for x, y and z.
+/// Permute the components of this vector based on the given indices for x, y
+/// and z.
 pub fn permute_v<T>(v: &Vector3<T>, x: usize, y: usize, z: usize) -> Vector3<T>
 where
     T: Num + Copy,
@@ -64,7 +66,8 @@ where
     Vector3::new(v[x], v[y], v[z])
 }
 
-/// Permute the components of this point based on the given indices for x, y and z.
+/// Permute the components of this point based on the given indices for x, y and
+/// z.
 pub fn permute_p<T>(v: &Point3<T>, x: usize, y: usize, z: usize) -> Point3<T>
 where
     T: Num + Signed + Copy,
@@ -139,11 +142,16 @@ pub fn sin2_phi(w: &Vector3f) -> f32 {
 }
 
 #[inline]
-#[allow(dead_code)]
 pub fn cos_d_phi(wa: &Vector3f, wb: &Vector3f) -> f32 {
+    let waxy = wa.x * wa.x + wa.y * wa.y;
+    let wbxy = wb.x * wb.x + wb.y * wb.y;
+
+    if waxy == 0.0 || wbxy == 0.0 {
+        return 1.0;
+    }
+
     clamp(
-        (wa.x * wb.x + wa.y * wa.y)
-            / ((wa.x * wa.x + wa.y * wa.y) * (wb.x * wb.x + wb.y * wb.y)).sqrt(),
+        (wa.x * wb.x + wa.y * wb.y) / (waxy * wbxy).sqrt(),
         -1.0,
         1.0,
     )
@@ -212,10 +220,10 @@ pub fn erf_inv(x: f32) -> f32 {
     let mut p;
     if w < 5.0 {
         w -= 2.5;
-        p = 2.81022636e-08;
-        p = 3.43273939e-07 + p * w;
-        p = -3.5233877e-06 + p * w;
-        p = -4.39150654e-06 + p * w;
+        p = 2.81022636E-08;
+        p = 3.43273939E-07 + p * w;
+        p = -3.5233877E-06 + p * w;
+        p = -4.39150654E-06 + p * w;
         p = 0.00021858087 + p * w;
         p = -0.00125372503 + p * w;
         p = -0.00417768164 + p * w;
@@ -339,7 +347,8 @@ pub fn next_float_down(v: f32) -> f32 {
     f32::from_bits(ui)
 }
 
-/// Version of min() that works on `PartialOrd`, so it works for both u32 and f32.
+/// Version of min() that works on `PartialOrd`, so it works for both u32 and
+/// f32.
 pub fn min<T: PartialOrd + Copy>(a: T, b: T) -> T {
     if a.lt(&b) {
         a
@@ -348,7 +357,8 @@ pub fn min<T: PartialOrd + Copy>(a: T, b: T) -> T {
     }
 }
 
-/// Version of max() that works on `PartialOrd`, so it works for both u32 and f32.
+/// Version of max() that works on `PartialOrd`, so it works for both u32 and
+/// f32.
 pub fn max<T: PartialOrd + Copy>(a: T, b: T) -> T {
     if a.gt(&b) {
         a
@@ -359,8 +369,8 @@ pub fn max<T: PartialOrd + Copy>(a: T, b: T) -> T {
 
 /// Linear interpolation between 2 values.
 ///
-/// This version should be generic enough to linearly interpolate between 2 Spectrums using an f32
-/// parameter.
+/// This version should be generic enough to linearly interpolate between 2
+/// Spectrums using an f32 parameter.
 pub fn lerp<S, T>(t: S, a: T, b: T) -> T
 where
     S: One,

@@ -1,6 +1,5 @@
-use std::ops::{Index, IndexMut, Mul};
-
 use log::error;
+use std::ops::{Index, IndexMut, Mul};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Matrix {
@@ -65,8 +64,9 @@ impl Matrix {
                     let tmp = minv[irow][k];
                     minv[irow][k] = minv[icol][k];
                     minv[icol][k] = tmp;
-                    // This doesn't work because I can't borrow minv mutably twice :(
-                    // ::std::mem::swap(&mut minv[irow][k], &mut minv[icol][k]);
+                    // This doesn't work because I can't borrow minv mutably
+                    // twice :( ::std::mem::swap(&mut
+                    // minv[irow][k], &mut minv[icol][k]);
                 }
             }
             indxr[i] = irow;
