@@ -1,6 +1,6 @@
-use maths::*;
+use crate::*;
+use core::{f32::INFINITY, fmt, ops::Mul};
 use num::zero;
-use std::{f32::INFINITY, fmt, ops::Mul};
 
 use crate::transform::Transform;
 

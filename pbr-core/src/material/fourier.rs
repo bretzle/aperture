@@ -18,10 +18,7 @@ impl FourierMaterial {
         let bump_map = mp.get_float_texture_or_none("bumpmap");
         let filename = mp.find_filename("bsdffile", "");
         let bsdf_table = Box::new(FourierBSDFTable::read(filename).unwrap()); // TODO error
-        Arc::new(FourierMaterial {
-            bsdf_table,
-            bump_map,
-        })
+        Arc::new(FourierMaterial { bsdf_table, bump_map })
     }
 }
 

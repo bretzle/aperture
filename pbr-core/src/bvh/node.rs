@@ -1,7 +1,5 @@
 use maths::*;
 
-use crate::bounds::{Axis, Bounds3f};
-
 pub struct PrimitiveInfo {
     pub prim_number: usize,
     pub centroid: Point3f,

@@ -24,11 +24,7 @@ impl MatteMaterial {
         let sigma = mp.get_float_texture("sigma", 0.0);
         let bump_map = mp.get_float_texture_or_none("bumpmap");
 
-        Arc::new(MatteMaterial {
-            kd,
-            sigma,
-            bump_map,
-        })
+        Arc::new(MatteMaterial { kd, sigma, bump_map })
     }
 }
 

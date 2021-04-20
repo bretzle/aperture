@@ -72,20 +72,10 @@ impl Sampler for ZeroTwoSequence {
     fn start_pixel(&mut self, p: Point2i) {
         // Generate 1D and 2D pixel sample components using (0, 2)-sequence
         for i in 0..self.samples_1d.len() {
-            van_der_corput(
-                1,
-                self.spp as u32,
-                &mut self.samples_1d[i][..],
-                &mut self.rng,
-            );
+            van_der_corput(1, self.spp as u32, &mut self.samples_1d[i][..], &mut self.rng);
         }
         for i in 0..self.samples_2d.len() {
-            sobol_2d(
-                1,
-                self.spp as u32,
-                &mut self.samples_2d[i][..],
-                &mut self.rng,
-            );
+            sobol_2d(1, self.spp as u32, &mut self.samples_2d[i][..], &mut self.rng);
         }
 
         // generate 1d and 2d array samples
@@ -142,8 +132,7 @@ impl Sampler for ZeroTwoSequence {
         }
         assert_eq!(self.sample_1d_array_sizes[self.array_1d_offset], n);
         assert!(self.current_pixel_sample_index < self.spp);
-        let res =
-            &self.sample_array_1d[self.array_1d_offset][(self.current_pixel_sample_index * n)..];
+        let res = &self.sample_array_1d[self.array_1d_offset][(self.current_pixel_sample_index * n)..];
         self.array_1d_offset += 1;
         Some(res)
     }
@@ -154,8 +143,7 @@ impl Sampler for ZeroTwoSequence {
         }
         assert_eq!(self.sample_2d_array_sizes[self.array_2d_offset], n);
         assert!(self.current_pixel_sample_index < self.spp);
-        let res =
-            &self.sample_array_2d[self.array_2d_offset][(self.current_pixel_sample_index * n)..];
+        let res = &self.sample_array_2d[self.array_2d_offset][(self.current_pixel_sample_index * n)..];
         self.array_2d_offset += 1;
         Some(res)
     }
@@ -377,10 +365,9 @@ const CSOBOL: [[u32; 32]; 2] = [
         0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100, 0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1,
     ],
     [
-        0x80000000, 0xc0000000, 0xa0000000, 0xf0000000, 0x88000000, 0xcc000000, 0xaa000000,
-        0xff000000, 0x80800000, 0xc0c00000, 0xa0a00000, 0xf0f00000, 0x88880000, 0xcccc0000,
-        0xaaaa0000, 0xffff0000, 0x80008000, 0xc000c000, 0xa000a000, 0xf000f000, 0x88008800,
-        0xcc00cc00, 0xaa00aa00, 0xff00ff00, 0x80808080, 0xc0c0c0c0, 0xa0a0a0a0, 0xf0f0f0f0,
-        0x88888888, 0xcccccccc, 0xaaaaaaaa, 0xffffffff,
+        0x80000000, 0xc0000000, 0xa0000000, 0xf0000000, 0x88000000, 0xcc000000, 0xaa000000, 0xff000000,
+        0x80800000, 0xc0c00000, 0xa0a00000, 0xf0f00000, 0x88880000, 0xcccc0000, 0xaaaa0000, 0xffff0000,
+        0x80008000, 0xc000c000, 0xa000a000, 0xf000f000, 0x88008800, 0xcc00cc00, 0xaa00aa00, 0xff00ff00,
+        0x80808080, 0xc0c0c0c0, 0xa0a0a0a0, 0xf0f0f0f0, 0x88888888, 0xcccccccc, 0xaaaaaaaa, 0xffffffff,
     ],
 ];

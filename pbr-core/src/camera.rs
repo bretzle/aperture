@@ -1,10 +1,4 @@
-use crate::{
-    bounds::Bounds2f,
-    film::Film,
-    ray::{Ray, RayDifferential},
-    sampling,
-    transform::Transform,
-};
+use crate::{film::Film, sampling};
 use maths::*;
 use num::Zero;
 
@@ -48,19 +42,18 @@ impl PerspectiveCamera {
         film: Box<Film>,
     ) -> Self {
         let camera_to_screen = Transform::perspective(fov, 1e-2, 1000.0);
-        let screen_to_raster = Transform::scale(
-            film.full_resolution.x as f32,
-            film.full_resolution.y as f32,
-            1.0,
-        ) * Transform::scale(
-            1.0 / (screen_window.p_max.x - screen_window.p_min.x),
-            1.0 / (screen_window.p_min.y - screen_window.p_max.y),
-            1.0,
-        ) * Transform::translate(&Vector3f::new(
-            -screen_window.p_min.x,
-            -screen_window.p_max.y,
-            0.0,
-        ));
+        let screen_to_raster =
+            Transform::scale(film.full_resolution.x as f32, film.full_resolution.y as f32, 1.0)
+                * Transform::scale(
+                    1.0 / (screen_window.p_max.x - screen_window.p_min.x),
+                    1.0 / (screen_window.p_min.y - screen_window.p_max.y),
+                    1.0,
+                )
+                * Transform::translate(&Vector3f::new(
+                    -screen_window.p_min.x,
+                    -screen_window.p_max.y,
+                    0.0,
+                ));
 
         let raster_to_screen = screen_to_raster.inverse();
         let raster_to_camera = camera_to_screen.inverse() * raster_to_screen;

@@ -1,10 +1,7 @@
 use super::Shape;
 use crate::{
-    bounds::Bounds3f,
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
-    ray::Ray,
-    transform::Transform,
 };
 use maths::*;
 use std::sync::Arc;
@@ -61,8 +58,7 @@ impl Shape for Cone {
     }
 
     fn area(&self) -> f32 {
-        self.radius * (self.height * self.height + self.radius * self.radius).sqrt() * self.phi_max
-            / 2.0
+        self.radius * (self.height * self.height + self.radius * self.radius).sqrt() * self.phi_max / 2.0
     }
 
     fn object_bounds(&self) -> Bounds3f {

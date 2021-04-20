@@ -1,11 +1,9 @@
 use self::node::*;
 use crate::{
-    bounds::{Axis, Bounds3f},
     interaction::SurfaceInteraction,
     material::{Material, TransportMode},
     paramset::ParamSet,
     primitive::{AreaLight, Primitive},
-    ray::Ray,
 };
 use itertools as it;
 use light_arena::Allocator;
@@ -116,9 +114,7 @@ impl Bvh {
             // Compute bounds of primitive centroids
             let centroids_bounds = primitive_info[start..end]
                 .iter()
-                .fold(Bounds3f::new(), |bb, pi| {
-                    Bounds3f::union_point(&bb, &pi.centroid)
-                });
+                .fold(Bounds3f::new(), |bb, pi| Bounds3f::union_point(&bb, &pi.centroid));
             // Choose split dimension
             let dimension = centroids_bounds.maximum_extent();
             // Partition primitives into 2 sets and build children
@@ -134,8 +130,7 @@ impl Bvh {
             let mut mid;
             match split_method {
                 SplitMethod::Middle => {
-                    let pmid =
-                        0.5 * (centroids_bounds[0][dimension] + centroids_bounds[1][dimension]);
+                    let pmid = 0.5 * (centroids_bounds[0][dimension] + centroids_bounds[1][dimension]);
                     mid = start
                         + it::partition(primitive_info[start..end].iter_mut(), |pi| {
                             pi.centroid[dimension] < pmid
@@ -178,8 +173,7 @@ impl Bvh {
                             }
                             assert!(b < N_BUCKETS);
                             buckets[b].count += 1;
-                            buckets[b].bounds =
-                                Bounds3f::union(&buckets[b].bounds, &prim_inf.bounds);
+                            buckets[b].bounds = Bounds3f::union(&buckets[b].bounds, &prim_inf.bounds);
                         }
 
                         // Compute costs for splitting after each bucket
@@ -333,19 +327,14 @@ impl Primitive for Bvh {
         ];
         loop {
             let linear_node = &self.nodes[current_node_idx];
-            if linear_node
-                .bounds
-                .intersect_p_fast(ray, &inv_dir, &dir_is_neg)
-            {
+            if linear_node.bounds.intersect_p_fast(ray, &inv_dir, &dir_is_neg) {
                 match linear_node.data {
                     LNodeData::Leaf {
                         num_prims,
                         primitives_offset,
                     } => {
                         for i in 0..num_prims {
-                            result = self.primitives[primitives_offset + i]
-                                .intersect(ray)
-                                .or(result);
+                            result = self.primitives[primitives_offset + i].intersect(ray).or(result);
                         }
                         if to_visit_offset == 0 {
                             break;
@@ -401,10 +390,7 @@ impl Primitive for Bvh {
         ];
         loop {
             let linear_node = &self.nodes[current_node_idx];
-            if linear_node
-                .bounds
-                .intersect_p_fast(ray, &inv_dir, &dir_is_neg)
-            {
+            if linear_node.bounds.intersect_p_fast(ray, &inv_dir, &dir_is_neg) {
                 match linear_node.data {
                     LNodeData::Leaf {
                         num_prims,

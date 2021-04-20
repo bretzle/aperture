@@ -2,10 +2,8 @@ use crate::{
     bsdf::Bsdf,
     material::TransportMode,
     primitive::Primitive,
-    ray::Ray,
     shapes::Shape,
     spectrum::{Colors, Spectrum},
-    transform::{solve_linear_system2x2, Transform},
 };
 use light_arena::Allocator;
 use maths::*;
@@ -311,14 +309,8 @@ impl<'a, 'b> SurfaceInteraction<'a, 'b> {
                 [self.dpdu[dim[0]], self.dpdv[dim[0]]],
                 [self.dpdu[dim[1]], self.dpdv[dim[1]]],
             ];
-            let Bx = Vector2f::new(
-                px[dim[0]] - self.hit.p[dim[0]],
-                px[dim[1]] - self.hit.p[dim[1]],
-            );
-            let By = Vector2f::new(
-                py[dim[0]] - self.hit.p[dim[0]],
-                py[dim[1]] - self.hit.p[dim[1]],
-            );
+            let Bx = Vector2f::new(px[dim[0]] - self.hit.p[dim[0]], px[dim[1]] - self.hit.p[dim[1]]);
+            let By = Vector2f::new(py[dim[0]] - self.hit.p[dim[0]], py[dim[1]] - self.hit.p[dim[1]]);
 
             let (dudx, dvdx) = solve_linear_system2x2(&A, Bx).unwrap_or((0.0, 0.0));
             let (dudy, dvdy) = solve_linear_system2x2(&A, By).unwrap_or((0.0, 0.0));

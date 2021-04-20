@@ -1,11 +1,8 @@
 use crate::{
-    bounds::Bounds3f,
     interaction::{Interaction, SurfaceInteraction},
     material::{Material, TransportMode},
-    ray::Ray,
     shapes::Shape,
     spectrum::Spectrum,
-    transform::Transform,
 };
 use light_arena::Allocator;
 use maths::*;

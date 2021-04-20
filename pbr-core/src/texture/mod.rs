@@ -1,10 +1,8 @@
 use crate::{
-    bounds::Bounds2i,
     interaction::SurfaceInteraction,
     mipmap::{MIPMap, WrapMode},
     paramset::ParamSet,
     spectrum::{Colors, Spectrum},
-    transform::Transform,
     utils,
 };
 use log::{debug, error, info, warn};
@@ -44,10 +42,7 @@ impl ConstantTexture<f32> {
 }
 
 impl ConstantTexture<Spectrum> {
-    pub fn create_spectrum(
-        _tex2world: &Transform,
-        tp: &TextureParams<'_>,
-    ) -> ConstantTexture<Spectrum> {
+    pub fn create_spectrum(_tex2world: &Transform, tp: &TextureParams<'_>) -> ConstantTexture<Spectrum> {
         ConstantTexture::new(tp.find_spectrum("value", Colors::WHITE))
     }
 }
@@ -124,10 +119,7 @@ impl<'a> TextureParams<'a> {
             if let Some(tex) = self.spectrum_textures.get(&name) {
                 return Arc::clone(tex);
             } else {
-                error!(
-                    "Couldn't find spectrum texture {} for parameter {}",
-                    name, n
-                );
+                error!("Couldn't find spectrum texture {} for parameter {}", name, n);
             }
         }
         // If texture wasn't found
@@ -223,8 +215,7 @@ impl SphericalMapping2D {
     }
 
     fn sphere(&self, p: &Point3f) -> Point2f {
-        let vec =
-            (self.world_to_tex.transform_point(p).0 - Point3f::new(0.0, 0.0, 0.0)).normalize();
+        let vec = (self.world_to_tex.transform_point(p).0 - Point3f::new(0.0, 0.0, 0.0)).normalize();
         let theta = spherical_theta(&vec);
         let phi = spherical_phi(&vec);
 
@@ -384,10 +375,7 @@ where
                 (res, pixels)
             }
             Err(e) => {
-                warn!(
-                    "Could not open texture file. Using grey texture instead: {}",
-                    e
-                );
+                warn!("Could not open texture file. Using grey texture instead: {}", e);
                 (Point2i::new(1, 1), vec![Spectrum::grey(0.18)])
             }
         };
@@ -411,10 +399,7 @@ where
             max_aniso,
             wrap_mode,
         ));
-        ImageTexture {
-            mapping: map,
-            mipmap,
-        }
+        ImageTexture { mapping: map, mipmap }
     }
 }
 
@@ -462,28 +447,24 @@ impl ImageTexture<Spectrum> {
 
     pub fn dump_mipmap(&self) {
         info!("Dumping MIPMap levels for debugging...");
-        self.mipmap
-            .pyramid
-            .iter()
-            .enumerate()
-            .for_each(|(i, level)| {
-                let mut buf = Vec::new();
-                for y in 0..level.v_size() {
-                    for x in 0..level.u_size() {
-                        let p = level[(x, y)];
-                        buf.push(p[0]);
-                        buf.push(p[1]);
-                        buf.push(p[2]);
-                    }
+        self.mipmap.pyramid.iter().enumerate().for_each(|(i, level)| {
+            let mut buf = Vec::new();
+            for y in 0..level.v_size() {
+                for x in 0..level.u_size() {
+                    let p = level[(x, y)];
+                    buf.push(p[0]);
+                    buf.push(p[1]);
+                    buf.push(p[2]);
                 }
-                utils::write_image(
-                    format!("mipmap_level_{}.png", i),
-                    &buf[..],
-                    &Bounds2i::from_elements(0, 0, level.u_size() as i32, level.v_size() as i32),
-                    Point2i::new(level.u_size() as i32, level.v_size() as i32),
-                )
-                .unwrap();
-            });
+            }
+            utils::write_image(
+                format!("mipmap_level_{}.png", i),
+                &buf[..],
+                &Bounds2i::from_elements(0, 0, level.u_size() as i32, level.v_size() as i32),
+                Point2i::new(level.u_size() as i32, level.v_size() as i32),
+            )
+            .unwrap();
+        });
     }
 }
 

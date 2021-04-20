@@ -1,12 +1,9 @@
 use super::Shape;
 use crate::{
-    bounds::Bounds3f,
     efloat::{self, EFloat},
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
-    ray::Ray,
     sampling::{uniform_cone_pdf, uniform_sample_sphere},
-    transform::Transform,
 };
 use maths::*;
 use std::{f32::consts, sync::Arc};
@@ -80,8 +77,7 @@ impl Shape for Sphere {
         let dz = EFloat::new(r.d.z, d_err.z);
         let a = dx * dx + dy * dy + dz * dz;
         let b = 2.0 * (dx * ox + dy * oy + dz * oz);
-        let c =
-            (ox * ox + oy * oy + oz * oz) - EFloat::from(self.radius) * EFloat::from(self.radius);
+        let c = (ox * ox + oy * oy + oz * oz) - EFloat::from(self.radius) * EFloat::from(self.radius);
 
         // Solve quadratic equation for t values
         efloat::solve_quadratic(&a, &b, &c).and_then(|(t0, t1)| {
@@ -152,11 +148,7 @@ impl Shape for Sphere {
             let sin_phi = p_hit.y * inv_z_radius;
             let dpdu = Vector3f::new(-self.phi_max * p_hit.y, self.phi_max * p_hit.x, 0.0);
             let dpdv = (self.theta_max - self.theta_min)
-                * Vector3f::new(
-                    p_hit.z * cos_phi,
-                    p_hit.z * sin_phi,
-                    -self.radius * theta.sin(),
-                );
+                * Vector3f::new(p_hit.z * cos_phi, p_hit.z * sin_phi, -self.radius * theta.sin());
             // Compute dndu and dndv
             let d2Pduu = -self.phi_max * self.phi_max * Vector3f::new(p_hit.x, p_hit.y, 0.0);
             let d2Pduv = (self.theta_max - self.theta_min)
@@ -288,8 +280,7 @@ impl Shape for Sphere {
         let sin_alpha = f32::sqrt(f32::max(0.0, 1.0 - cos_alpha * cos_alpha));
 
         // Compute surface normal and sampled point on sphere
-        let n_world =
-            spherical_direction_vec(sin_alpha, cos_alpha, phi, &(-wc_x), &(-wc_y), &(-wc));
+        let n_world = spherical_direction_vec(sin_alpha, cos_alpha, phi, &(-wc_x), &(-wc_y), &(-wc));
         let p_world = p_center + self.radius * Point3f::new(n_world.x, n_world.y, n_world.z);
 
         // Return `Interaction` for sampled point on sphere

@@ -1,11 +1,10 @@
-use crate::ray::Ray;
-use maths::*;
-use num::{Bounded, Num, Signed};
-use std::{
+use crate::{ray::Ray, *};
+use core::{
     cmp::PartialOrd,
     f32, fmt,
     ops::{DivAssign, Index, SubAssign},
 };
+use num::{Bounded, Num, Signed};
 
 pub type Bounds3f = Bounds3<f32>;
 pub type Bounds2i = Bounds2<i32>;
@@ -386,8 +385,7 @@ impl<'a> Iterator for Bounds2Iterator<'a> {
     type Item = Point2i;
 
     fn next(&mut self) -> Option<Point2i> {
-        if self.bounds.p_max.x <= self.bounds.p_min.x || self.bounds.p_max.y <= self.bounds.p_min.y
-        {
+        if self.bounds.p_max.x <= self.bounds.p_min.x || self.bounds.p_max.y <= self.bounds.p_min.y {
             // Handle degenerate bounds explicitly
             return None;
         }

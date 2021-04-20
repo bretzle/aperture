@@ -104,8 +104,7 @@ pub fn solve_quadratic(a: &EFloat, b: &EFloat, c: &EFloat) -> Option<(EFloat, EF
     }
 
     let root_discrim = discrim.sqrt();
-    let float_root_discrim =
-        EFloat::new(root_discrim as f32, MACHINE_EPSILON * root_discrim as f32);
+    let float_root_discrim = EFloat::new(root_discrim as f32, MACHINE_EPSILON * root_discrim as f32);
 
     let q = if b.v < 0.0 {
         -0.5 * (*b - float_root_discrim)
@@ -168,14 +167,8 @@ impl Mul<EFloat> for EFloat {
 
         let r = EFloat {
             v: self.v * f.v,
-            low: next_float_down(f32::min(
-                f32::min(prod[0], prod[1]),
-                f32::min(prod[2], prod[3]),
-            )),
-            high: next_float_up(f32::max(
-                f32::max(prod[0], prod[1]),
-                f32::max(prod[2], prod[3]),
-            )),
+            low: next_float_down(f32::min(f32::min(prod[0], prod[1]), f32::min(prod[2], prod[3]))),
+            high: next_float_up(f32::max(f32::max(prod[0], prod[1]), f32::max(prod[2], prod[3]))),
         };
         r.check();
         r

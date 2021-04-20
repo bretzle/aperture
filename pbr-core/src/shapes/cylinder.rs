@@ -1,11 +1,8 @@
 use super::Shape;
 use crate::{
-    bounds::Bounds3f,
     efloat::{solve_quadratic, EFloat},
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
-    ray::Ray,
-    transform::Transform,
 };
 use maths::*;
 use num::zero;
@@ -133,12 +130,10 @@ impl Shape for Cylinder {
 
             // Compute dndu and dndv from fundamental form coefficients
             let inv_EGF2 = 1.0 / (E * G - F * F);
-            let dndu = Normal3f::from(
-                (f * F - e * G) * inv_EGF2 * dpdu + (e * F - f * E) * inv_EGF2 * dpdv,
-            );
-            let dndv = Normal3f::from(
-                (g * F - f * G) * inv_EGF2 * dpdu + (f * F - g * E) * inv_EGF2 * dpdv,
-            );
+            let dndu =
+                Normal3f::from((f * F - e * G) * inv_EGF2 * dpdu + (e * F - f * E) * inv_EGF2 * dpdv);
+            let dndv =
+                Normal3f::from((g * F - f * G) * inv_EGF2 * dpdu + (f * F - g * E) * inv_EGF2 * dpdv);
 
             let p_error = gamma(3) * Vector3f::new(p_hit.x.abs(), p_hit.y.abs(), 0.0);
 

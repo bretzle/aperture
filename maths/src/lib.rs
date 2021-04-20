@@ -3,9 +3,12 @@
 #![feature(const_fn_floating_point_arithmetic)]
 
 pub use crate::{
-	cmatrix::Matrix,
+    bounds::*,
+    cmatrix::Matrix,
     normal::Normal3,
     point::{Point2, Point3},
+    ray::*,
+    transform::*,
     vector::{Vector2, Vector3},
 };
 use core::{
@@ -14,12 +17,14 @@ use core::{
 };
 use num::{Num, One, Signed};
 
-
-pub mod cmatrix;
+mod cmatrix;
 mod macros;
 // mod matrix;
+mod bounds;
 mod normal;
 mod point;
+mod ray;
+mod transform;
 mod vector;
 
 pub type Vector2f = Vector2<f32>;

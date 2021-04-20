@@ -69,11 +69,7 @@ pub struct Bsdf<'a> {
 }
 
 impl<'a> Bsdf<'a> {
-    pub fn new<'b>(
-        isect: &'b SurfaceInteraction<'_, '_>,
-        eta: f32,
-        bxdfs: &'a [&'a dyn BxDF],
-    ) -> Self {
+    pub fn new<'b>(isect: &'b SurfaceInteraction<'_, '_>, eta: f32, bxdfs: &'a [&'a dyn BxDF]) -> Self {
         let ss = isect.shading.dpdu.normalize();
         Self {
             eta,
@@ -137,11 +133,7 @@ impl<'a> Bsdf<'a> {
         u: Point2f,
         flags: BxDFType,
     ) -> (Spectrum, Vector3f, f32, BxDFType) {
-        let matching_comps = self
-            .bxdfs
-            .iter()
-            .filter(|b| b.matches(flags))
-            .collect::<Vec<_>>();
+        let matching_comps = self.bxdfs.iter().filter(|b| b.matches(flags)).collect::<Vec<_>>();
         if matching_comps.is_empty() {
             return (
                 Colors::BLACK,
@@ -175,12 +167,7 @@ impl<'a> Bsdf<'a> {
         // Sample chosen BxDF
         let wo = self.world_to_local(wo_w);
         if wo.z == 0.0 {
-            return (
-                Colors::BLACK,
-                Vector3f::new(0.0, 0.0, 0.0),
-                0.0,
-                bxdf.get_type(),
-            );
+            return (Colors::BLACK, Vector3f::new(0.0, 0.0, 0.0), 0.0, bxdf.get_type());
         }
         let (mut f, wi, mut pdf, sampled_type) = bxdf.sample_f(&wo, u_remapped);
         // debug!(

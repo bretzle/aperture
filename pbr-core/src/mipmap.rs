@@ -67,8 +67,7 @@ where
                 res, res_pow2
             );
 
-            let mut resampled_img: Array2<T> =
-                Array2::zeros((res_pow2.y as usize, res_pow2.x as usize));
+            let mut resampled_img: Array2<T> = Array2::zeros((res_pow2.y as usize, res_pow2.x as usize));
 
             // resample image in s direction
             let s_weights = MIPMap::<T>::resample_weights(res.x as usize, res_pow2.x as usize);
@@ -193,10 +192,7 @@ where
         let (u_size, v_size) = (l.u_size() as isize, l.v_size() as isize);
         let (ss, tt) = match self.wrap_mode {
             WrapMode::Repeat => (modulo(s, u_size) as usize, modulo(t, v_size) as usize),
-            WrapMode::Clamp => (
-                clamp(s, 0, u_size - 1) as usize,
-                clamp(t, 0, v_size - 1) as usize,
-            ),
+            WrapMode::Clamp => (clamp(s, 0, u_size - 1) as usize, clamp(t, 0, v_size - 1) as usize),
             WrapMode::Black => {
                 if s < 0 || s >= u_size || t < 0 || t >= v_size {
                     return &self.black;
@@ -329,8 +325,7 @@ where
                 // Compute squared radius and filter texel if inside ellipse
                 let r2 = A * ss * ss + B * ss * tt + C * tt * tt;
                 if r2 < 1.0 {
-                    let index =
-                        usize::min((r2 * WEIGHT_LUT_SIZE as f32) as usize, WEIGHT_LUT_SIZE - 1);
+                    let index = usize::min((r2 * WEIGHT_LUT_SIZE as f32) as usize, WEIGHT_LUT_SIZE - 1);
                     let weight = WEIGHT_LUT[index];
                     sum += *self.texel(level, is, it) * weight;
                     sumWts += weight;
@@ -357,12 +352,7 @@ where
             let inv_sum_weights = 1.0 / (w[0] + w[1] + w[2] + w[3]);
             for w_j in &mut w {
                 *w_j *= inv_sum_weights;
-                assert!(
-                    *w_j <= 1.0,
-                    "w[j]={}, inv_sum_weights={}",
-                    w_j,
-                    inv_sum_weights
-                );
+                assert!(*w_j <= 1.0, "w[j]={}, inv_sum_weights={}", w_j, inv_sum_weights);
             }
             wt.push(ResampleWeight {
                 first_texel: first_texel as i32,

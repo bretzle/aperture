@@ -1,10 +1,7 @@
 use super::Shape;
 use crate::{
-    bounds::Bounds3f,
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
-    ray::Ray,
-    transform::Transform,
 };
 use maths::*;
 use std::sync::Arc;

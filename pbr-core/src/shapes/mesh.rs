@@ -1,12 +1,9 @@
 use super::Shape;
 use crate::{
-    bounds::Bounds3f,
     interaction::{Interaction, SurfaceInteraction},
     paramset::ParamSet,
-    ray::Ray,
     sampling,
     texture::{ConstantTexture, Texture, TextureFloat},
-    transform::Transform,
 };
 use log::error;
 use maths::*;
@@ -343,34 +340,16 @@ impl Shape for Triangle {
 
         // test intersection against alpha texture if present
         if let Some(ref alpha_mask) = self.mesh.alpha_mask {
-            let isect_local = SurfaceInteraction::new(
-                p_hit,
-                zero(),
-                uv_hit,
-                -ray.d,
-                dpdu,
-                dpdv,
-                zero(),
-                zero(),
-                self,
-            );
+            let isect_local =
+                SurfaceInteraction::new(p_hit, zero(), uv_hit, -ray.d, dpdu, dpdv, zero(), zero(), self);
             if alpha_mask.evaluate(&isect_local) == 0.0 {
                 return None;
             }
         }
 
         // Fill in SurfaceInteraction from triangle hit
-        let mut isect = SurfaceInteraction::new(
-            p_hit,
-            p_error,
-            uv_hit,
-            -ray.d,
-            dpdu,
-            dpdv,
-            zero(),
-            zero(),
-            self,
-        );
+        let mut isect =
+            SurfaceInteraction::new(p_hit, p_error, uv_hit, -ray.d, dpdu, dpdv, zero(), zero(), self);
         //
         // - Override surface normal
         let n = Normal3f::from(dp02.cross(&dp12).normalize());
@@ -558,17 +537,8 @@ impl Shape for Triangle {
             // interpolate (u,v) parametric coordinates and hit point
             let p_hit = *p0 * b0 + *p1 * b1 + *p2 * b2;
             let uv_hit = uv[0] * b0 + uv[1] * b1 + uv[2] * b2;
-            let isect_local = SurfaceInteraction::new(
-                p_hit,
-                zero(),
-                uv_hit,
-                -ray.d,
-                dpdu,
-                dpdv,
-                zero(),
-                zero(),
-                self,
-            );
+            let isect_local =
+                SurfaceInteraction::new(p_hit, zero(), uv_hit, -ray.d, dpdu, dpdv, zero(), zero(), self);
             if let Some(ref alpha_mask) = self.mesh.alpha_mask {
                 if alpha_mask.evaluate(&isect_local) == 0.0 {
                     return false;
@@ -668,11 +638,7 @@ pub fn create_triangle_mesh(
     let mut tris: Vec<Arc<dyn Shape>> = Vec::with_capacity(n_triangles);
 
     for i in 0..n_triangles {
-        tris.push(Arc::new(Triangle::new(
-            Arc::clone(&mesh),
-            i,
-            reverse_orientation,
-        )));
+        tris.push(Arc::new(Triangle::new(Arc::clone(&mesh), i, reverse_orientation)));
     }
 
     tris

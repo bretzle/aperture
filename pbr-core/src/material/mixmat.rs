@@ -55,10 +55,8 @@ impl Material for MixMaterial {
             bxdfs.add(arena.alloc(ScaledBxDF::new(si2.bsdf.as_ref().unwrap().bxdfs[i], s2)));
         }
 
-        si.bsdf.as_mut().map(|b| {
-            (Arc::get_mut(b))
-                .as_mut()
-                .map(|b| b.bxdfs = bxdfs.into_slice())
-        });
+        si.bsdf
+            .as_mut()
+            .map(|b| (Arc::get_mut(b)).as_mut().map(|b| b.bxdfs = bxdfs.into_slice()));
     }
 }

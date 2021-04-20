@@ -1,7 +1,7 @@
-use crate::{bounds::Bounds2i, spectrum::Spectrum};
+use crate::spectrum::Spectrum;
 use anyhow::Result;
 use log::debug;
-use maths::{Point2i, ONE_MINUS_EPSILON};
+use maths::{Bounds2i, Point2i, ONE_MINUS_EPSILON};
 use std::{
     num::Wrapping,
     path::Path,

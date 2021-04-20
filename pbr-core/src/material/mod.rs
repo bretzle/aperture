@@ -51,8 +51,7 @@ pub fn bump(d: &Arc<dyn Texture<f32>>, si: &mut SurfaceInteraction) {
     }
     si_eval.hit.p = si.hit.p + du * si.shading.dpdu;
     si_eval.uv = si.uv + Vector2f::new(du, 0.0);
-    si_eval.hit.n =
-        (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + du * si.dndu).normalize();
+    si_eval.hit.n = (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + du * si.dndu).normalize();
     let u_displace = d.evaluate(&si_eval);
 
     // Shift si_eval dv in the v direction
@@ -62,8 +61,7 @@ pub fn bump(d: &Arc<dyn Texture<f32>>, si: &mut SurfaceInteraction) {
     }
     si_eval.hit.p = si.hit.p + dv * si.shading.dpdv;
     si_eval.uv = si.uv + Vector2f::new(0.0, dv);
-    si_eval.hit.n =
-        (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + dv * si.dndv).normalize();
+    si_eval.hit.n = (Normal3f::from(si.shading.dpdu.cross(&si.shading.dpdv)) + dv * si.dndv).normalize();
     let v_displace = d.evaluate(&si_eval);
 
     let displace = d.evaluate(si);

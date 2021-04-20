@@ -90,16 +90,8 @@ impl Material for UberMaterial {
         let ks = op * self.ks.evaluate(si).clamp();
         if !ks.is_black() {
             let fresnel = arena.alloc(<dyn Fresnel>::dielectric(1.0, e));
-            let mut roughu = self
-                .roughnessu
-                .as_ref()
-                .unwrap_or(&self.roughness)
-                .evaluate(si);
-            let mut roughv = self
-                .roughnessv
-                .as_ref()
-                .unwrap_or(&self.roughness)
-                .evaluate(si);
+            let mut roughu = self.roughnessu.as_ref().unwrap_or(&self.roughness).evaluate(si);
+            let mut roughv = self.roughnessv.as_ref().unwrap_or(&self.roughness).evaluate(si);
             if self.remap_roughness {
                 roughu = TrowbridgeReitzDistribution::roughness_to_alpha(roughu);
                 roughv = TrowbridgeReitzDistribution::roughness_to_alpha(roughv);

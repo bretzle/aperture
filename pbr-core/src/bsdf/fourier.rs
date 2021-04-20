@@ -78,8 +78,7 @@ impl BxDF for FourierBSDF {
                     m_max = u32::max(m_max, m);
                     for c in 0..bsdf_table.n_channels {
                         for k in 0..m {
-                            ak[(c * bsdf_table.m_max + k) as usize] +=
-                                weight * ap[(c * m + k) as usize];
+                            ak[(c * bsdf_table.m_max + k) as usize] += weight * ap[(c * m + k) as usize];
                         }
                     }
                 }
@@ -151,8 +150,7 @@ impl BxDF for FourierBSDF {
                     m_max = u32::max(m_max, m);
                     for c in 0..bsdf_table.n_channels {
                         for k in 0..m {
-                            ak[(c * bsdf_table.m_max + k) as usize] +=
-                                weight * ap[(c * m + k) as usize];
+                            ak[(c * bsdf_table.m_max + k) as usize] += weight * ap[(c * m + k) as usize];
                         }
                     }
                 }

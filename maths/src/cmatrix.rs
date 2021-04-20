@@ -102,6 +102,7 @@ impl<const R: usize> Matrix<R, R> {
         Self { data }
     }
 
+    #[allow(clippy::needless_range_loop)]
     pub fn inverse(&self) -> Self {
         let mut indxc = [0usize; 4];
         let mut indxr = [0usize; 4];
@@ -290,7 +291,7 @@ impl<const R: usize, const C: usize> fmt::Debug for Matrix<R, C> {
             for x in 0..R {
                 write!(f, "{} ", self[y][x])?;
             }
-            writeln!(f, "")?;
+            writeln!(f)?;
         }
 
         Ok(())

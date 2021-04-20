@@ -1,5 +1,4 @@
 use crate::{
-    bounds::{Bounds2f, Bounds2i},
     filter::Filter,
     spectrum::Spectrum,
     utils::{self, AtomicFloat},
@@ -90,10 +89,7 @@ impl Film {
         let aspect = self.full_resolution.y as f32 / self.full_resolution.x as f32;
         let x = (self.diagonal * self.diagonal / (1.0 + aspect * aspect)).sqrt();
         let y = aspect * x;
-        Bounds2f::from_points(
-            &Point2f::new(-x / 2.0, -y / 2.0),
-            &Point2f::new(x / 2.0, y / 2.0),
-        )
+        Bounds2f::from_points(&Point2f::new(-x / 2.0, -y / 2.0), &Point2f::new(x / 2.0, y / 2.0))
     }
 
     pub fn get_film_tile(&self, sample_bounds: &Bounds2i) -> FilmTile {
@@ -105,8 +101,7 @@ impl Film {
         // numbers can temporarily be negative which would cause u32 to wrap
         // around.
         let p0 = ceil(float_bounds.p_min - half_pixel - self.filter_radius);
-        let p1 =
-            floor(float_bounds.p_max - half_pixel + self.filter_radius + Vector2f::new(1.0, 1.0));
+        let p1 = floor(float_bounds.p_max - half_pixel + self.filter_radius + Vector2f::new(1.0, 1.0));
         let sample_extent_bounds = Bounds2f::from_points(&p0, &p1);
 
         let tile_pixel_bounds = Bounds2i::from(Bounds2f::intersect(
@@ -132,11 +127,7 @@ impl Film {
                     + (pixel.x - self.cropped_pixel_bounds.p_min.x)) as usize
             };
             let xyz = tile_pixel.contrib_sum.to_xyz();
-            pixels[pidx]
-                .xyz
-                .iter_mut()
-                .zip(&xyz)
-                .for_each(|(a, b)| *a += b);
+            pixels[pidx].xyz.iter_mut().zip(&xyz).for_each(|(a, b)| *a += b);
             pixels[pidx].filter_weight_sum += tile_pixel.filter_weight_sum;
         }
     }
@@ -299,15 +290,13 @@ impl FilmTile {
         let mut ifx = Vec::with_capacity(p1.x as usize - p0.x as usize);
         for x in p0.x..p1.x {
             let fx =
-                ((x as f32 - p_film_discrete.x) * self.inv_filter_radius.x * filter_table_size)
-                    .abs();
+                ((x as f32 - p_film_discrete.x) * self.inv_filter_radius.x * filter_table_size).abs();
             ifx.push(fx.floor().min(filter_table_size - 1.0) as usize);
         }
         let mut ify = Vec::with_capacity(p1.y as usize - p0.y as usize);
         for y in p0.y..p1.y {
             let fy =
-                ((y as f32 - p_film_discrete.y) * self.inv_filter_radius.y * filter_table_size)
-                    .abs();
+                ((y as f32 - p_film_discrete.y) * self.inv_filter_radius.y * filter_table_size).abs();
             ify.push(fy.floor().min(filter_table_size - 1.0) as usize);
         }
 

@@ -180,12 +180,7 @@ pub struct SpecularTransmission {
 }
 
 impl SpecularTransmission {
-    pub const fn new(
-        t: Spectrum,
-        eta_a: f32,
-        eta_b: f32,
-        mode: TransportMode,
-    ) -> SpecularTransmission {
+    pub const fn new(t: Spectrum, eta_a: f32, eta_b: f32, mode: TransportMode) -> SpecularTransmission {
         SpecularTransmission {
             t,
             eta_a,
@@ -344,11 +339,7 @@ pub struct FresnelBlend<'a> {
 }
 
 impl<'a> FresnelBlend<'a> {
-    pub fn new(
-        rs: Spectrum,
-        rd: Spectrum,
-        distrib: &dyn MicrofacetDistribution,
-    ) -> FresnelBlend<'_> {
+    pub fn new(rs: Spectrum, rd: Spectrum, distrib: &dyn MicrofacetDistribution) -> FresnelBlend<'_> {
         FresnelBlend { rd, rs, distrib }
     }
 

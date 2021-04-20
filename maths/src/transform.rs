@@ -1,6 +1,6 @@
+use crate::*;
+use core::ops::Mul;
 use log::error;
-use maths::*;
-use std::ops::Mul;
 
 use crate::bounds::Bounds3f;
 
@@ -16,7 +16,10 @@ impl Transform {
     }
 
     pub fn from_matrix(m: Matrix<4, 4>) -> Self {
-        Self { m_inv: m.inverse(), m }
+        Self {
+            m_inv: m.inverse(),
+            m,
+        }
     }
 
     pub fn rotate(theta: f32, axis: Vector3f) -> Self {
@@ -177,13 +180,16 @@ impl Transform {
         let m = &self.m;
         let x_abs_err = (gamma(3) + 1.0)
             * ((m[0][0] * p_error.x).abs() + (m[0][1] * p_error.y).abs() + (m[0][2] * p_error.z).abs())
-            + gamma(3) * ((m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs());
+            + gamma(3)
+                * ((m[0][0] * x).abs() + (m[0][1] * y).abs() + (m[0][2] * z).abs() + m[0][3].abs());
         let y_abs_err = (gamma(3) + 1.0)
             * ((m[1][0] * p_error.x).abs() + (m[1][1] * p_error.y).abs() + (m[1][2] * p_error.z).abs())
-            + gamma(3) * ((m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs());
+            + gamma(3)
+                * ((m[1][0] * x).abs() + (m[1][1] * y).abs() + (m[1][2] * z).abs() + m[1][3].abs());
         let z_abs_err = (gamma(3) + 1.0)
             * ((m[2][0] * p_error.x).abs() + (m[2][1] * p_error.y).abs() + (m[2][2] * p_error.z).abs())
-            + gamma(3) * ((m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs());
+            + gamma(3)
+                * ((m[2][0] * x).abs() + (m[2][1] * y).abs() + (m[2][2] * z).abs() + m[2][3].abs());
         let p_err = Vector3f::new(x_abs_err, y_abs_err, z_abs_err);
 
         (tp, p_err)
@@ -193,9 +199,12 @@ impl Transform {
         let (x, y, z) = (v.x, v.y, v.z);
         let tv = self * v;
         let m = &self.m;
-        let x_abs_sum = f32::abs(m[0][0] * x) + f32::abs(m[0][1] * y) + f32::abs(m[0][2] * z) + f32::abs(m[0][3]);
-        let y_abs_sum = f32::abs(m[1][0] * x) + f32::abs(m[1][1] * y) + f32::abs(m[1][2] * z) + f32::abs(m[1][3]);
-        let z_abs_sum = f32::abs(m[2][0] * x) + f32::abs(m[2][1] * y) + f32::abs(m[2][2] * z) + f32::abs(m[2][3]);
+        let x_abs_sum =
+            f32::abs(m[0][0] * x) + f32::abs(m[0][1] * y) + f32::abs(m[0][2] * z) + f32::abs(m[0][3]);
+        let y_abs_sum =
+            f32::abs(m[1][0] * x) + f32::abs(m[1][1] * y) + f32::abs(m[1][2] * z) + f32::abs(m[1][3]);
+        let z_abs_sum =
+            f32::abs(m[2][0] * x) + f32::abs(m[2][1] * y) + f32::abs(m[2][2] * z) + f32::abs(m[2][3]);
         let v_err = gamma(3) * Vector3f::new(x_abs_sum, y_abs_sum, z_abs_sum);
 
         (tv, v_err)
@@ -214,7 +223,8 @@ impl Transform {
 
     pub fn swaps_handedness(&self) -> bool {
         let m = &self.m.data;
-        let det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+        let det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+            - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
             + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
         det < 0.0
     }
@@ -333,7 +343,6 @@ pub fn solve_linear_system2x2(A: &[[f32; 2]; 2], B: Vector2f) -> Option<(f32, f3
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::*;
 
     #[test]
     fn test_normal_transform() {
@@ -348,6 +357,6 @@ mod tests {
         let v2 = &t * &v;
         let n2 = t_inv.transform_normal(&Normal3f::from(n));
         println!("v2 = {}, n2 = {}", v2, n2);
-        assert_relative_eq!(v2.dotn(&n2), 0.0);
+        assert_eq!(v2.dotn(&n2), 0.0);
     }
 }
