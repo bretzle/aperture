@@ -1,5 +1,5 @@
+use core::ops::{Index, IndexMut, Mul};
 use log::error;
-use std::ops::{Index, IndexMut, Mul};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Matrix {

@@ -6,8 +6,8 @@ use crate::bounds::Bounds3f;
 
 #[derive(Debug, Clone, Default)]
 pub struct Transform {
-    pub m: Matrix,
-    pub m_inv: Matrix,
+    pub m: Matrix<4, 4>,
+    pub m_inv: Matrix<4, 4>,
 }
 
 impl Transform {
@@ -15,7 +15,7 @@ impl Transform {
         Self::default()
     }
 
-    pub fn from_matrix(m: Matrix) -> Self {
+    pub fn from_matrix(m: Matrix<4, 4>) -> Self {
         Self { m_inv: m.inverse(), m }
     }
 
@@ -43,8 +43,8 @@ impl Transform {
         m[2][3] = 0.0;
 
         Self {
-            m,
             m_inv: m.transpose(),
+            m,
         }
     }
 
@@ -347,7 +347,7 @@ mod tests {
 
         let v2 = &t * &v;
         let n2 = t_inv.transform_normal(&Normal3f::from(n));
-        println!("v = {}, n = {}", v2, n2);
+        println!("v2 = {}, n2 = {}", v2, n2);
         assert_relative_eq!(v2.dotn(&n2), 0.0);
     }
 }

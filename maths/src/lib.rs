@@ -1,21 +1,23 @@
+#![cfg_attr(not(test), no_std)]
 #![allow(clippy::excessive_precision)]
 #![feature(const_fn_floating_point_arithmetic)]
 
 pub use crate::{
-    matrix::*,
+	cmatrix::Matrix,
     normal::Normal3,
     point::{Point2, Point3},
     vector::{Vector2, Vector3},
 };
-use num::{Num, One, Signed};
-use std::{
+use core::{
     f32::consts::PI,
     ops::{Add, Mul, Sub},
 };
+use num::{Num, One, Signed};
+
 
 pub mod cmatrix;
 mod macros;
-mod matrix;
+// mod matrix;
 mod normal;
 mod point;
 mod vector;
@@ -34,11 +36,11 @@ pub const ONE_MINUS_EPSILON: f32 = 0.99999994f32;
 
 #[macro_export]
 macro_rules! matrix {
+	// ( $( $( $val:expr ),+ );* ; ) => {
+	// 	$crate::Matrix::new([ $( [$( $val as f32 ),+] ),* ]);
+	// };
 	( $( $( $val:expr ),+ );* ; ) => {
-		$crate::Matrix::new([ $( [$( $val as f32 ),+] ),* ]);
-	};
-	(CC $( $( $val:expr ),+ );* ; ) => {
-		$crate::cmatrix::CMatrix::new([ $( [$( $val as f32 ),+] ),* ]);
+		$crate::cmatrix::Matrix::new([ $( [$( $val as f32 ),+] ),* ]);
 	};
 }
 

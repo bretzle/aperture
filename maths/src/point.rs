@@ -1,9 +1,9 @@
 use super::{vector::Vector2, Vector3};
-use num::{abs, Num, Signed, Zero};
-use std::{
+use core::{
     fmt::{Display, Error, Formatter},
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
+use num::{abs, Num, Signed, Zero};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Point3<T> {

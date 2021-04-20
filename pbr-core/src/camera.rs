@@ -30,7 +30,7 @@ pub struct OrthographicCamera {}
 pub struct PerspectiveCamera {
     film: Box<Film>,
     camera_to_world: Transform,
-    _camera_to_screen: Matrix,
+    _camera_to_screen: Matrix<4, 4>,
     raster_to_camera: Transform,
     lens_radius: f32,
     focal_distance: f32,

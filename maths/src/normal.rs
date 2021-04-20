@@ -1,10 +1,10 @@
 use super::Vector3;
-use num::{Num, Zero};
-use std::{
+use core::{
     convert::From,
     fmt::{Display, Error, Formatter},
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign},
 };
+use num::{Num, Zero};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Normal3<T> {

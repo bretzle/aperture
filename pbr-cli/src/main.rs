@@ -1,4 +1,4 @@
-use maths::{cmatrix::CMatrix, *};
+use maths::*;
 use pbr_core::efloat::EFloat;
 
 fn main() {
@@ -8,7 +8,7 @@ fn main() {
     let b = dbg!(EFloat::from(5.0));
     let _c = dbg!(a / b);
 
-    let mat = matrix![CC
+    let mat = matrix![
         1.0, 2.0;
         3.0, 4.0;
         5.0, 6.0;
@@ -17,5 +17,5 @@ fn main() {
     let mata = dbg!(mat.clone());
     let matb = dbg!(mat.clone());
 
-    dbg!(CMatrix::add(&mata, &matb));
+    dbg!(Matrix::add(&mata, &matb));
 }
