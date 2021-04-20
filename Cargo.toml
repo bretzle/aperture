@@ -4,3 +4,6 @@ members = [
 	"pbr-core",
 	"pbr-cli"
 ]
+
+[profile.release]
+lto = true
