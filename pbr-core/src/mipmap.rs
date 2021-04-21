@@ -1,5 +1,4 @@
 use crate::blockedarray::BlockedArray;
-use lazy_static::lazy_static;
 use log::{debug, info, trace};
 use maths::*;
 use ndarray::{parallel::prelude::*, prelude::*, Zip};
@@ -18,17 +17,17 @@ pub enum WrapMode {
 }
 
 const WEIGHT_LUT_SIZE: usize = 128;
-lazy_static! {
-    static ref WEIGHT_LUT: [f32; WEIGHT_LUT_SIZE] = {
-        let mut w: [f32; WEIGHT_LUT_SIZE] = [0.0; WEIGHT_LUT_SIZE];
-        for (i, w_i) in w.iter_mut().enumerate() {
-            let alpha = 2.0;
-            let r2 = i as f32 / (WEIGHT_LUT_SIZE as f32 - 1.0);
-            *w_i = f32::exp(-alpha * r2) - f32::exp(-alpha);
-        }
-        w
-    };
-}
+
+#[static_init::dynamic]
+static WEIGHT_LUT: [f32; WEIGHT_LUT_SIZE] = {
+    let mut w: [f32; WEIGHT_LUT_SIZE] = [0.0; WEIGHT_LUT_SIZE];
+    for (i, w_i) in w.iter_mut().enumerate() {
+        let alpha = 2.0;
+        let r2 = i as f32 / (WEIGHT_LUT_SIZE as f32 - 1.0);
+        *w_i = f32::exp(-alpha * r2) - f32::exp(-alpha);
+    }
+    w
+};
 
 pub struct MIPMap<T> {
     do_trilinear: bool,
@@ -157,7 +156,7 @@ where
             let t_res = cmp::max(1, mipmap.pyramid[i - 1].v_size() / 2);
             let mut buf = Array2::zeros((t_res, s_res));
             // Filter 4 texels from finer level of pyramid
-            Zip::indexed(&mut buf).par_apply(|(t, s), p| {
+            Zip::indexed(&mut buf).par_for_each(|(t, s), p| {
                 let (si, ti) = (s as isize, t as isize);
                 *p = (*mipmap.texel(i - 1, 2 * si, 2 * ti)
                     + *mipmap.texel(i - 1, 2 * si + 1, 2 * ti)
