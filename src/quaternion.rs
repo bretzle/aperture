@@ -89,6 +89,7 @@ impl Quaternion {
         self.v.dot(other.v) + self.w * other.w
     }
 
+    #[must_use]
     pub fn normalize(&self) -> Self {
         *self / self.dot(self).sqrt()
     }

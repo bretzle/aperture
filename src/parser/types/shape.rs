@@ -41,13 +41,13 @@ impl Shape {
                 let points = named_token
                     .values
                     .remove("P")
-                    .expect(&format!("P is required {:?}", named_token))
+                    .unwrap_or_else(|| panic!("P is required {:?}", named_token))
                     .into_vector3();
-                let points = points.into_iter().map(|v| Point3::from_vec(v)).collect();
+                let points = points.into_iter().map(Point3::from_vec).collect();
                 let indices = named_token
                     .values
                     .remove("indices")
-                    .expect(&format!("indice is required {:?}", named_token))
+                    .unwrap_or_else(|| panic!("indice is required {:?}", named_token))
                     .into_integer();
                 if indices.len() % 3 != 0 {
                     panic!("Support only 3 indices list {:?}", named_token);
@@ -56,19 +56,12 @@ impl Shape {
                     .chunks(3)
                     .map(|v| Vector3::new(v[0] as usize, v[1] as usize, v[2] as usize))
                     .collect();
-                let normals = if let Some(v) = named_token.values.remove("N") {
-                    Some(v.into_vector3())
-                } else {
-                    None
-                };
-                let uv = if let Some(v) = named_token.values.remove("uv") {
+                let normals = named_token.values.remove("N").map(|v| v.into_vector3());
+                let uv = named_token.values.remove("uv").map(|v| {
                     let v = v.into_floats();
                     assert_eq!(v.len() % 2, 0);
-                    let v = v.chunks(2).map(|v| Vector2::new(v[0], v[1])).collect();
-                    Some(v)
-                } else {
-                    None
-                };
+                    v.chunks(2).map(|v| Vector2::new(v[0], v[1])).collect()
+                });
                 Some(Shape::TriMesh {
                     indices,
                     points,

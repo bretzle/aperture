@@ -1,8 +1,6 @@
-use std::ops::{Index, IndexMut, Mul};
-
-use crate::transform::Transform;
-
 use super::{Angle, Vector3};
+use crate::transform::Transform;
+use std::ops::{Index, IndexMut, Mul};
 
 #[macro_export]
 macro_rules! matrix {
@@ -42,6 +40,7 @@ impl Matrix {
         mat
     }
 
+    #[must_use]
     pub const fn transpose(&self) -> Self {
         Self {
             m: [
@@ -58,7 +57,7 @@ impl Matrix {
         let mut indxr = vec![0; 4];
         let mut ipiv = vec![0; 4];
 
-        let mut minv = self.clone();
+        let mut minv = *self;
 
         for i in 0..4 {
             let mut irow = 0;
@@ -191,6 +190,7 @@ impl IndexMut<usize> for Matrix {
 mod tests {
     use super::Matrix;
 
+    #[allow(clippy::neg_cmp_op_on_partial_ord)]
     fn approx(a: Matrix, b: Matrix) -> bool {
         let a = a.m;
         let b = b.m;

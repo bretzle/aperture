@@ -195,8 +195,8 @@ pub fn medium_interface<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a s
 
 pub fn parse_token<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, Token, E> {
     nom::branch::alt((
-        nom::combinator::map(parse_named_token, |v| Token::NamedToken(v)),
-        nom::combinator::map(parse_keyword, |v| Token::Keyword(v)),
+        nom::combinator::map(parse_named_token, Token::NamedToken),
+        nom::combinator::map(parse_keyword, Token::Keyword),
         transform,
         texture,
         medium_interface,

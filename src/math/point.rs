@@ -1,8 +1,6 @@
-use std::ops::{Add, Mul, Sub};
-
-use num_traits::{Float, Num};
-
 use super::{Vector2, Vector3};
+use num_traits::{Float, Num};
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct Point2<T> {

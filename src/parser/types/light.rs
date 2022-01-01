@@ -12,17 +12,17 @@ pub enum Light {
         luminance: Spectrum,
         from: Point3<f32>,
         to: Point3<f32>,
-        scale: RGB,
+        scale: Rgb,
     },
     Infinite {
         luminance: Spectrum,
         samples: u32,
-        scale: RGB,
+        scale: Rgb,
     },
     Point {
         intensity: Spectrum,
         from: Point3<f32>,
-        scale: RGB,
+        scale: Rgb,
     },
 }
 
@@ -31,7 +31,7 @@ impl Light {
         let scale = if let Some(scale) = named_token.values.remove("scale") {
             scale.into_rgb()
         } else {
-            RGB::color(1.0)
+            Rgb::color(1.0)
         };
 
         match &named_token.internal_type[..] {
@@ -40,7 +40,7 @@ impl Light {
                     remove_default!(named_token.values, "samples", Value::Integer(vec![1]))
                         .into_integer()[0] as u32;
                 let luminance =
-                    remove_default!(named_token.values, "L", Value::RGB(RGB::color(1.0)))
+                    remove_default!(named_token.values, "L", Value::Rgb(Rgb::color(1.0)))
                         .into_spectrum();
 
                 // In case the map name is provide, we will replace the luminance
@@ -58,7 +58,7 @@ impl Light {
             }
             "point" => {
                 let intensity =
-                    remove_default!(named_token.values, "I", Value::RGB(RGB::color(1.0)))
+                    remove_default!(named_token.values, "I", Value::Rgb(Rgb::color(1.0)))
                         .into_spectrum();
                 let from = remove_default!(
                     named_token.values,
@@ -76,7 +76,7 @@ impl Light {
             }
             "distant" => {
                 let luminance =
-                    remove_default!(named_token.values, "L", Value::RGB(RGB::color(1.0)))
+                    remove_default!(named_token.values, "L", Value::Rgb(Rgb::color(1.0)))
                         .into_spectrum();
                 let from = remove_default!(
                     named_token.values,

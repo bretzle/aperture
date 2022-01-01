@@ -5,22 +5,22 @@ pub struct Blackbody {
 }
 
 #[derive(Debug, Clone)]
-pub struct RGB {
+pub struct Rgb {
     pub r: f32,
     pub g: f32,
     pub b: f32,
 }
 
-impl RGB {
-    pub fn color(v: f32) -> RGB {
-        RGB { r: v, g: v, b: v }
+impl Rgb {
+    pub fn color(v: f32) -> Rgb {
+        Rgb { r: v, g: v, b: v }
     }
 }
 
 /// PBRT spectrum type
 #[derive(Debug, Clone)]
 pub enum Spectrum {
-    RGB(RGB),
+    Rgb(Rgb),
     Blackbody(Blackbody),
     Texture(String),
     Spectrum(String),

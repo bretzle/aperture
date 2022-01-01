@@ -307,7 +307,7 @@ impl<'a> PbrtParser<'a> {
                         NamedTokenType::CoordSys => {
                             self.scene
                             .transforms
-                            .insert(named_token.internal_type, self.state.matrix.last().unwrap().clone());
+                            .insert(named_token.internal_type, *self.state.matrix.last().unwrap());
                         }
                         NamedTokenType::Include => {
                             info!("Include found: {}", named_token.internal_type);

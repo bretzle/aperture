@@ -58,6 +58,7 @@ impl<T: Num + Copy> Vector3<T> {
         }
     }
 
+    #[must_use]
     pub fn abs(self) -> Self
     where
         T: Signed,
@@ -80,6 +81,7 @@ impl<T: Num + Copy> Vector3<T> {
         self.length_squared().sqrt()
     }
 
+    #[must_use]
     pub fn normalize(self) -> Self
     where
         T: Float,
@@ -87,6 +89,7 @@ impl<T: Num + Copy> Vector3<T> {
         self / self.length()
     }
 
+    #[must_use]
     pub fn cross(&self, other: Self) -> Self {
         Self {
             x: (self.y * other.z) - (self.z * other.y),

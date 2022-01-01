@@ -1,6 +1,5 @@
-use std::ops::Div;
-
 use num_traits::{Float, Num};
+use std::ops::Div;
 
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
 pub struct Normal3<T> {
@@ -25,6 +24,7 @@ impl<T: Num + Copy> Normal3<T> {
         self.length_squared().sqrt()
     }
 
+    #[must_use]
     pub fn normalize(&self) -> Self
     where
         T: Float,

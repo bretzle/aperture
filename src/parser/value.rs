@@ -1,6 +1,6 @@
 use super::{
     utils::{parse_string, parse_string_sp, sp},
-    BSDFFloat, Blackbody, Spectrum, RGB,
+    BSDFFloat, Blackbody, Rgb, Spectrum,
 };
 use crate::math::{Vector2, Vector3};
 use nom::{
@@ -23,7 +23,7 @@ pub enum Value {
     String(String),
     Texture(String),
     Spectrum(String),
-    RGB(RGB),
+    Rgb(Rgb),
     Blackbody(Blackbody),
     Boolean(bool),
 }
@@ -81,16 +81,16 @@ impl Value {
         }
     }
 
-    pub fn into_rgb(self) -> RGB {
+    pub fn into_rgb(self) -> Rgb {
         match self {
-            Value::RGB(v) => v,
+            Value::Rgb(v) => v,
             _ => panic!("into_rgb failed: {:?}", self),
         }
     }
 
     pub fn into_spectrum(self) -> Spectrum {
         match self {
-            Value::RGB(v) => Spectrum::RGB(v),
+            Value::Rgb(v) => Spectrum::Rgb(v),
             Value::Blackbody(v) => Spectrum::Blackbody(v),
             Value::Texture(v) => Spectrum::Texture(v),
             Value::Spectrum(v) => Spectrum::Spectrum(v),
@@ -218,7 +218,7 @@ pub fn parse_value<'a, E: ParseError<&'a str>>(i: &'a str) -> IResult<&'a str, (
                     preceded(sp, char(']')),
                 ),
             )(i)?;
-            (i, Value::RGB(RGB { r, g, b }))
+            (i, Value::Rgb(Rgb { r, g, b }))
         }
         "blackbody" => {
             let (i, (temperature, scale)) = preceded(

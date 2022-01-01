@@ -44,7 +44,8 @@ impl Transform {
         }
     }
 
-    pub fn inverse(&self) -> Transform {
+    #[must_use]
+    pub fn inverse(&self) -> Self {
         Self {
             mat: self.inv,
             inv: self.mat,
