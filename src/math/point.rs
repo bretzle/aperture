@@ -50,13 +50,13 @@ impl<T: Num + Copy> Point3<T> {
         Self { x, y, z }
     }
 
-	pub fn from_vec(vec: Vector3<T>) -> Self {
-		Self {
-			x: vec.x,
-			y: vec.y,
-			z: vec.z,
-		}
-	}
+    pub fn from_vec(vec: Vector3<T>) -> Self {
+        Self {
+            x: vec.x,
+            y: vec.y,
+            z: vec.z,
+        }
+    }
 
     pub fn has_nans(&self) -> bool
     where

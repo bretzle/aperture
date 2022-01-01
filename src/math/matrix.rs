@@ -30,6 +30,18 @@ impl Matrix {
         }
     }
 
+    pub fn with<F: Fn(usize, usize) -> f32>(f: F) -> Self {
+        let mut mat = Matrix::IDENTITY;
+
+        for i in 0..4 {
+            for j in 0..4 {
+                mat[i][j] = f(i, j);
+            }
+        }
+
+        mat
+    }
+
     pub const fn transpose(&self) -> Self {
         Self {
             m: [

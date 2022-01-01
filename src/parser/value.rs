@@ -2,7 +2,7 @@ use super::{
     utils::{parse_string, parse_string_sp, sp},
     BSDFFloat, Blackbody, Spectrum, RGB,
 };
-use crate::math::{Vector3, Vector2};
+use crate::math::{Vector2, Vector3};
 use nom::{
     character::complete::char,
     error::ParseError,

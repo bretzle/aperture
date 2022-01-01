@@ -1,4 +1,4 @@
-use num_traits::{Float, Num,  Signed};
+use num_traits::{Float, Num, Signed};
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, Default, Clone, Copy)]
@@ -93,6 +93,10 @@ impl<T: Num + Copy> Vector3<T> {
             y: (self.z * other.x) - (self.x * other.z),
             z: (self.x * other.y) - (self.y * other.x),
         }
+    }
+
+    pub fn dot(self, v2: Self) -> T {
+        self.x * v2.x + self.y * v2.y + self.z * v2.z
     }
 }
 

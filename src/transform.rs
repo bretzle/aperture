@@ -1,6 +1,9 @@
-use crate::math::{Matrix, Point3, Vector3};
+use crate::{
+    math::{Matrix, Point3, Vector3},
+    quaternion::Quaternion,
+};
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Transform {
     pub mat: Matrix,
     pub inv: Matrix,
@@ -80,5 +83,122 @@ impl Transform {
 
     pub fn to_matrix(self) -> Matrix {
         self.mat
+    }
+}
+
+#[derive(Debug, Default, Copy, Clone)]
+pub struct DerivativeTerm {
+    kc: f32,
+    kx: f32,
+    ky: f32,
+    kz: f32,
+}
+
+impl DerivativeTerm {
+    pub fn eval(&self, p: &Point3<f32>) -> f32 {
+        self.kc + self.kx * p.x + self.ky * p.y + self.kz * p.z
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Default, Copy, Clone)]
+pub struct AnimatedTransform {
+    start_transform: Transform,
+    end_transform: Transform,
+    start_time: f32,
+    end_time: f32,
+    actually_animated: bool,
+    t: [Vector3<f32>; 2],
+    r: [Quaternion; 2],
+    s: [Matrix; 2],
+    has_rotation: bool,
+    c1: [DerivativeTerm; 3],
+    c2: [DerivativeTerm; 3],
+    c3: [DerivativeTerm; 3],
+    c4: [DerivativeTerm; 3],
+    c5: [DerivativeTerm; 3],
+}
+
+impl AnimatedTransform {
+    pub fn new(
+        start_transform: Transform,
+        end_transform: Transform,
+        start_time: f32,
+        end_time: f32,
+    ) -> Self {
+        let mut at = Self {
+            actually_animated: start_transform != end_transform,
+            start_transform,
+            end_transform,
+            start_time,
+            end_time,
+            ..Default::default()
+        };
+
+        AnimatedTransform::decompose(
+            &start_transform.mat,
+            &mut at.t[0],
+            &mut at.r[0],
+            &mut at.s[0],
+        );
+        AnimatedTransform::decompose(&end_transform.mat, &mut at.t[1], &mut at.r[1], &mut at.s[1]);
+        // flip _r[1]_ if needed to select shortest path
+        if at.r[0].dot(&at.r[1]) < 0.0 {
+            at.r[1] = -at.r[1];
+        }
+        at.has_rotation = at.r[0].dot(&at.r[1]) < 0.9995;
+
+        // compute terms of motion derivative function
+        if at.has_rotation {
+            todo!()
+        }
+
+        at
+    }
+
+    fn decompose(m: &Matrix, t: &mut Vector3<f32>, rquat: &mut Quaternion, s: &mut Matrix) {
+        // extract translation from transformation matrix
+        t.x = m.m[0][3];
+        t.y = m.m[1][3];
+        t.z = m.m[2][3];
+        // compute new transformation matrix _m_ without translation
+        let mut matrix = *m;
+        for i in 0..3 {
+            matrix.m[i][3] = 0.0;
+            matrix.m[3][i] = 0.0;
+        }
+        matrix.m[3][3] = 1.0;
+        // extract rotation _r_ from transformation matrix
+        let mut norm;
+        let mut r = matrix;
+        for _ in 0..100 {
+            // compute next matrix _rnext_ in series
+            let rit = r.transpose().inverse().unwrap();
+            let rnext = Matrix::with(|i, j| 0.5 * (r.m[i][j] + rit.m[i][j]));
+
+            // compute norm of difference between _r_ and _rnext_
+            norm = 0.0f32;
+            for i in 0..3 {
+                let n = (r.m[i][0] - rnext.m[i][0]).abs()
+                    + (r.m[i][1] - rnext.m[i][1]).abs()
+                    + (r.m[i][2] - rnext.m[i][2]).abs();
+                norm = norm.max(n);
+            }
+            r = rnext;
+
+            if norm <= 0.0001 {
+                break;
+            }
+        }
+
+        let transform = Transform {
+            mat: r,
+            inv: r.inverse().unwrap(),
+        };
+
+        *rquat = Quaternion::new(transform);
+
+        // compute scale _S_ using rotation and original matrix
+        *s = r.inverse().unwrap() * *m;
     }
 }

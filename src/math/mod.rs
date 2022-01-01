@@ -48,3 +48,16 @@ impl Angle {
         self.0 * PI / 180.0
     }
 }
+
+pub fn clamp<T>(val: T, low: T, high: T) -> T
+where
+    T: PartialOrd,
+{
+    if val < low {
+        low
+    } else if val > high {
+        high
+    } else {
+        val
+    }
+}

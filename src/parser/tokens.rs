@@ -3,7 +3,7 @@ use super::{
     named::{parse_named_token, NamedToken},
     value::{parse_value, Value},
 };
-use crate::{parser::utils::*, math::Vector3};
+use crate::{math::Vector3, parser::utils::*};
 use nom::{
     bytes::complete::tag,
     character::complete::char,
