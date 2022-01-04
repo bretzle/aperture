@@ -1,0 +1,3 @@
+[submodule "pbrt-v3-scenes"]
+	path = pbrt-v3-scenes
+	url = https://gitlab.com/bo-jcube/pbrt-v3-scenes.git
