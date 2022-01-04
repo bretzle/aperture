@@ -1,5 +1,7 @@
 use num_traits::{Float, Num, Signed};
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
+
+use super::Normal3;
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct Vector2<T> {
@@ -100,6 +102,44 @@ impl<T: Num + Copy> Vector3<T> {
 
     pub fn dot(self, v2: Self) -> T {
         self.x * v2.x + self.y * v2.y + self.z * v2.z
+    }
+
+    pub fn dot_nrm(&self, n: &Normal3<T>) -> T {
+        self.x * n.x + self.y * n.y + self.z * n.z
+    }
+}
+
+impl<T> From<Normal3<T>> for Vector3<T> {
+    fn from(n: Normal3<T>) -> Self {
+        Self {
+            x: n.x,
+            y: n.y,
+            z: n.z,
+        }
+    }
+}
+
+impl<T> Index<usize> for Vector3<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl<T> IndexMut<usize> for Vector3<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => unreachable!(),
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 use super::{Point3, Vector3};
-use std::cell::Cell;
+use crate::medium::Medium;
+use std::{cell::Cell, sync::Arc};
 
 #[derive(Default, Clone)]
 pub struct Ray {
@@ -7,7 +8,7 @@ pub struct Ray {
     pub direction: Vector3<f32>,
     pub t_max: Cell<f32>,
     pub time: f32,
-    // pub medium: Option<Arc<Medium>>, TODO
+    pub medium: Option<Arc<Medium>>,
     pub differential: Option<RayDifferential>,
 }
 

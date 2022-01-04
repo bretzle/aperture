@@ -1,6 +1,6 @@
 use super::{Vector2, Vector3};
 use num_traits::{Float, Num};
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Mul, Sub, Index, IndexMut};
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct Point2<T> {
@@ -64,6 +64,30 @@ impl<T: Num + Copy> Point3<T> {
             self.x.is_nan() || self.y.is_nan() || self.z.is_nan()
         } else {
             false
+        }
+    }
+}
+
+impl<T> Index<usize> for Point3<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl<T> IndexMut<usize> for Point3<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => unreachable!(),
         }
     }
 }

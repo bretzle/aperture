@@ -8,3 +8,5 @@ pub mod math;
 pub mod parser;
 pub mod quaternion;
 pub mod transform;
+pub mod interaction;
+pub mod medium;

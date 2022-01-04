@@ -1,5 +1,7 @@
-use num_traits::{Float, Num};
+use num_traits::{Float, Num, Signed};
 use std::ops::Div;
+
+use super::Vector3;
 
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
 pub struct Normal3<T> {
@@ -30,6 +32,25 @@ impl<T: Num + Copy> Normal3<T> {
         T: Float,
     {
         *self / self.length()
+    }
+
+    #[must_use]
+    pub fn abs(&self) -> Self
+    where
+        T: Signed,
+    {
+        Self {
+            x: self.x.abs(),
+            y: self.y.abs(),
+            z: self.z.abs(),
+        }
+    }
+
+    /// Product of the Euclidean magnitudes of a normal (and a vector) and
+    /// the cosine of the angle between them. A return value of zero means
+    /// both are orthogonal, a value if one means they are codirectional.
+    pub fn dot_vec(&self, v: &Vector3<T>) -> T {
+        self.x * v.x + self.y * v.y + self.z * v.z
     }
 }
 
