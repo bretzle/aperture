@@ -146,3 +146,58 @@ impl Interaction for MediumInteraction {
         self.phase.as_ref().cloned()
     }
 }
+
+#[derive(Default)]
+pub struct SurfaceInteraction {
+    // TODO
+}
+
+impl Interaction for SurfaceInteraction {
+    fn is_surface_interaction(&self) -> bool {
+        todo!()
+    }
+
+    fn is_medium_interaction(&self) -> bool {
+        todo!()
+    }
+
+    fn spawn_ray(&self, d: Vector3<f32>) -> Ray {
+        todo!()
+    }
+
+    fn get_common(&self) -> &InteractionBase {
+        todo!()
+    }
+
+    fn get_p(&self) -> &Point3<f32> {
+        todo!()
+    }
+
+    fn get_time(&self) -> f32 {
+        todo!()
+    }
+
+    fn get_p_error(&self) -> &Vector3<f32> {
+        todo!()
+    }
+
+    fn get_wo(&self) -> &Vector3<f32> {
+        todo!()
+    }
+
+    fn get_n(&self) -> &Normal3<f32> {
+        todo!()
+    }
+
+    fn get_medium_interface(&self) -> Option<Arc<MediumInterface>> {
+        todo!()
+    }
+
+    fn get_shading_n(&self) -> Option<&Normal3<f32>> {
+        todo!()
+    }
+
+    fn get_phase(&self) -> Option<Arc<HenyeyGreenStein>> {
+        todo!()
+    }
+}
