@@ -2,6 +2,7 @@ use super::{Angle, Vector3};
 use crate::transform::Transform;
 use std::ops::{Index, IndexMut, Mul};
 
+/// Shorthand for calling [Matrix::new]
 #[macro_export]
 macro_rules! matrix {
 	( $( $( $val:expr ),+ );* ; ) => {
@@ -28,6 +29,7 @@ impl Matrix {
         }
     }
 
+    /// Fill a matrix with values given the `x` and `y` coordinates
     pub fn with<F: Fn(usize, usize) -> f32>(f: F) -> Self {
         let mut mat = Matrix::IDENTITY;
 
@@ -40,6 +42,7 @@ impl Matrix {
         mat
     }
 
+    /// Returns the transpose of the matrix
     #[must_use]
     pub const fn transpose(&self) -> Self {
         Self {
@@ -52,6 +55,7 @@ impl Matrix {
         }
     }
 
+    /// Returns the inverse of the matrix. None if the matrix is not invertable
     pub fn inverse(&self) -> Option<Self> {
         let mut indxc = vec![0; 4];
         let mut indxr = vec![0; 4];
@@ -128,9 +132,10 @@ impl Matrix {
         Some(minv)
     }
 
+    /// Creates a new matrix with the diagonal being the values given by a vector
     pub fn from_diagonal(diag: Vector3<f32>) -> Self {
         matrix! {
-            diag.z, 0., 0., 0.;
+            diag.x, 0., 0., 0.;
             0., diag.y, 0., 0.;
             0., 0., diag.z, 0.;
             0., 0., 0., 1.0;
@@ -144,6 +149,7 @@ impl Matrix {
         }
     }
 
+	#[doc(hidden)]
     pub fn from_axis_angle(_axis: Vector3<f32>, _angle: Angle) -> Matrix {
         todo!()
     }

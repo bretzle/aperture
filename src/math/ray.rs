@@ -2,6 +2,13 @@ use super::{Point3, Vector3};
 use crate::medium::Medium;
 use std::{cell::Cell, sync::Arc};
 
+/// A Ray is a semi-infinite line specified by its `origin` and `direction`
+/// 
+/// The parametric form of a `Ray` expresses it as a function of t, giving the set of points that the ray passes through:
+/// 
+/// 	r(t) = origin + t*direction  t∈[0,t_max)
+/// 
+/// Note: `t_max` has interior mutability
 #[derive(Default, Clone)]
 pub struct Ray {
     pub origin: Point3<f32>,
@@ -13,7 +20,8 @@ pub struct Ray {
 }
 
 impl Ray {
-    // Point3f operator()(Float t) const { return o + d * t; }
+    // https://github.com/mmp/pbrt-v3/blob/master/src/core/geometry.h#L876
+	/// Get the current position of the Ray
     pub fn position(&self, t: f32) -> Point3<f32> {
         self.origin + self.direction * t
     }

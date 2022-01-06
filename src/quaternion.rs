@@ -94,6 +94,7 @@ impl Quaternion {
         *self / self.dot(self).sqrt()
     }
 
+	/// Spherical linear interpolation
     pub fn slerp(t: f32, q1: &Self, q2: &Self) -> Self {
         let cos_theta = q1.dot(q2);
         if cos_theta > 0.9995 {

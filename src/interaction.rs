@@ -99,7 +99,7 @@ impl Interaction for MediumInteraction {
 
     fn spawn_ray(&self, direction: Vector3<f32>) -> Ray {
         let origin =
-            pnt3_offset_ray_origin(&self.base.p, &self.base.p_error, &self.base.n, &direction);
+            pnt3_offset_ray_origin(self.base.p, &self.base.p_error, &self.base.n, &direction);
         Ray {
             origin,
             direction,

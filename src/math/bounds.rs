@@ -54,6 +54,7 @@ pub struct Bounds3<T> {
 
 impl<T: Number> Bounds3<T> {
     pub fn new(p_min: Point3<T>, p_max: Point3<T>) -> Self {
+		// TODO: validate input data
         Self { p_min, p_max }
     }
 
@@ -88,6 +89,7 @@ impl<T: Number> Bounds3<T> {
         r + r
     }
 
+	/// The dimension that the bounds extends into the most
     pub fn maximum_extent(self) -> u8 {
         let d = self.diagonal();
         if d.x > d.y && d.x > d.z {
