@@ -1,5 +1,5 @@
 use crate::{
-    math::{Matrix, Point3, Vector3},
+    math::{Bounds3, Matrix, Point3, Vector3},
     quaternion::Quaternion,
 };
 
@@ -84,6 +84,62 @@ impl Transform {
 
     pub fn to_matrix(self) -> Matrix {
         self.mat
+    }
+
+    pub fn swaps_handedness(&self) -> bool {
+        let det = self.mat.m[0][0]
+            * (self.mat.m[1][1] * self.mat.m[2][2] - self.mat.m[1][2] * self.mat.m[2][1])
+            - self.mat.m[0][1]
+                * (self.mat.m[1][0] * self.mat.m[2][2] - self.mat.m[1][2] * self.mat.m[2][0])
+            + self.mat.m[0][2]
+                * (self.mat.m[1][0] * self.mat.m[2][1] - self.mat.m[1][1] * self.mat.m[2][0]);
+        det < 0.0
+    }
+
+    pub fn transform_bounds(&self, b: Bounds3<f32>) -> Bounds3<f32> {
+        let m: Transform = *self;
+        let p = self.transform_point(Point3 {
+            x: b.p_min.x,
+            y: b.p_min.y,
+            z: b.p_min.z,
+        });
+
+        Bounds3 { p_min: p, p_max: p }
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_max.x,
+                y: b.p_min.y,
+                z: b.p_min.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_min.x,
+                y: b.p_max.y,
+                z: b.p_min.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_min.x,
+                y: b.p_min.y,
+                z: b.p_max.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_min.x,
+                y: b.p_max.y,
+                z: b.p_max.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_max.x,
+                y: b.p_max.y,
+                z: b.p_min.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_max.x,
+                y: b.p_min.y,
+                z: b.p_max.z,
+            }))
+            .union_point(&m.transform_point(Point3 {
+                x: b.p_max.x,
+                y: b.p_max.y,
+                z: b.p_max.z,
+            }))
     }
 }
 

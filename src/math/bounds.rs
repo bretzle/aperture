@@ -54,7 +54,7 @@ pub struct Bounds3<T> {
 
 impl<T: Number> Bounds3<T> {
     pub fn new(p_min: Point3<T>, p_max: Point3<T>) -> Self {
-		// TODO: validate input data
+        // TODO: validate input data
         Self { p_min, p_max }
     }
 
@@ -89,7 +89,7 @@ impl<T: Number> Bounds3<T> {
         r + r
     }
 
-	/// The dimension that the bounds extends into the most
+    /// The dimension that the bounds extends into the most
     pub fn maximum_extent(self) -> u8 {
         let d = self.diagonal();
         if d.x > d.y && d.x > d.z {
@@ -137,4 +137,20 @@ impl<T: Number> Bounds3<T> {
     // pub fn intersect_p(&self, ray: &Ray, inv_dir: &Vector3f, dir_is_neg: &[u8; 3]) -> bool {
     //     todo!()
     // }
+}
+
+impl Bounds3<f32> {
+    pub fn union_point(&self, p: &Point3<f32>) -> Self {
+        let p_min = Point3 {
+            x: self.p_min.x.min(p.x),
+            y: self.p_min.y.min(p.y),
+            z: self.p_min.z.min(p.z),
+        };
+        let p_max = Point3 {
+            x: self.p_max.x.max(p.x),
+            y: self.p_max.y.max(p.y),
+            z: self.p_max.z.max(p.z),
+        };
+        Self { p_min, p_max }
+    }
 }

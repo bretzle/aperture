@@ -47,6 +47,10 @@ impl Angle {
     pub fn as_rad(&self) -> f32 {
         self.0 * PI / 180.0
     }
+
+	pub fn radians(deg: f32) -> f32 {
+		deg * PI / 180.0
+	}
 }
 
 pub fn clamp<T>(val: T, low: T, high: T) -> T

@@ -10,3 +10,4 @@ pub mod quaternion;
 pub mod transform;
 pub mod interaction;
 pub mod medium;
+pub mod shapes;
