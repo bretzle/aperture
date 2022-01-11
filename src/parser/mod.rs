@@ -6,7 +6,6 @@ use self::types::*;
 use self::utils::*;
 use self::value::*;
 use crate::math::*;
-use crate::transform::Transform;
 use nom::{error::VerboseError, sequence::preceded, IResult};
 use std::{collections::HashMap, fs::read_to_string, path::Path, time::Instant};
 
