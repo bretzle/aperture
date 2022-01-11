@@ -1,10 +1,4 @@
-#![allow(clippy::enum_variant_names)]
+#![allow(clippy::return_self_not_must_use)]
 #![forbid(unsafe_code)]
-
-#[macro_use]
-extern crate log;
-
-// pub mod math;
-// pub mod transform;
 
 pub mod math;

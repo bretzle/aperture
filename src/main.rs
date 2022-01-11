@@ -1,5 +1,5 @@
 // const PBRT_PATH: &str = "scenes/cornell-box/scene.pbrt";
-const PBRT_PATH: &str = "hello.pbrt";
+// const PBRT_PATH: &str = "hello.pbrt";
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
