@@ -1,6 +1,8 @@
 use crate::texture::Texture;
 use std::sync::Arc;
 
+pub trait Material {}
+
 pub struct Matte<D, R> {
     diffuse: Arc<D>,
     roughness: Arc<R>,
@@ -18,3 +20,5 @@ where
         }
     }
 }
+
+impl<D, R> Material for Matte<D, R> {}

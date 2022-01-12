@@ -1,5 +1,5 @@
 use crate::{
-    math::{AnimatedTransform, Matrix, Transform, Vector},
+    math::{AnimatedTransform, Matrix, Ray, Transform, Vector},
     matrix,
 };
 
@@ -37,8 +37,8 @@ impl Camera {
             ))
             * Transform::translate(&Vector::new(-screen[0], -screen[3], 0.0));
         let raster_screen = screen_raster.inverse();
-        
-		let far = 1.0;
+
+        let far = 1.0;
         let near = 1000.0;
         let proj_div = matrix! {
             1.0, 0.0, 0.0, 0.0;
@@ -49,8 +49,8 @@ impl Camera {
 
         let tan_fov = (fov.to_radians() / 2.0).tan();
         let scaling = Vector::new(tan_fov, tan_fov, 1.0);
-        
-		Self {
+
+        Self {
             cam_world,
             raster_screen,
             proj_div_inv: Transform::from_matrix(proj_div).inverse(),
@@ -61,5 +61,9 @@ impl Camera {
             scaling,
             active_at,
         }
+    }
+
+    pub fn generate_ray(&self, px: &(f32, f32), time: f32) -> Ray {
+        todo!()
     }
 }

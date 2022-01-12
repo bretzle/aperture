@@ -1,3 +1,5 @@
+use crate::geometry::{Boundable, Geometry, Sampleable};
+
 pub struct Sphere {
     radius: f32,
 }
@@ -7,3 +9,7 @@ impl Sphere {
         Self { radius }
     }
 }
+
+impl Geometry for Sphere {}
+impl Boundable for Sphere {}
+impl Sampleable for Sphere {}
