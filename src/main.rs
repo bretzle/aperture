@@ -4,14 +4,11 @@
 extern crate log;
 
 use aperture::{
-    camera::Camera,
-    color::Color,
-    filter::MitchellNetravali,
-    geometry::instance::Instance,
+    film::{camera::Camera, color::Color, filter::MitchellNetravali},
+    geometry::{Instance, Sphere},
     material::Matte,
     math::{AnimatedTransform, Point, Transform, Vector},
     sampler::{block_queue::BlockQueue, ImageSample, LowDiscrepancy, Sampler},
-    shapes::Sphere,
     texture::{ConstantColor, ConstantScalar},
     RenderTarget,
 };
@@ -58,7 +55,7 @@ fn main() -> color_eyre::Result<()> {
 
     let block_queue = BlockQueue::new((dim.0 as u32, dim.1 as u32), (8, 8), (0, 0));
     let block_dim = block_queue.block_dim();
-    let mut sampler = LowDiscrepancy::new(block_dim, 2);
+    let mut sampler = LowDiscrepancy::new(block_dim, 32);
     let mut sample_pos = Vec::with_capacity(sampler.max_spp());
     let mut block_samples =
         Vec::with_capacity(sampler.max_spp() * (block_dim.0 * block_dim.1) as usize);

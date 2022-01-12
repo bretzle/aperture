@@ -1,6 +1,5 @@
-use crate::material::Material;
-
 use super::{differential_geometry::DifferentialGeometry, instance::Instance};
+use crate::material::Material;
 
 #[derive(Clone, Copy)]
 pub struct Intersection<'a, 'b, G, M> {

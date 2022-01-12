@@ -1,7 +1,6 @@
+use super::Material;
 use crate::texture::Texture;
 use std::sync::Arc;
-
-pub trait Material {}
 
 pub struct Matte<D, R> {
     _diffuse: Arc<D>,

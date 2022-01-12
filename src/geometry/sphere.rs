@@ -1,9 +1,8 @@
-use std::f32::consts::PI;
-
 use crate::{
     geometry::{differential_geometry::DifferentialGeometry, Boundable, Geometry, Sampleable},
     math::{self, Normal, Ray, Vector},
 };
+use std::f32::consts::PI;
 
 pub struct Sphere {
     radius: f32,

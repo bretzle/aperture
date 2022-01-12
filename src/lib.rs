@@ -4,21 +4,17 @@
 #[macro_use]
 extern crate log;
 
+use film::{color::Color, filter::Filter};
+use sampler::{ImageSample, Region};
 use std::{cmp, iter, sync::Mutex};
 
-use color::Color;
-use filter::Filter;
-use sampler::{ImageSample, Region};
-
-pub mod camera;
-pub mod color;
-pub mod filter;
+pub mod film;
 pub mod geometry;
+pub mod integrator;
+pub mod light;
 pub mod material;
 pub mod math;
-// pub mod rand;
 pub mod sampler;
-pub mod shapes;
 pub mod texture;
 
 const FILTER_TABLE_SIZE: usize = 16;
