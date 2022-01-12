@@ -2,17 +2,17 @@ use super::Material;
 use crate::texture::Texture;
 use std::sync::Arc;
 
-pub struct Matte<D, R> {
-    _diffuse: Arc<D>,
-    _roughness: Arc<R>,
+pub struct Matte {
+    _diffuse: Arc<dyn Texture + Send + Sync>,
+    _roughness: Arc<dyn Texture + Send + Sync>,
 }
 
-impl<D, R> Matte<D, R>
-where
-    D: Texture + Send + Sync,
-    R: Texture + Send + Sync,
-{
-    pub fn new(diffuse: &Arc<D>, roughness: &Arc<R>) -> Self {
+impl Matte {
+    pub fn new<D, R>(diffuse: &Arc<D>, roughness: &Arc<R>) -> Self
+    where
+        D: Texture + Send + Sync + 'static,
+        R: Texture + Send + Sync + 'static,
+    {
         Self {
             _diffuse: diffuse.clone(),
             _roughness: roughness.clone(),
@@ -20,4 +20,4 @@ where
     }
 }
 
-impl<D, R> Material for Matte<D, R> {}
+impl Material for Matte {}

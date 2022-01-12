@@ -5,25 +5,21 @@ use crate::{
 };
 use std::sync::Arc;
 
-pub enum Instance<G, M> {
-    Receiver(Receiver<G, M>),
+pub enum Instance {
+    Receiver(Receiver),
 }
 
-impl<G, M> Instance<G, M>
-where
-    G: BoundableGeom + Send + Sync,
-    M: Material + Send + Sync,
-{
+impl Instance {
     pub fn receiver(
-        geom: Arc<G>,
-        material: Arc<M>,
+        geom: Arc<dyn BoundableGeom + Send + Sync>,
+        material: Arc<dyn Material + Send + Sync>,
         transform: AnimatedTransform,
         tag: String,
     ) -> Self {
         Instance::Receiver(Receiver::new(geom, material, transform, tag))
     }
 
-    pub fn intersect(&self, ray: &mut Ray) -> Option<Intersection<G, M>> {
+    pub fn intersect(&self, ray: &mut Ray) -> Option<Intersection> {
         let hit = match *self {
             Instance::Receiver(ref r) => r.intersect(ray),
         };

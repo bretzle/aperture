@@ -7,19 +7,20 @@ use crate::{
 
 use super::{differential_geometry::DifferentialGeometry, BoundableGeom};
 
-pub struct Receiver<G, M> {
-    geom: Arc<G>,
-    material: Arc<M>,
+pub struct Receiver {
+    geom: Arc<dyn BoundableGeom + Send + Sync>,
+    material: Arc<dyn Material + Send + Sync>,
     transform: AnimatedTransform,
     _tag: String,
 }
 
-impl<G, M> Receiver<G, M>
-where
-    G: BoundableGeom + Send + Sync,
-    M: Material + Send + Sync,
-{
-    pub fn new(geom: Arc<G>, material: Arc<M>, transform: AnimatedTransform, tag: String) -> Self {
+impl Receiver {
+    pub fn new(
+        geom: Arc<dyn BoundableGeom + Send + Sync>,
+        material: Arc<dyn Material + Send + Sync>,
+        transform: AnimatedTransform,
+        tag: String,
+    ) -> Self {
         Self {
             geom,
             material,
@@ -28,7 +29,10 @@ where
         }
     }
 
-    pub fn intersect(&self, ray: &mut Ray) -> Option<(DifferentialGeometry, &M)> {
+    pub fn intersect(
+        &self,
+        ray: &mut Ray,
+    ) -> Option<(DifferentialGeometry, &(dyn Material + Send + Sync))> {
         let transform = self.transform.transform(ray.time);
         let mut local = transform.inv_mul_ray(ray);
         let mut dg = match self.geom.intersect(&mut local) {
