@@ -1,4 +1,4 @@
-use super::{quaternion, Quaternion, Transform, Vector, Matrix};
+use super::{quaternion, Matrix, Quaternion, Transform, Vector};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Keyframe {

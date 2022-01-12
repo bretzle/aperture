@@ -20,7 +20,7 @@ impl BlockQueue {
         let mut blocks: Vec<(u32, u32)> = (0..num_blocks.0 * num_blocks.1)
             .map(|i| (i % num_blocks.0, i / num_blocks.0))
             .collect();
-        blocks.sort_by(|a, b| super::morton2(a).cmp(&super::morton2(b)));
+        blocks.sort_by_key(super::morton2);
         // If we're only rendering a subset of the blocks then filter our list down
         if select_blocks.1 > 0 {
             blocks = blocks

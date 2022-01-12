@@ -9,10 +9,10 @@ pub struct Camera {
     proj_div_inv: Transform,
     shutter_open: f32,
     shutter_close: f32,
-    shutter_size: f32,
-    fov: f32, // TODO: support animations
+    _shutter_size: f32,
+    _fov: f32, // TODO: support animations
     scaling: Vector,
-    active_at: usize, // frame when camera activates
+    _active_at: usize, // frame when camera activates
 }
 
 impl Camera {
@@ -56,10 +56,10 @@ impl Camera {
             proj_div_inv: Transform::from_matrix(proj_div).inverse(),
             shutter_open: 0.0,
             shutter_close: 0.0,
-            shutter_size,
-            fov,
+            _shutter_size: shutter_size,
+            _fov: fov,
             scaling,
-            active_at,
+            _active_at: active_at,
         }
     }
 

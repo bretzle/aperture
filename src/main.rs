@@ -18,9 +18,6 @@ use aperture::{
 use rand::StdRng;
 use std::sync::Arc;
 
-// const PBRT_PATH: &str = "scenes/cornell-box/scene.pbrt";
-// const PBRT_PATH: &str = "hello.pbrt";
-
 const WIDTH: usize = 800;
 const HEIGHT: usize = 600;
 
@@ -44,18 +41,14 @@ fn main() -> color_eyre::Result<()> {
 
     let camera = Camera::new(transform, 40.0, rt.dimensions(), 0.5, 0);
     let sphere = Sphere::new(1.5);
-    let geometry_lock = Arc::new(sphere);
-    let texture = Arc::new(ConstantColor::new(Color::new(0.740063, 0.742313, 0.733934)));
-    let roughness = Arc::new(ConstantScalar::new(1.0));
-    let white_wall = Matte::new(texture, roughness);
-    let material_lock = Arc::new(white_wall);
-    let position_transform =
-        AnimatedTransform::unanimated(&Transform::translate(&Vector::new(0.0, 2.0, 0.0)));
+    let texture = Arc::new(ConstantColor(Color::new(0.740063, 0.742313, 0.733934)));
+    let roughness = Arc::new(ConstantScalar(1.0));
+    let white_wall = Matte::new(&texture, &roughness);
 
     let instance = Instance::receiver(
-        geometry_lock,
-        material_lock,
-        position_transform,
+        Arc::new(sphere),
+        Arc::new(white_wall),
+        AnimatedTransform::unanimated(&Transform::translate(&Vector::new(0.0, 2.0, 0.0))),
         "single_sphere".to_string(),
     );
 
@@ -80,36 +73,31 @@ fn main() -> color_eyre::Result<()> {
             sampler.get_samples(&mut sample_pos, &mut rng);
             for s in &sample_pos[..] {
                 let mut ray = camera.generate_ray(s, 0.0);
-                if let Some(_) = instance.intersect(&mut ray) {
-                    block_samples.push(ImageSample::new(s.0, s.1, Color::WHITE));
-                } else {
-                    // For correct filtering we also MUST set a background color of some kind
-                    // if we miss, otherwise the pixel weights will be wrong and we'll see object
-                    // fringes and artifacts at object boundaries w/ nothing. Try removing this
-                    // line and rendering again.
-                    block_samples.push(ImageSample::new(s.0, s.1, Color::BLACK));
-                }
+                block_samples.push(ImageSample::new(
+                    s.0,
+                    s.1,
+                    match instance.intersect(&mut ray) {
+                        Some(_) => Color::WHITE,
+                        None => Color::BLACK,
+                    },
+                ));
             }
         }
-        // We write all samples at once so we don't need to lock the render target tiles as often
+
         rt.write(&block_samples, sampler.get_region());
         block_samples.clear();
     }
 
     info!("Saving...");
 
-    // Get the sRGB8 render buffer from the floating point framebuffer and save it
     let img = rt.get_render();
-    match image::save_buffer(
+    image::save_buffer(
         "sphere.png",
         &img[..],
         dim.0 as u32,
         dim.1 as u32,
         image::RGB(8),
-    ) {
-        Ok(_) => {}
-        Err(e) => println!("Error saving image, {}", e),
-    };
+    )?;
 
     Ok(())
 }

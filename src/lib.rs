@@ -16,7 +16,7 @@ pub mod filter;
 pub mod geometry;
 pub mod material;
 pub mod math;
-pub mod rand;
+// pub mod rand;
 pub mod sampler;
 pub mod shapes;
 pub mod texture;

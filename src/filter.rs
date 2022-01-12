@@ -19,13 +19,13 @@ pub struct MitchellNetravali {
 
 impl MitchellNetravali {
     pub fn new(w: f32, h: f32, b: f32, c: f32) -> Self {
-        if b < 0.0 || b > 1.0 {
+        if !(0.0..=1.0).contains(&b) {
             warn!(
                 "Mitchell-Netravali b param = {} is out of bounds, clamping in range",
                 b
             );
         }
-        if c < 0.0 || c > 1.0 {
+        if !(0.0..=1.0).contains(&c) {
             warn!(
                 "Mitchell-Netravali c param = {} is out of bounds, clamping in range",
                 c

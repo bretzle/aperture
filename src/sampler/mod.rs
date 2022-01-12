@@ -108,7 +108,7 @@ impl Sampler for LowDiscrepancy {
         rng.shuffle(samples);
     }
 
-    fn get_samples_1d(&mut self, samples: &mut [f32], rng: &mut StdRng) {
+    fn get_samples_1d(&mut self, _samples: &mut [f32], _rng: &mut StdRng) {
         todo!()
     }
 

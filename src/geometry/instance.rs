@@ -32,10 +32,7 @@ where
             Instance::Receiver(ref r) => r.intersect(ray),
         };
 
-        match hit {
-            Some((dg, mat)) => Some(Intersection::new(dg, self, mat)),
-            None => None,
-        }
+        hit.map(|(dg, mat)| Intersection::new(dg, self, mat))
     }
 }
 
@@ -43,7 +40,7 @@ pub struct Receiver<G, M> {
     geom: Arc<G>,
     material: Arc<M>,
     transform: AnimatedTransform,
-    tag: String,
+    _tag: String,
 }
 
 impl<G, M> Receiver<G, M>
@@ -56,7 +53,7 @@ where
             geom,
             material,
             transform,
-            tag,
+            _tag: tag,
         }
     }
 

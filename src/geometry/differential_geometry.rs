@@ -23,6 +23,7 @@ pub struct DifferentialGeometry<'a> {
     pub geom: &'a (dyn Geometry + 'a), // TODO: dont use dyn
 }
 
+#[allow(clippy::too_many_arguments)]
 impl<'a> DifferentialGeometry<'a> {
     pub fn new(
         p: &Point,
