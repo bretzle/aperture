@@ -4,12 +4,11 @@
 //! same as those from the Low Discrepancy sampler but the
 //! number of samples taken per pixel will vary.
 
+use crate::film::ImageSample;
+use crate::sampler::{ld, Region, Sampler};
 use rand::distributions::{IndependentSample, Range};
 use rand::{Rng, StdRng};
 use std::{f32, iter, u32};
-
-use crate::film::ImageSample;
-use crate::sampler::{ld, Region, Sampler};
 
 /// Adaptive sampler that makes use of the (0, 2) sequence to generate
 /// well distributed samples and takes `min_spp` to `max_spp` samples per pixel
@@ -31,7 +30,7 @@ pub struct Adaptive {
 
 impl Adaptive {
     /// Create a low discrepancy sampler to sample the image in `dim.0 * dim.1` sized blocks
-    pub fn new(dim: (u32, u32), mut min_spp: usize, mut max_spp: usize) -> Adaptive {
+    pub fn new(dim: (u32, u32), mut min_spp: usize, mut max_spp: usize) -> Self {
         if !min_spp.is_power_of_two() {
             min_spp = min_spp.next_power_of_two();
             print!("Warning: Adaptive sampler requires power of two samples per pixel, ");
@@ -43,16 +42,17 @@ impl Adaptive {
             println!("rounding max_spp up to {}", max_spp);
         }
         let step_size = ((max_spp - min_spp) / 5).next_power_of_two();
-        Adaptive {
+        Self {
             region: Region::new((0, 0), dim),
-            min_spp: min_spp,
-            max_spp: max_spp,
-            step_size: step_size,
+            min_spp,
+            max_spp,
+            step_size,
             samples_taken: 0,
             avg_luminance: 0.0,
             scramble_range: Range::new(0, u32::MAX),
         }
     }
+
     /// Determine if more samples need to be taken for the pixel currently sampled with the
     /// set of samples passed. This is done by simply looking at the contrast difference
     /// between the samples. TODO: What are some better strategies for estimating
@@ -115,6 +115,7 @@ impl Sampler for Adaptive {
             s.1 += self.region.current.1 as f32;
         }
     }
+
     fn get_samples_2d(&mut self, samples: &mut [(f32, f32)], rng: &mut StdRng) {
         let scramble = (
             self.scramble_range.ind_sample(rng),
@@ -123,26 +124,33 @@ impl Sampler for Adaptive {
         ld::sample_2d(samples, scramble, self.samples_taken as u32);
         rng.shuffle(samples);
     }
+
     fn get_samples_1d(&mut self, samples: &mut [f32], rng: &mut StdRng) {
         let scramble = self.scramble_range.ind_sample(rng);
         ld::sample_1d(samples, scramble, self.samples_taken as u32);
         rng.shuffle(samples);
     }
+
     fn max_spp(&self) -> usize {
         self.max_spp
     }
+
     fn has_samples(&self) -> bool {
         self.region.current.1 != self.region.end.1
     }
+
     fn dimensions(&self) -> (u32, u32) {
         self.region.dim
     }
+
     fn select_block(&mut self, start: (u32, u32)) {
         self.region.select_region(start);
     }
+
     fn get_region(&self) -> &Region {
         &self.region
     }
+
     fn report_results(&mut self, samples: &[ImageSample]) -> bool {
         // If we've hit taken the max samples per pixel or don't need to super sample
         // this pixel advance to the next one

@@ -24,13 +24,13 @@ impl<'a, 'b> Intersection<'a, 'b> {
     /// or if the instance member of `dg` is None
     pub fn new(
         dg: DifferentialGeometry<'a>,
-        inst: &'b Instance,
-        mat: &'b dyn Material,
-    ) -> Intersection<'a, 'b> {
-        Intersection {
-            dg: dg,
-            instance: inst,
-            material: mat,
+        instance: &'b Instance,
+        material: &'b dyn Material,
+    ) -> Self {
+        Self {
+            dg,
+            instance,
+            material,
         }
     }
 }

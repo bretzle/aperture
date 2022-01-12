@@ -20,36 +20,31 @@ pub struct Colorf {
 impl Colorf {
     /// Create an RGB color
     pub fn new(r: f32, g: f32, b: f32) -> Colorf {
-        Colorf {
-            r: r,
-            g: g,
-            b: b,
-            a: 1.0,
-        }
+        Colorf { r, g, b, a: 1.0 }
     }
+
     /// Create an RGB color
     pub fn with_alpha(r: f32, g: f32, b: f32, a: f32) -> Colorf {
-        Colorf {
-            r: r,
-            g: g,
-            b: b,
-            a: a,
-        }
+        Colorf { r, g, b, a }
     }
+
     /// Create an RGB color using the same value for all channels
     pub fn broadcast(r: f32) -> Colorf {
         Colorf {
-            r: r,
+            r,
             g: r,
             b: r,
             a: r,
         }
     }
+
     /// Create a black color
     pub fn black() -> Colorf {
         Colorf::broadcast(0.0)
     }
+
     /// Clamp the color values between [0, 1]
+    #[must_use]
     pub fn clamp(&self) -> Colorf {
         Colorf {
             r: linalg::clamp(self.r, 0.0, 1.0),
@@ -58,18 +53,22 @@ impl Colorf {
             a: linalg::clamp(self.a, 0.0, 1.0),
         }
     }
+
     /// Compute the luminance of the color
     pub fn luminance(&self) -> f32 {
         0.2126 * self.r + 0.7152 * self.g + 0.0722 * self.b
     }
+
     /// Check if the color is black
     pub fn is_black(&self) -> bool {
         self.r == 0f32 && self.g == 0f32 && self.b == 0f32
     }
+
     /// Check if any of the color channels are NaN
     pub fn has_nans(&self) -> bool {
         f32::is_nan(self.r) || f32::is_nan(self.g) || f32::is_nan(self.b) || f32::is_nan(self.a)
     }
+
     /// Check if any of the color channels are infinite
     pub fn has_infs(&self) -> bool {
         f32::is_infinite(self.r)
@@ -77,7 +76,9 @@ impl Colorf {
             || f32::is_infinite(self.b)
             || f32::is_infinite(self.a)
     }
+
     /// Convert the linear RGB color to sRGB
+    #[must_use]
     pub fn to_srgb(&self) -> Colorf {
         let a = 0.055f32;
         let b = 1f32 / 2.4;
@@ -91,7 +92,9 @@ impl Colorf {
         }
         srgb
     }
+
     /// Return the color with values { e^r, e^g, e^b }
+    #[must_use]
     pub fn exp(&self) -> Colorf {
         Colorf {
             r: f32::exp(self.r),

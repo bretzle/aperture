@@ -24,12 +24,12 @@ impl Receiver {
         material: Arc<dyn Material + Send + Sync>,
         transform: AnimatedTransform,
         tag: String,
-    ) -> Receiver {
-        Receiver {
-            geom: geom,
-            material: material,
-            transform: transform,
-            tag: tag,
+    ) -> Self {
+        Self {
+            geom,
+            material,
+            transform,
+            tag,
         }
     }
     /// Test the ray for intersection against this insance of geometry.

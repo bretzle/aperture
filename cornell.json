@@ -2,7 +2,7 @@
 	"film": {
 		"width": 800,
 		"height": 600,
-		"samples": 4,
+		"samples": 8,
 		"frames": 1,
 		"start_frame": 0,
 		"end_frame": 0,

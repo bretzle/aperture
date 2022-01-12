@@ -19,28 +19,30 @@ pub struct MitchellNetravali {
 }
 
 impl MitchellNetravali {
-    pub fn new(w: f32, h: f32, b: f32, c: f32) -> MitchellNetravali {
-        if b < 0.0 || b > 1.0 {
+    pub fn new(w: f32, h: f32, b: f32, c: f32) -> Self {
+        if !(0.0..=1.0).contains(&b) {
             println!(
                 "Warning! Mitchell-Netravali b param = {} is out of bounds, clamping in range",
                 b
             );
         }
-        if c < 0.0 || c > 1.0 {
+        if !(0.0..=1.0).contains(&c) {
             println!(
                 "Warning! Mitchell-Netravali c param = {} is out of bounds, clamping in range",
                 c
             );
         }
-        MitchellNetravali {
-            w: w,
-            h: h,
+
+        Self {
+            w,
+            h,
             inv_w: 1.0 / w,
             inv_h: 1.0 / h,
             b: linalg::clamp(b, 0.0, 1.0),
             c: linalg::clamp(c, 0.0, 1.0),
         }
     }
+
     /// Compute a 1d weight for the filter. Note that the Mitchell-Netravali
     /// filter is defined on [-2, 2] so x should be in this range
     fn weight_1d(&self, x: f32) -> f32 {
@@ -66,15 +68,19 @@ impl Filter for MitchellNetravali {
     fn weight(&self, x: f32, y: f32) -> f32 {
         self.weight_1d(2.0 * x * self.inv_w) * self.weight_1d(2.0 * y * self.inv_h)
     }
+
     fn width(&self) -> f32 {
         self.w
     }
+
     fn inv_width(&self) -> f32 {
         self.inv_w
     }
+
     fn height(&self) -> f32 {
         self.h
     }
+
     fn inv_height(&self) -> f32 {
         self.inv_h
     }

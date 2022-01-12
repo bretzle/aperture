@@ -13,20 +13,24 @@ pub struct Point {
 impl Point {
     /// Initialize the point and set values for x, y, z
     pub fn new(x: f32, y: f32, z: f32) -> Point {
-        Point { x: x, y: y, z: z }
+        Point { x, y, z }
     }
+
     /// Initialize the point with the same value of x, y, z
     pub fn broadcast(x: f32) -> Point {
-        Point { x: x, y: x, z: x }
+        Point { x, y: x, z: x }
     }
+
     /// Initialize a point to be all 0 values
     pub fn origin() -> Point {
         Point::broadcast(0.0)
     }
+
     /// Compute the squared distance between this point and another
     pub fn distance_sqr(&self, a: &Point) -> f32 {
         (*self - *a).length_sqr()
     }
+
     /// Compute the distance between this point and another
     pub fn distance(&self, a: &Point) -> f32 {
         (*self - *a).length()

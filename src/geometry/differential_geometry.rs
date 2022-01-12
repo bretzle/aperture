@@ -38,18 +38,18 @@ impl<'a> DifferentialGeometry<'a> {
         dp_du: &Vector,
         dp_dv: &Vector,
         geom: &'a (dyn Geometry + 'a),
-    ) -> DifferentialGeometry<'a> {
+    ) -> Self {
         let n = linalg::cross(dp_du, dp_dv).normalized();
-        DifferentialGeometry {
+        Self {
             p: *p,
             n: Normal::new(n.x, n.y, n.z),
             ng: ng.normalized(),
-            u: u,
-            v: v,
-            time: time,
+            u,
+            v,
+            time,
             dp_du: *dp_du,
             dp_dv: *dp_dv,
-            geom: geom,
+            geom,
         }
     }
     /// Setup the differential geometry using the normal passed for the surface normal
@@ -62,18 +62,18 @@ impl<'a> DifferentialGeometry<'a> {
         dp_du: &Vector,
         dp_dv: &Vector,
         geom: &'a (dyn Geometry + 'a),
-    ) -> DifferentialGeometry<'a> {
+    ) -> Self {
         let nn = n.normalized();
-        DifferentialGeometry {
+        Self {
             p: *p,
             n: nn,
             ng: nn,
-            u: u,
-            v: v,
-            time: time,
+            u,
+            v,
+            time,
             dp_du: *dp_du,
             dp_dv: *dp_dv,
-            geom: geom,
+            geom,
         }
     }
 }

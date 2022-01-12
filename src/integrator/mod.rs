@@ -52,6 +52,7 @@ pub trait Integrator {
         rng: &mut StdRng,
         alloc: &Allocator,
     ) -> Colorf;
+
     /// Compute the color of specularly reflecting light off the intersection
     fn specular_reflection(
         &self,
@@ -84,6 +85,7 @@ pub trait Integrator {
         }
         refl
     }
+
     /// Compute the color of specularly transmitted light through the intersection
     fn specular_transmission(
         &self,
@@ -117,6 +119,7 @@ pub trait Integrator {
         }
         transmit
     }
+
     /// Uniformly sample the contribution of a randomly chosen light in the scene
     /// to the illumination of this BSDF at the point
     ///
@@ -152,6 +155,7 @@ pub trait Integrator {
             time,
         )
     }
+
     /// Estimate the direct light contribution to the surface being shaded by the light
     /// using multiple importance sampling
     ///
@@ -209,7 +213,9 @@ pub trait Integrator {
                 let mut li = Colorf::black();
                 if let Some(h) = scene.intersect(&mut ray) {
                     if let Instance::Emitter(ref e) = *h.instance {
-                        if e as *const dyn Light == light as *const dyn Light {
+                        // FIXME
+                        #[allow(clippy::vtable_address_comparisons)]
+                        if std::ptr::eq(e as *const dyn Light, light as *const dyn Light) {
                             li = e.radiance(&-w_i, &h.dg.p, &h.dg.ng, time)
                         }
                     }

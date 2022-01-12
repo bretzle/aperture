@@ -105,15 +105,15 @@ impl Camera {
         let tan_fov = f32::tan(linalg::to_radians(fov) / 2.0);
         let scaling = Vector::new(tan_fov, tan_fov, 1.0);
         Camera {
-            cam_world: cam_world,
-            raster_screen: raster_screen,
+            cam_world,
+            raster_screen,
             proj_div_inv: Transform::from_mat(&proj_div).inverse(),
             shutter_open: 0.0,
             shutter_close: 0.0,
-            shutter_size: shutter_size,
+            shutter_size,
             fov: CameraFov::Unanimated(fov),
-            scaling: scaling,
-            active_at: active_at,
+            scaling,
+            active_at,
         }
     }
     /// Create a camera with some orientation in the world specified by `cam_world`
@@ -167,15 +167,15 @@ impl Camera {
         let tan_fov = f32::tan(linalg::to_radians(fovs[0]) / 2.0);
         let scaling = Vector::new(tan_fov, tan_fov, 1.0);
         Camera {
-            cam_world: cam_world,
-            raster_screen: raster_screen,
+            cam_world,
+            raster_screen,
             proj_div_inv: Transform::from_mat(&proj_div).inverse(),
             shutter_open: 0.0,
             shutter_close: 0.0,
-            shutter_size: shutter_size,
+            shutter_size,
             fov: CameraFov::Animated(BSpline::new(fov_spline_degree, fovs, fov_knots)),
-            scaling: scaling,
-            active_at: active_at,
+            scaling,
+            active_at,
         }
     }
     /// Update the camera's shutter open/close time for this new frame

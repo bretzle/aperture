@@ -109,9 +109,9 @@ impl Emitter {
         */
         Emitter {
             emitter: EmitterType::Area(geom, material),
-            emission: emission,
-            transform: transform,
-            tag: tag,
+            emission,
+            transform,
+            tag,
         }
     }
     /// Create a point light at the origin that is transformed by `transform` to its location
@@ -119,9 +119,9 @@ impl Emitter {
     pub fn point(transform: AnimatedTransform, emission: AnimatedColor, tag: String) -> Emitter {
         Emitter {
             emitter: EmitterType::Point,
-            emission: emission,
-            transform: transform,
-            tag: tag,
+            emission,
+            transform,
+            tag,
         }
     }
     /// Test the ray for intersection against this insance of geometry.
@@ -217,12 +217,11 @@ impl Light for Emitter {
             }
         }
     }
+
     fn delta_light(&self) -> bool {
-        match self.emitter {
-            EmitterType::Point => true,
-            _ => false,
-        }
+        matches!(self.emitter, EmitterType::Point)
     }
+
     fn pdf(&self, p: &Point, w_i: &Vector, time: f32) -> f32 {
         match self.emitter {
             EmitterType::Point => 0.0,

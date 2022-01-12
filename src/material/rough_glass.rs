@@ -49,12 +49,12 @@ impl RoughGlass {
         transmit: Arc<dyn Texture + Send + Sync>,
         eta: Arc<dyn Texture + Send + Sync>,
         roughness: Arc<dyn Texture + Send + Sync>,
-    ) -> RoughGlass {
-        RoughGlass {
-            reflect: reflect,
-            transmit: transmit,
-            eta: eta,
-            roughness: roughness,
+    ) -> Self {
+        Self {
+            reflect,
+            transmit,
+            eta,
+            roughness,
         }
     }
 }

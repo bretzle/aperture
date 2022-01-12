@@ -60,14 +60,13 @@
 //! ```
 //!
 
-use std::sync::Arc;
-
-use crate::film::AnimatedColor;
-use crate::geometry::{
-    BBox, Boundable, BoundableGeom, Emitter, Intersection, Receiver, SampleableGeom,
+use crate::{
+    film::AnimatedColor,
+    geometry::{BBox, Boundable, BoundableGeom, Emitter, Intersection, Receiver, SampleableGeom},
+    linalg::{AnimatedTransform, Ray},
+    material::Material,
 };
-use crate::linalg::{AnimatedTransform, Ray};
-use crate::material::Material;
+use std::sync::Arc;
 
 /// Defines an instance of some geometry with its own transform and material
 pub enum Instance {
@@ -85,6 +84,7 @@ impl Instance {
     ) -> Instance {
         Instance::Receiver(Receiver::new(geom, material, transform, tag))
     }
+
     /// Create an instance of the geometry in the scene that will emit and receive light
     pub fn area_light(
         geom: Arc<dyn SampleableGeom + Send + Sync>,
@@ -95,6 +95,7 @@ impl Instance {
     ) -> Instance {
         Instance::Emitter(Emitter::area(geom, material, emission, transform, tag))
     }
+
     /// Create a point light at the origin that is transformed by `transform` to its location
     /// in the world
     pub fn point_light(
@@ -104,6 +105,7 @@ impl Instance {
     ) -> Instance {
         Instance::Emitter(Emitter::point(transform, emission, tag))
     }
+
     /// Test the ray for intersection against this insance of geometry.
     /// returns Some(Intersection) if an intersection was found and None if not.
     /// If an intersection is found `ray.max_t` will be set accordingly
@@ -112,11 +114,10 @@ impl Instance {
             Instance::Emitter(ref e) => e.intersect(ray),
             Instance::Receiver(ref r) => r.intersect(ray),
         };
-        match hit {
-            Some((dg, mat)) => Some(Intersection::new(dg, self, mat)),
-            None => None,
-        }
+
+        hit.map(|(dg, mat)| Intersection::new(dg, self, mat))
     }
+
     /// Get the tag for this instance
     pub fn tag(&self) -> &str {
         match *self {
@@ -124,6 +125,7 @@ impl Instance {
             Instance::Receiver(ref r) => &r.tag[..],
         }
     }
+
     /// Get the transform for this instance
     pub fn get_transform(&self) -> &AnimatedTransform {
         match *self {
@@ -131,6 +133,7 @@ impl Instance {
             Instance::Receiver(ref r) => r.get_transform(),
         }
     }
+
     /// Set the transform for this instance
     pub fn set_transform(&mut self, transform: AnimatedTransform) {
         match *self {

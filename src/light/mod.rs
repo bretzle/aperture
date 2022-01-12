@@ -33,11 +33,7 @@ impl OcclusionTester {
     /// Perform the occlusion test in the scene
     pub fn occluded(&self, scene: &Scene) -> bool {
         let mut r = self.ray;
-        if let Some(_) = scene.intersect(&mut r) {
-            true
-        } else {
-            false
-        }
+        scene.intersect(&mut r).is_some()
     }
 }
 

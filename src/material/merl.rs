@@ -48,7 +48,7 @@ pub struct Merl {
 impl Merl {
     /// Create a new MERL BRDF by loading the refletance data from a MERL BRDF
     /// database file
-    pub fn load_file(path: &Path) -> Merl {
+    pub fn load_file(path: &Path) -> Self {
         let file = match File::open(path) {
             Ok(f) => f,
             Err(e) => {
@@ -85,11 +85,11 @@ impl Merl {
                 brdf[3 * i + c] = f32::max(0.0, x);
             }
         }
-        Merl {
-            brdf: brdf,
-            n_theta_h: n_theta_h,
-            n_theta_d: n_theta_d,
-            n_phi_d: n_phi_d,
+        Self {
+            brdf,
+            n_theta_h,
+            n_theta_d,
+            n_phi_d,
         }
     }
 }

@@ -49,12 +49,13 @@ impl AnimatedMeshData {
         times: Vec<f32>,
     ) -> AnimatedMeshData {
         AnimatedMeshData {
-            positions: positions,
-            normals: normals,
-            texcoords: texcoords,
-            times: times,
+            positions,
+            normals,
+            texcoords,
+            times,
         }
     }
+
     /// Get the active indices in the buffers for some time
     fn active_keyframes(&self, time: f32) -> (usize, Option<usize>) {
         match self
@@ -73,6 +74,7 @@ impl AnimatedMeshData {
             }
         }
     }
+
     /// Get the position at some time
     fn position(&self, i: usize, time: f32) -> Point {
         match self.active_keyframes(time) {
@@ -85,6 +87,7 @@ impl AnimatedMeshData {
             }
         }
     }
+
     /// Get the normal at some time
     fn normal(&self, i: usize, time: f32) -> Normal {
         match self.active_keyframes(time) {
@@ -97,6 +100,7 @@ impl AnimatedMeshData {
             }
         }
     }
+
     /// Get the texture coordinate at some time
     fn texcoord(&self, i: usize, time: f32) -> Point {
         match self.active_keyframes(time) {
@@ -120,7 +124,7 @@ pub struct AnimatedMesh {
 impl AnimatedMesh {
     /// Create a new AnimatedMesh from the meshes passed. It's assumed the meshes
     /// are sorted in ascending time
-    pub fn new(meshes: Vec<Arc<Mesh>>, times: Vec<f32>) -> AnimatedMesh {
+    pub fn new(meshes: Vec<Arc<Mesh>>, times: Vec<f32>) -> Self {
         let pos = meshes
             .iter()
             .map(|m| m.bvh.iter().next().unwrap().positions.clone())
@@ -139,7 +143,7 @@ impl AnimatedMesh {
             .iter()
             .map(|t| AnimatedTriangle::new(t.a, t.b, t.c, data.clone()))
             .collect();
-        AnimatedMesh {
+        Self {
             bvh: BVH::new(16, tris, data.times[0], data.times[1]),
         }
     }
@@ -171,13 +175,8 @@ pub struct AnimatedTriangle {
 
 impl AnimatedTriangle {
     /// Create a new triangle representing a triangle within the mesh passed
-    pub fn new(a: usize, b: usize, c: usize, data: Arc<AnimatedMeshData>) -> AnimatedTriangle {
-        AnimatedTriangle {
-            a: a,
-            b: b,
-            c: c,
-            data: data,
-        }
+    pub fn new(a: usize, b: usize, c: usize, data: Arc<AnimatedMeshData>) -> Self {
+        Self { a, b, c, data }
     }
 }
 

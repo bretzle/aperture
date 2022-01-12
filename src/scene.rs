@@ -154,11 +154,11 @@ impl Scene {
             "Aborting: the scene does not have any objects!"
         );
         let scene = Scene {
-            cameras: cameras,
+            cameras,
             active_camera: None,
             // TODO: Read time parameters from the scene file, update BVH every few frames
             bvh: BVH::new(4, instances, 0.0, frame_info.time),
-            integrator: integrator,
+            integrator,
         };
         (scene, rt, spp, frame_info)
     }
@@ -873,10 +873,9 @@ fn load_objects(
                     .expect("Object material name must be a string");
                 let mat = materials
                     .get(mat_name)
-                    .expect(&format!(
-                        "Material {} was not found in the material list",
-                        mat_name
-                    ))
+                    .unwrap_or_else(|| {
+                        panic!("Material {} was not found in the material list", mat_name)
+                    })
                     .clone();
                 let geom = load_sampleable_geometry(
                     o.get("geometry")
@@ -895,10 +894,9 @@ fn load_objects(
                 .expect("Object material name must be a string");
             let mat = materials
                 .get(mat_name)
-                .expect(&format!(
-                    "Material {} was not found in the material list",
-                    mat_name
-                ))
+                .unwrap_or_else(|| {
+                    panic!("Material {} was not found in the material list", mat_name)
+                })
                 .clone();
             let geom = load_geometry(
                 path,
@@ -1130,12 +1128,7 @@ fn load_animated_color(elem: &Value) -> Option<AnimatedColor> {
     }
     // Check if this is actually just a single color value
     if array[0].is_number() {
-        match load_color(elem) {
-            Some(c) => Some(AnimatedColor::with_keyframes(vec![ColorKeyframe::new(
-                &c, 0.0,
-            )])),
-            None => None,
-        }
+        load_color(elem).map(|c| AnimatedColor::with_keyframes(vec![ColorKeyframe::new(&c, 0.0)]))
     } else {
         let mut v = Vec::new();
         for c in array.iter() {

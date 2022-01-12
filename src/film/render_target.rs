@@ -20,12 +20,8 @@ pub struct ImageSample {
 }
 
 impl ImageSample {
-    pub fn new(x: f32, y: f32, color: Colorf) -> ImageSample {
-        ImageSample {
-            x: x,
-            y: y,
-            color: color,
-        }
+    pub fn new(x: f32, y: f32, color: Colorf) -> Self {
+        Self { x, y, color }
     }
 }
 
@@ -82,15 +78,16 @@ impl RenderTarget {
         }
 
         RenderTarget {
-            width: width,
-            height: height,
-            pixels_locked: pixels_locked,
+            width,
+            height,
+            pixels_locked,
             lock_size: (lock_size.0 as i32, lock_size.1 as i32),
-            filter: filter,
-            filter_table: filter_table,
-            filter_pixel_width: filter_pixel_width,
+            filter,
+            filter_table,
+            filter_pixel_width,
         }
     }
+
     /// Write all the image samples to the render target
     pub fn write(&self, samples: &[ImageSample], region: &Region) {
         // Determine which blocks we touch with our set of samples
@@ -204,6 +201,7 @@ impl RenderTarget {
             }
         }
     }
+
     /// Clear the render target to black
     pub fn clear(&mut self) {
         let x_blocks = self.width / self.lock_size.0 as usize;
@@ -218,10 +216,12 @@ impl RenderTarget {
             }
         }
     }
+
     /// Get the dimensions of the render target
     pub fn dimensions(&self) -> (usize, usize) {
         (self.width, self.height)
     }
+
     /// Convert the floating point color buffer to 24bpp sRGB for output to an image
     pub fn get_render(&self) -> Vec<u8> {
         let mut render: Vec<u8> = iter::repeat(0u8)
@@ -251,6 +251,7 @@ impl RenderTarget {
         }
         render
     }
+
     /// Get the blocks that have had pixels written too them. Returns the size of each block,
     /// a list of block positions in pixels and then pixels for the blocks (in a single f32 vec).
     /// The block's pixels are stored in the same order their position appears in the block
@@ -267,7 +268,7 @@ impl RenderTarget {
                 let block_y_start = by * block_size.1;
                 let block_idx = by * x_blocks + bx;
                 let pixels = self.pixels_locked[block_idx].lock().unwrap();
-                if pixels.iter().fold(true, |acc, px| acc && px.a != 0.0) {
+                if pixels.iter().all(|px| px.a != 0.0) {
                     blocks.push((block_x_start, block_y_start));
                     for y in 0..block_size.1 {
                         for x in 0..block_size.0 {
@@ -282,6 +283,7 @@ impl RenderTarget {
         }
         (block_size, blocks, render)
     }
+
     /// Get the raw floating point framebuffer
     pub fn get_renderf32(&self) -> Vec<f32> {
         let mut render: Vec<f32> = iter::repeat(0.0)

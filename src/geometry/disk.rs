@@ -32,10 +32,10 @@ pub struct Disk {
 
 impl Disk {
     /// Create a new disk with some inner and outer radius
-    pub fn new(radius: f32, inner_radius: f32) -> Disk {
-        Disk {
-            radius: radius,
-            inner_radius: inner_radius,
+    pub fn new(radius: f32, inner_radius: f32) -> Self {
+        Self {
+            radius,
+            inner_radius,
         }
     }
 }

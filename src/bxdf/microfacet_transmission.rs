@@ -28,13 +28,14 @@ impl<'a> MicrofacetTransmission<'a> {
         c: &Colorf,
         fresnel: &'a Dielectric,
         microfacet: &'a dyn MicrofacetDistribution,
-    ) -> MicrofacetTransmission<'a> {
-        MicrofacetTransmission {
+    ) -> Self {
+        Self {
             reflectance: *c,
-            fresnel: fresnel,
-            microfacet: microfacet,
+            fresnel,
+            microfacet,
         }
     }
+
     /// Convenience method for getting `eta_i` and `eta_t` in the right order for if
     /// we're entering or exiting this material based on the direction of the outgoing
     /// ray.
@@ -45,6 +46,7 @@ impl<'a> MicrofacetTransmission<'a> {
             (self.fresnel.eta_t, self.fresnel.eta_i)
         }
     }
+
     /// Compute the Jacobian for the change of variables (see [Walter et al 07] section 4.2),
     /// here we compute equation 17 in that section.
     fn jacobian(w_o: &Vector, w_i: &Vector, w_h: &Vector, eta: (f32, f32)) -> f32 {
@@ -57,6 +59,7 @@ impl<'a> MicrofacetTransmission<'a> {
             0.0
         }
     }
+
     fn half_vector(w_o: &Vector, w_i: &Vector, eta: (f32, f32)) -> Vector {
         (-eta.1 * *w_i - eta.0 * *w_o).normalized()
     }
@@ -69,6 +72,7 @@ impl<'a> BxDF for MicrofacetTransmission<'a> {
         e.insert(BxDFType::Transmission);
         e
     }
+
     fn eval(&self, w_o: &Vector, w_i: &Vector) -> Colorf {
         if bxdf::same_hemisphere(w_o, w_i) {
             return Colorf::black();
@@ -90,6 +94,7 @@ impl<'a> BxDF for MicrofacetTransmission<'a> {
             * (f * g * d)
             * jacobian
     }
+
     fn sample(&self, w_o: &Vector, samples: &(f32, f32)) -> (Colorf, Vector, f32) {
         let mut w_h = self.microfacet.sample(w_o, samples);
         if !bxdf::same_hemisphere(w_o, &w_h) {
@@ -106,6 +111,7 @@ impl<'a> BxDF for MicrofacetTransmission<'a> {
             (Colorf::black(), Vector::broadcast(0.0), 0.0)
         }
     }
+
     fn pdf(&self, w_o: &Vector, w_i: &Vector) -> f32 {
         if bxdf::same_hemisphere(w_o, w_i) {
             0.0

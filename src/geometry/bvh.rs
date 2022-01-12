@@ -1,12 +1,10 @@
 //! Provides a simple SAH split based BVH2 that stores types implementing the Boundable trait
 
-use std::f32;
-use std::iter::repeat;
-use std::slice::Iter;
-
 use crate::geometry::{BBox, Boundable};
 use crate::linalg::{Axis, Point, Ray, Vector};
 use crate::partition::partition;
+use std::f32;
+use std::slice::Iter;
 
 /// A standard BVH2 that stores objects that can report their bounds in some space
 /// via the `Boundable` trait. The BVH is constructed using a SAH partitioning scheme
@@ -26,12 +24,13 @@ pub struct BVH<T: Boundable> {
 
 impl<T: Boundable> BVH<T> {
     /// Create a new non-animated BVH holding the geometry
-    pub fn unanimated(max_geom: usize, geometry: Vec<T>) -> BVH<T> {
+    pub fn unanimated(max_geom: usize, geometry: Vec<T>) -> Self {
         BVH::<T>::new(max_geom, geometry, 0.0, 0.0)
     }
+
     /// Create a new BVH using a SAH construction algorithm which holds the scene
     /// geometry for some time period.
-    pub fn new(max_geom: usize, geometry: Vec<T>, start: f32, end: f32) -> BVH<T> {
+    pub fn new(max_geom: usize, geometry: Vec<T>, start: f32, end: f32) -> Self {
         assert!(!geometry.is_empty());
         let mut flat_tree = Vec::new();
         let mut ordered_geom = Vec::with_capacity(geometry.len());
@@ -61,11 +60,11 @@ impl<T: Boundable> BVH<T> {
             // TODO: I'm not sure if there's a better way that we can re-sort the geometry by the
             // indices in ordered geom
         }
-        BVH {
-            geometry: geometry,
-            ordered_geom: ordered_geom,
+        Self {
+            geometry,
+            ordered_geom,
             tree: flat_tree,
-            max_geom: max_geom,
+            max_geom,
         }
     }
     /// Re-build the BVH for the time range passed
@@ -194,7 +193,7 @@ impl<T: Boundable> BVH<T> {
         // sense to do
         if (centroids.max[split_axis] - centroids.min[split_axis]).abs() < f32::EPSILON {
             if ngeom < max_geom {
-                return BVH::build_leaf(&mut build_info[..], ordered_geom, bounds);
+                return BVH::build_leaf(build_info, ordered_geom, bounds);
             } else {
                 let l = Box::new(BVH::build(
                     &mut build_info[..mid],
@@ -326,7 +325,7 @@ impl<T: Boundable> BVH<T> {
     }
     /// Flatten the BVH sub-tree pointed too by the node passed into the vec passed
     /// Returns the index that the node was inserted at in the tree
-    fn flatten_tree(node: &Box<BuildNode>, tree: &mut Vec<FlatNode>) -> usize {
+    fn flatten_tree(node: &BuildNode, tree: &mut Vec<FlatNode>) -> usize {
         let offset = tree.len();
         match node.node {
             BuildNodeData::Interior {
@@ -386,23 +385,18 @@ struct FlatNode {
 
 impl FlatNode {
     /// Construct a new flattened interior node
-    fn interior(bounds: BBox, second_child: usize, axis: Axis) -> FlatNode {
-        FlatNode {
-            bounds: bounds,
-            node: FlatNodeData::Interior {
-                second_child: second_child,
-                axis: axis,
-            },
+    fn interior(bounds: BBox, second_child: usize, axis: Axis) -> Self {
+        Self {
+            bounds,
+            node: FlatNodeData::Interior { second_child, axis },
         }
     }
+
     /// Construct a new flattened leaf node
-    fn leaf(bounds: BBox, geom_offset: usize, ngeom: usize) -> FlatNode {
-        FlatNode {
-            bounds: bounds,
-            node: FlatNodeData::Leaf {
-                geom_offset: geom_offset,
-                ngeom: ngeom,
-            },
+    fn leaf(bounds: BBox, geom_offset: usize, ngeom: usize) -> Self {
+        Self {
+            bounds,
+            node: FlatNodeData::Leaf { geom_offset, ngeom },
         }
     }
 }
@@ -417,13 +411,13 @@ struct GeomInfo<'a, T: 'a> {
 
 impl<'a, T: Boundable> GeomInfo<'a, T> {
     /// Create a new reference to some geometry
-    fn new(geom: &'a T, geom_idx: usize, start: f32, end: f32) -> GeomInfo<T> {
+    fn new(geom: &'a T, geom_idx: usize, start: f32, end: f32) -> Self {
         let bounds = geom.bounds(start, end);
-        GeomInfo {
-            geom: geom,
-            geom_idx: geom_idx,
+        Self {
+            geom,
+            geom_idx,
             center: bounds.lerp(0.5, 0.5, 0.5),
-            bounds: bounds,
+            bounds,
         }
     }
 }
@@ -460,31 +454,28 @@ struct BuildNode {
 }
 
 impl BuildNode {
-    fn interior(children: [Box<BuildNode>; 2], split_axis: Axis) -> BuildNode {
+    fn interior(children: [Box<BuildNode>; 2], split_axis: Axis) -> Self {
         let bounds = children[0].bounds.box_union(&children[1].bounds);
-        BuildNode {
+        Self {
             node: BuildNodeData::Interior {
-                children: children,
-                split_axis: split_axis,
+                children,
+                split_axis,
             },
-            bounds: bounds,
+            bounds,
         }
     }
 
-    fn leaf(ngeom: usize, geom_offset: usize, bounds: BBox) -> BuildNode {
-        BuildNode {
-            node: BuildNodeData::Leaf {
-                ngeom: ngeom,
-                geom_offset: geom_offset,
-            },
-            bounds: bounds,
+    fn leaf(ngeom: usize, geom_offset: usize, bounds: BBox) -> Self {
+        Self {
+            node: BuildNodeData::Leaf { ngeom, geom_offset },
+            bounds,
         }
     }
 
     fn _print_tree(&self, depth: usize) {
-        let ident: String = repeat(" ").take(depth).collect();
+        let ident = str::repeat(" ", depth);
         println!("{}BuildNode: {{", ident);
-        let pad: String = repeat(" ").take(depth + 2).collect();
+        let pad = str::repeat(" ", depth + 2);
         println!("{}bounds: {:?}", pad, self.bounds);
         match self.node {
             BuildNodeData::Interior {

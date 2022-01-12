@@ -19,10 +19,10 @@ pub struct SpecularTransmission<'a> {
 
 impl<'a> SpecularTransmission<'a> {
     /// Create a specularly transmissive BTDF with the color and Fresnel term
-    pub fn new(c: &Colorf, fresnel: &'a Dielectric) -> SpecularTransmission<'a> {
-        SpecularTransmission {
+    pub fn new(c: &Colorf, fresnel: &'a Dielectric) -> Self {
+        Self {
             transmission: *c,
-            fresnel: fresnel,
+            fresnel,
         }
     }
 }
@@ -34,11 +34,13 @@ impl<'a> BxDF for SpecularTransmission<'a> {
         e.insert(BxDFType::Transmission);
         e
     }
+
     /// We'll never exactly hit the specular transmission direction with some pair
     /// so this just returns black. Use `sample` instead
     fn eval(&self, _: &Vector, _: &Vector) -> Colorf {
         Colorf::broadcast(0.0)
     }
+
     /// Sampling the specular BTDF just returns the specular transmission direction
     /// for the light leaving along `w_o`
     fn sample(&self, w_o: &Vector, _: &(f32, f32)) -> (Colorf, Vector, f32) {

@@ -2,10 +2,9 @@
 //! targeted for usage in a BVH
 //! TODO: Should I also implement the Geometry trait?
 
-use std::f32;
-use std::ops::{Index, IndexMut};
-
 use crate::linalg::{self, Axis, Point, Ray, Vector};
+use std::f32::{INFINITY, NEG_INFINITY};
+use std::ops::{Index, IndexMut};
 
 /// A box between the min and max points
 #[derive(Clone, Copy, Debug)]
@@ -18,19 +17,23 @@ impl BBox {
     /// Create a new degenerate box
     pub fn new() -> BBox {
         BBox {
-            min: Point::broadcast(f32::INFINITY),
-            max: Point::broadcast(f32::NEG_INFINITY),
+            min: Point::broadcast(INFINITY),
+            max: Point::broadcast(NEG_INFINITY),
         }
     }
+
     /// Create a new box containing only the point passed
     pub fn singular(p: Point) -> BBox {
         BBox { min: p, max: p }
     }
+
     /// Create a new box spanning [min, max]
     pub fn span(min: Point, max: Point) -> BBox {
-        BBox { min: min, max: max }
+        BBox { min, max }
     }
+
     /// Get a box representing the union of this box with the one passed
+    #[must_use]
     pub fn box_union(&self, b: &BBox) -> BBox {
         BBox {
             min: Point::new(
@@ -45,7 +48,9 @@ impl BBox {
             ),
         }
     }
+
     /// Get a box that contains the passed point, by expanding this box to reach the point
+    #[must_use]
     pub fn point_union(&self, p: &Point) -> BBox {
         BBox {
             min: Point::new(
@@ -60,6 +65,7 @@ impl BBox {
             ),
         }
     }
+
     /// Compute the axis along which the box is longest
     pub fn max_extent(&self) -> Axis {
         let d = self.max - self.min;
@@ -71,6 +77,7 @@ impl BBox {
             Axis::Z
         }
     }
+
     /// Compute the point in the box at some t value along each axis
     pub fn lerp(&self, tx: f32, ty: f32, tz: f32) -> Point {
         Point::new(
@@ -79,15 +86,18 @@ impl BBox {
             linalg::lerp(tz, &self.min.z, &self.max.z),
         )
     }
+
     /// Find the position of the point relative to the box, with `min` being the origin
     pub fn offset(&self, p: &Point) -> Vector {
         (*p - self.min) / (self.max - self.min)
     }
+
     /// Compute the surface area of the box
     pub fn surface_area(&self) -> f32 {
         let d = self.max - self.min;
         2.0 * (d.x * d.y + d.x * d.z + d.y * d.z)
     }
+
     /// Optimized ray-box intersection test, for use in the BVH traversal where we have
     /// pre-computed the ray's inverse direction and which directions are negative, indicated
     /// by a 1 for negative and 0 for non-negative
@@ -121,6 +131,12 @@ impl BBox {
             tmax = tzmax;
         }
         tmin < r.max_t && tmax > r.min_t
+    }
+}
+
+impl Default for BBox {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

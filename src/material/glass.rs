@@ -44,11 +44,11 @@ impl Glass {
         reflect: Arc<dyn Texture + Send + Sync>,
         transmit: Arc<dyn Texture + Send + Sync>,
         eta: Arc<dyn Texture + Send + Sync>,
-    ) -> Glass {
-        Glass {
-            reflect: reflect,
-            transmit: transmit,
-            eta: eta,
+    ) -> Self {
+        Self {
+            reflect,
+            transmit,
+            eta,
         }
     }
 }

@@ -15,21 +15,26 @@ pub struct Normal {
 impl Normal {
     /// Initialize the normal and set values for x, y, z
     pub fn new(x: f32, y: f32, z: f32) -> Normal {
-        Normal { x: x, y: y, z: z }
+        Normal { x, y, z }
     }
+
     /// Initialize the normal with the same value of x, y, z
     pub fn broadcast(x: f32) -> Normal {
-        Normal { x: x, y: x, z: x }
+        Normal { x, y: x, z: x }
     }
+
     /// Compute the squared length of the normal
     pub fn length_sqr(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
+
     /// Compute the length of the normal
     pub fn length(&self) -> f32 {
         f32::sqrt(self.length_sqr())
     }
+
     /// Get a normalized copy of this normal
+    #[must_use]
     pub fn normalized(&self) -> Normal {
         let len = self.length();
         Normal {
@@ -38,7 +43,9 @@ impl Normal {
             z: self.z / len,
         }
     }
+
     /// Return a normal facing along the same direction as v
+    #[must_use]
     pub fn face_forward(&self, v: &Vector) -> Normal {
         if linalg::dot(self, v) < 0f32 {
             -*self

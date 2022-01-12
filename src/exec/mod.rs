@@ -34,15 +34,15 @@ impl Config {
         num_threads: u32,
         frame_info: FrameInfo,
         select_blocks: (usize, usize),
-    ) -> Config {
-        Config {
-            out_path: out_path,
-            scene_file: scene_file,
-            spp: spp,
-            num_threads: num_threads,
-            frame_info: frame_info,
+    ) -> Self {
+        Self {
+            out_path,
+            scene_file,
+            spp,
+            num_threads,
+            frame_info,
             current_frame: frame_info.start,
-            select_blocks: select_blocks,
+            select_blocks,
         }
     }
 }

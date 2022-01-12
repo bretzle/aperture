@@ -62,10 +62,10 @@ pub struct Sample {
 
 impl Sample {
     /// Create a new sample taking the 2D sample values from the slice
-    pub fn new(two_d: &(f32, f32), one_d: f32) -> Sample {
-        Sample {
+    pub fn new(two_d: &(f32, f32), one_d: f32) -> Self {
+        Self {
             two_d: *two_d,
-            one_d: one_d,
+            one_d,
         }
     }
 }
@@ -85,14 +85,15 @@ pub struct Region {
 
 impl Region {
     /// Create a new region starting at `start` with dimension `dim`
-    pub fn new(start: (u32, u32), dim: (u32, u32)) -> Region {
-        Region {
+    pub fn new(start: (u32, u32), dim: (u32, u32)) -> Self {
+        Self {
             current: start,
-            start: start,
+            start,
             end: (start.0 + dim.0, start.1 + dim.1),
-            dim: dim,
+            dim,
         }
     }
+
     /// Select a new region starting at region indices `start` with the same dimensions
     /// eg. with blocks of width 8 the 2nd region along x is at 16 so to get
     /// this block you'd set start.0 = 2

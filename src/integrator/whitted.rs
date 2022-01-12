@@ -34,10 +34,8 @@ pub struct Whitted {
 
 impl Whitted {
     /// Create a new Whitted integrator with the desired maximum recursion depth for rays
-    pub fn new(max_depth: u32) -> Whitted {
-        Whitted {
-            max_depth: max_depth,
-        }
+    pub fn new(max_depth: u32) -> Self {
+        Self { max_depth }
     }
 }
 

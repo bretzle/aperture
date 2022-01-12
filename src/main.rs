@@ -1,6 +1,6 @@
 use aperture::{
-    exec::{self, Exec, MultiThreaded},
-    scene,
+    exec::{Config, Exec, MultiThreaded},
+    scene::Scene,
 };
 use std::path::PathBuf;
 use std::time::SystemTime;
@@ -11,11 +11,11 @@ fn main() {
     let num_threads = num_cpus::get() as u32;
     let out_path = PathBuf::from("./");
 
-    let (mut scene, mut rt, spp, frame_info) = scene::Scene::load_file(SCENE_PATH);
+    let (mut scene, mut rt, spp, frame_info) = Scene::load_file(SCENE_PATH);
     let dim = rt.dimensions();
 
     let scene_start = SystemTime::now();
-    let mut config = exec::Config::new(
+    let mut config = Config::new(
         out_path,
         SCENE_PATH.to_string(),
         spp,

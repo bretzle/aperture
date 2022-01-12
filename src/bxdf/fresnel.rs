@@ -1,9 +1,8 @@
 //! Provides the Fresnel term trait and implementations for conductors and dielectric materials
 
-use std::f32;
-
 use crate::film::Colorf;
 use crate::linalg;
+use std::f32;
 
 /// Compute the Fresnel term for a dielectric material given the incident and transmission
 /// angles and refractive indices
@@ -12,6 +11,7 @@ fn dielectric(cos_i: f32, cos_t: f32, eta_i: f32, eta_t: f32) -> Colorf {
     let r_perp = (eta_i * cos_i - eta_t * cos_t) / (eta_i * cos_i + eta_t * cos_t);
     Colorf::broadcast(0.5 * (r_par * r_par + r_perp * r_perp))
 }
+
 /// Compute the Fresnel term for a conductor given the incident angle and the material properties
 fn conductor(cos_i: f32, eta: &Colorf, k: &Colorf) -> Colorf {
     let a = (*eta * *eta + *k * *k) * cos_i * cos_i;
@@ -43,11 +43,8 @@ impl Dielectric {
     /// Create a new Dielectric Fresnel term for the boundary between two objects.
     /// `eta_i`: refractive index of the material the light is coming from.
     /// `eta_t`: refractive index of the material the light is entering.
-    pub fn new(eta_i: f32, eta_t: f32) -> Dielectric {
-        Dielectric {
-            eta_i: eta_i,
-            eta_t: eta_t,
-        }
+    pub fn new(eta_i: f32, eta_t: f32) -> Self {
+        Self { eta_i, eta_t }
     }
 }
 
@@ -85,8 +82,8 @@ impl Conductor {
     /// Create a new Conductor Fresnel term for the object.
     /// `eta`: refractive index of the material.
     /// `k`: absorption coefficient of the material.
-    pub fn new(eta: &Colorf, k: &Colorf) -> Conductor {
-        Conductor { eta: *eta, k: *k }
+    pub fn new(eta: &Colorf, k: &Colorf) -> Self {
+        Self { eta: *eta, k: *k }
     }
 }
 

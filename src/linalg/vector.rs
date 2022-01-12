@@ -14,21 +14,26 @@ pub struct Vector {
 impl Vector {
     /// Initialize the vector and set values for x, y, z
     pub fn new(x: f32, y: f32, z: f32) -> Vector {
-        Vector { x: x, y: y, z: z }
+        Vector { x, y, z }
     }
+
     /// Initialize the vector with the same value of x, y, z
     pub fn broadcast(x: f32) -> Vector {
-        Vector { x: x, y: x, z: x }
+        Vector { x, y: x, z: x }
     }
+
     /// Compute the squared length of the vector
     pub fn length_sqr(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
+
     /// Compute the length of the vector
     pub fn length(&self) -> f32 {
         f32::sqrt(self.length_sqr())
     }
+
     /// Get a normalized copy of this vector
+    #[must_use]
     pub fn normalized(&self) -> Vector {
         let len = self.length();
         Vector {

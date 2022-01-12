@@ -12,10 +12,11 @@ pub struct AnimatedImage {
 }
 
 impl AnimatedImage {
-    pub fn new(frames: Vec<(f32, Image)>) -> AnimatedImage {
+    pub fn new(frames: Vec<(f32, Image)>) -> Self {
         assert!(frames.len() >= 2);
-        AnimatedImage { frames: frames }
+        Self { frames }
     }
+
     pub fn active_keyframes(&self, time: f32) -> (usize, Option<usize>) {
         match self
             .frames
@@ -49,6 +50,7 @@ impl Texture for AnimatedImage {
             }
         }
     }
+
     fn sample_color(&self, u: f32, v: f32, time: f32) -> Colorf {
         match self.active_keyframes(time) {
             (lo, None) => self.frames[lo].1.sample_color(u, v, time),

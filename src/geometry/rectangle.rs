@@ -29,11 +29,8 @@ pub struct Rectangle {
 
 impl Rectangle {
     /// Create a new rectangle with the desired width and height
-    pub fn new(width: f32, height: f32) -> Rectangle {
-        Rectangle {
-            width: width,
-            height: height,
-        }
+    pub fn new(width: f32, height: f32) -> Self {
+        Self { width, height }
     }
 }
 

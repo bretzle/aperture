@@ -24,8 +24,8 @@ pub struct Sphere {
 
 impl Sphere {
     /// Create a sphere with the desired radius
-    pub fn new(radius: f32) -> Sphere {
-        Sphere { radius: radius }
+    pub fn new(radius: f32) -> Self {
+        Self { radius }
     }
 }
 

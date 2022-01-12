@@ -18,15 +18,15 @@ pub struct LowDiscrepancy {
 
 impl LowDiscrepancy {
     /// Create a low discrepancy sampler to sample the image in `dim.0 * dim.1` sized blocks
-    pub fn new(dim: (u32, u32), mut spp: usize) -> LowDiscrepancy {
+    pub fn new(dim: (u32, u32), mut spp: usize) -> Self {
         if !spp.is_power_of_two() {
             spp = spp.next_power_of_two();
             print!("Warning: LowDiscrepancy sampler requires power of two samples per pixel, ");
             println!("rounding up to {}", spp);
         }
-        LowDiscrepancy {
+        Self {
             region: Region::new((0, 0), dim),
-            spp: spp,
+            spp,
             scramble_range: Range::new(0, u32::MAX),
         }
     }
@@ -54,6 +54,7 @@ impl Sampler for LowDiscrepancy {
             self.region.current.1 += 1;
         }
     }
+
     fn get_samples_2d(&mut self, samples: &mut [(f32, f32)], rng: &mut StdRng) {
         let scramble = (
             self.scramble_range.ind_sample(rng),
@@ -62,23 +63,29 @@ impl Sampler for LowDiscrepancy {
         sample_2d(samples, scramble, 0);
         rng.shuffle(samples);
     }
+
     fn get_samples_1d(&mut self, samples: &mut [f32], rng: &mut StdRng) {
         let scramble = self.scramble_range.ind_sample(rng);
         sample_1d(samples, scramble, 0);
         rng.shuffle(samples);
     }
+
     fn max_spp(&self) -> usize {
         self.spp
     }
+
     fn has_samples(&self) -> bool {
         self.region.current.1 != self.region.end.1
     }
+
     fn dimensions(&self) -> (u32, u32) {
         self.region.dim
     }
+
     fn select_block(&mut self, start: (u32, u32)) {
         self.region.select_region(start);
     }
+
     fn get_region(&self) -> &Region {
         &self.region
     }
@@ -91,6 +98,7 @@ pub fn sample_2d(samples: &mut [(f32, f32)], scramble: (u32, u32), offset: u32) 
         *s.1 = sample_02(s.0 as u32 + offset, scramble);
     }
 }
+
 /// Generate a 1D pattern of low discrepancy samples to fill the slice
 /// sample values will be normalized between [0, 1]
 pub fn sample_1d(samples: &mut [f32], scramble: u32, offset: u32) {
@@ -98,10 +106,12 @@ pub fn sample_1d(samples: &mut [f32], scramble: u32, offset: u32) {
         *s.1 = van_der_corput(s.0 as u32 + offset, scramble);
     }
 }
+
 /// Generate a sample from a scrambled (0, 2) sequence
 pub fn sample_02(n: u32, scramble: (u32, u32)) -> (f32, f32) {
     (van_der_corput(n, scramble.0), sobol(n, scramble.1))
 }
+
 /// Generate a scrambled Van der Corput sequence value
 /// as described by Kollig & Keller (2002) and in PBR
 /// method is specialized for base 2
@@ -117,6 +127,7 @@ pub fn van_der_corput(mut n: u32, scramble: u32) -> f32 {
         1.0 - f32::EPSILON,
     )
 }
+
 /// Generate a scrambled Sobol' sequence value
 /// as described by Kollig & Keller (2002) and in PBR
 /// method is specialized for base 2

@@ -142,14 +142,14 @@ impl Triangle {
         positions: Arc<Vec<Point>>,
         normals: Arc<Vec<Normal>>,
         texcoords: Arc<Vec<Point>>,
-    ) -> Triangle {
-        Triangle {
-            a: a,
-            b: b,
-            c: c,
-            positions: positions,
-            normals: normals,
-            texcoords: texcoords,
+    ) -> Self {
+        Self {
+            a,
+            b,
+            c,
+            positions,
+            normals,
+            texcoords,
         }
     }
 }

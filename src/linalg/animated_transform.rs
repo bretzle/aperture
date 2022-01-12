@@ -1,12 +1,10 @@
 //! Provides an animated transformation that moves an object between a
 //! set of specified keyframes.
 
-use std::ops::Mul;
-
-use bspline::BSpline;
-
 use crate::geometry::BBox;
 use crate::linalg::{self, quaternion, Keyframe, Transform};
+use bspline::BSpline;
+use std::ops::Mul;
 
 /// An animated transform that blends between the keyframes in its transformation
 /// list over time.
@@ -82,7 +80,7 @@ impl AnimatedTransform {
             || self
                 .keyframes
                 .iter()
-                .fold(true, |b, spline| b && spline.control_points().count() > 1)
+                .all(|spline| spline.control_points().count() > 1)
     }
 }
 

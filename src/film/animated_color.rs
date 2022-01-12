@@ -13,10 +13,10 @@ pub struct ColorKeyframe {
 }
 
 impl ColorKeyframe {
-    pub fn new(color: &Colorf, time: f32) -> ColorKeyframe {
-        ColorKeyframe {
+    pub fn new(color: &Colorf, time: f32) -> Self {
+        Self {
             color: *color,
-            time: time,
+            time,
         }
     }
 }
@@ -47,11 +47,9 @@ pub struct AnimatedColor {
 
 impl AnimatedColor {
     /// Create an animated transform that will blend between the passed keyframes
-    pub fn with_keyframes(mut keyframes: Vec<ColorKeyframe>) -> AnimatedColor {
+    pub fn with_keyframes(mut keyframes: Vec<ColorKeyframe>) -> Self {
         keyframes.sort();
-        AnimatedColor {
-            keyframes: keyframes,
-        }
+        Self { keyframes }
     }
     /// Compute the color at the desired time
     pub fn color(&self, time: f32) -> Colorf {
@@ -62,21 +60,20 @@ impl AnimatedColor {
         } else {
             // TODO: Binary search here?
             let first = self.keyframes.iter().take_while(|k| k.time < time).last();
-            let second = self.keyframes.iter().skip_while(|k| k.time < time).next();
-            if first.is_none() {
-                self.keyframes.first().unwrap().color
-            } else if second.is_none() {
-                self.keyframes.last().unwrap().color
-            } else {
-                let mut color = Colorf::black();
-                let fk = first.unwrap();
-                let sk = second.unwrap();
-                let t = (time - fk.time) / (sk.time - fk.time);
-                color.r = linalg::lerp(t, &fk.color.r, &sk.color.r);
-                color.g = linalg::lerp(t, &fk.color.g, &sk.color.g);
-                color.b = linalg::lerp(t, &fk.color.b, &sk.color.b);
-                color.a = linalg::lerp(t, &fk.color.a, &sk.color.a);
-                color
+            let second = self.keyframes.iter().find(|k| k.time >= time);
+
+            match (first, second) {
+                (None, _) => self.keyframes.first().unwrap().color,
+                (_, None) => self.keyframes.last().unwrap().color,
+                (Some(fk), Some(sk)) => {
+                    let mut color = Colorf::black();
+                    let t = (time - fk.time) / (sk.time - fk.time);
+                    color.r = linalg::lerp(t, &fk.color.r, &sk.color.r);
+                    color.g = linalg::lerp(t, &fk.color.g, &sk.color.g);
+                    color.b = linalg::lerp(t, &fk.color.b, &sk.color.b);
+                    color.a = linalg::lerp(t, &fk.color.a, &sk.color.a);
+                    color
+                }
             }
         }
     }

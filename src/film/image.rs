@@ -12,13 +12,13 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(dimensions: (usize, usize)) -> Image {
+    pub fn new(dimensions: (usize, usize)) -> Self {
         let pixels = iter::repeat(Colorf::broadcast(0.0))
             .take(dimensions.0 * dimensions.1)
             .collect();
-        Image {
+        Self {
             dim: dimensions,
-            pixels: pixels,
+            pixels,
         }
     }
     /// Add the floating point RGBAf32 pixels to the image. It is assumed that `pixels` contains

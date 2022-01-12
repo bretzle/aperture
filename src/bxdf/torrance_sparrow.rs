@@ -28,11 +28,11 @@ impl<'a> TorranceSparrow<'a> {
         c: &Colorf,
         fresnel: &'a dyn Fresnel,
         microfacet: &'a dyn MicrofacetDistribution,
-    ) -> TorranceSparrow<'a> {
-        TorranceSparrow {
+    ) -> Self {
+        Self {
             reflectance: *c,
-            fresnel: fresnel,
-            microfacet: microfacet,
+            fresnel,
+            microfacet,
         }
     }
 }
@@ -44,6 +44,7 @@ impl<'a> BxDF for TorranceSparrow<'a> {
         e.insert(BxDFType::Reflection);
         e
     }
+
     fn eval(&self, w_o: &Vector, w_i: &Vector) -> Colorf {
         let cos_to = f32::abs(bxdf::cos_theta(w_o));
         let cos_ti = f32::abs(bxdf::cos_theta(w_i));
@@ -60,6 +61,7 @@ impl<'a> BxDF for TorranceSparrow<'a> {
         let g = self.microfacet.shadowing_masking(w_i, w_o, &w_h);
         self.reflectance * f * d * g / (4.0 * cos_ti * cos_to)
     }
+
     fn sample(&self, w_o: &Vector, samples: &(f32, f32)) -> (Colorf, Vector, f32) {
         if w_o.z == 0.0 {
             return (Colorf::black(), Vector::broadcast(0.0), 0.0);
@@ -75,6 +77,7 @@ impl<'a> BxDF for TorranceSparrow<'a> {
             (self.eval(w_o, &w_i), w_i, self.pdf(w_o, &w_i))
         }
     }
+
     fn pdf(&self, w_o: &Vector, w_i: &Vector) -> f32 {
         if !bxdf::same_hemisphere(w_o, w_i) {
             0.0

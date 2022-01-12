@@ -12,14 +12,16 @@ pub struct Image {
 
 impl Image {
     pub fn new(img: image::DynamicImage) -> Image {
-        Image { img: img }
+        Image { img }
     }
+
     fn get_float(&self, x: u32, y: u32) -> f32 {
         let dims = self.img.dimensions();
         let x = clamp(x, 0, dims.0 - 1);
         let y = clamp(y, 0, dims.1 - 1);
         self.img.get_pixel(x, y).data[0] as f32 / 255.0
     }
+
     fn get_color(&self, x: u32, y: u32) -> Colorf {
         let dims = self.img.dimensions();
         let x = clamp(x, 0, dims.0 - 1);
@@ -41,6 +43,7 @@ impl Texture for Image {
         let y = v * dims.1 as f32;
         bilinear_interpolate(x, y, |px, py| self.get_float(px, py))
     }
+
     fn sample_color(&self, u: f32, v: f32, _: f32) -> Colorf {
         let x = u * self.img.dimensions().0 as f32;
         let y = v * self.img.dimensions().1 as f32;

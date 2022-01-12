@@ -28,14 +28,15 @@ pub struct Merl<'a> {
 
 impl<'a> Merl<'a> {
     /// Create a MERL BRDF to use data loaded from a MERL BRDF data file
-    pub fn new(brdf: &'a [f32], n_theta_h: usize, n_theta_d: usize, n_phi_d: usize) -> Merl<'a> {
-        Merl {
-            brdf: brdf,
-            n_theta_h: n_theta_h,
-            n_theta_d: n_theta_d,
-            n_phi_d: n_phi_d,
+    pub fn new(brdf: &'a [f32], n_theta_h: usize, n_theta_d: usize, n_phi_d: usize) -> Self {
+        Self {
+            brdf,
+            n_theta_h,
+            n_theta_d,
+            n_phi_d,
         }
     }
+
     /// Re-map values from an angular value to the index in the MERL data table
     fn map_index(val: f32, max: f32, n_vals: usize) -> usize {
         linalg::clamp((val / max * n_vals as f32) as usize, 0, n_vals - 1)
@@ -49,6 +50,7 @@ impl<'a> BxDF for Merl<'a> {
         e.insert(BxDFType::Reflection);
         e
     }
+
     fn eval(&self, w_oi: &Vector, w_ii: &Vector) -> Colorf {
         // Find the half-vector and transform into the half angle coordinate system used by MERL
         // BRDF files

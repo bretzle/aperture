@@ -15,7 +15,7 @@ where
     loop {
         let mut front = None;
         let mut back = None;
-        while let Some(f) = it.next() {
+        for f in it.by_ref() {
             if !pred(f) {
                 front = Some(f);
                 break;

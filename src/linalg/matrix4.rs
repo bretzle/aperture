@@ -13,6 +13,7 @@ impl Matrix4 {
     pub fn zero() -> Matrix4 {
         Matrix4 { mat: [0f32; 16] }
     }
+
     /// Return the identity matrix
     pub fn identity() -> Matrix4 {
         Matrix4 {
@@ -22,19 +23,24 @@ impl Matrix4 {
             ],
         }
     }
+
     /// Create the matrix using the values passed
     pub fn new(mat: [f32; 16]) -> Matrix4 {
-        Matrix4 { mat: mat }
+        Matrix4 { mat }
     }
+
     /// Access the element at row `i` column `j`
     pub fn at(&self, i: usize, j: usize) -> &f32 {
         &self.mat[4 * i + j]
     }
+
     /// Mutably access the element at row `i` column `j`
     pub fn at_mut(&mut self, i: usize, j: usize) -> &mut f32 {
         &mut self.mat[4 * i + j]
     }
+
     /// Compute and return the transpose of this matrix
+    #[must_use]
     pub fn transpose(&self) -> Matrix4 {
         let mut res = Matrix4::zero();
         for i in 0..4 {
@@ -44,7 +50,9 @@ impl Matrix4 {
         }
         res
     }
+
     /// Compute and return the inverse of this matrix
+    #[must_use]
     pub fn inverse(&self) -> Matrix4 {
         //MESA's matrix inverse, tweaked for row-major matrices
         let mut inv = Matrix4::zero();
@@ -172,11 +180,13 @@ impl Matrix4 {
         }
         inv
     }
+
     /// Return an iterator over the matrix's elements. The iterator goes
     /// row by row through the matrix.
     pub fn iter(&self) -> Iter<f32> {
         self.mat.iter()
     }
+
     pub fn has_nans(&self) -> bool {
         for x in &self.mat {
             if x.is_nan() {

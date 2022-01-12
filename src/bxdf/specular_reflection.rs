@@ -19,10 +19,10 @@ pub struct SpecularReflection<'a> {
 
 impl<'a> SpecularReflection<'a> {
     /// Create a specularly reflective BRDF with the reflective color and Fresnel term
-    pub fn new(c: &Colorf, fresnel: &'a dyn Fresnel) -> SpecularReflection<'a> {
-        SpecularReflection {
+    pub fn new(c: &Colorf, fresnel: &'a dyn Fresnel) -> Self {
+        Self {
             reflectance: *c,
-            fresnel: fresnel,
+            fresnel,
         }
     }
 }
@@ -34,11 +34,13 @@ impl<'a> BxDF for SpecularReflection<'a> {
         e.insert(BxDFType::Reflection);
         e
     }
+
     /// We'll never exactly hit the specular reflection direction with some pair
     /// so this just returns black. Use `sample` instead
     fn eval(&self, _: &Vector, _: &Vector) -> Colorf {
         Colorf::broadcast(0.0)
     }
+
     /// Sampling the specular BRDF just returns the specular reflection direction
     /// for the light leaving along `w_o`
     fn sample(&self, w_o: &Vector, _: &(f32, f32)) -> (Colorf, Vector, f32) {

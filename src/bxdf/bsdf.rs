@@ -35,29 +35,32 @@ pub struct BSDF<'a> {
 impl<'a> BSDF<'a> {
     /// Create a new BSDF using the BxDFs passed to shade the differential geometry with
     /// refractive index `eta`
-    pub fn new<'b>(bxdfs: &'a [&'a dyn BxDF], eta: f32, dg: &DifferentialGeometry<'b>) -> BSDF<'a> {
+    pub fn new<'b>(bxdfs: &'a [&'a dyn BxDF], eta: f32, dg: &DifferentialGeometry<'b>) -> Self {
         let n = dg.n.normalized();
         let mut bitan = dg.dp_du.normalized();
         let tan = linalg::cross(&n, &bitan);
         bitan = linalg::cross(&tan, &n);
-        BSDF {
+        Self {
             p: dg.p,
-            n: n,
+            n,
             ng: dg.ng,
-            tan: tan,
-            bitan: bitan,
-            bxdfs: bxdfs,
-            eta: eta,
+            tan,
+            bitan,
+            bxdfs,
+            eta,
         }
     }
+
     /// Return the total number of BxDFs
     pub fn num_bxdfs(&self) -> usize {
         self.bxdfs.len()
     }
+
     /// Return the number of BxDFs matching the flags
     pub fn num_matching(&self, flags: EnumSet<BxDFType>) -> usize {
         self.bxdfs.iter().filter(|x| x.matches(flags)).count()
     }
+
     /// Transform the vector from world space to shading space
     pub fn to_shading(&self, v: &Vector) -> Vector {
         Vector::new(
@@ -66,6 +69,7 @@ impl<'a> BSDF<'a> {
             linalg::dot(v, &self.n),
         )
     }
+
     /// Transform the vectro from shading space to world space
     pub fn from_shading(&self, v: &Vector) -> Vector {
         Vector::new(
@@ -74,6 +78,7 @@ impl<'a> BSDF<'a> {
             self.bitan.z * v.x + self.tan.z * v.y + self.n.z * v.z,
         )
     }
+
     /// Evaluate the BSDF for the outgoing and incident light directions
     /// `w_o` and `w_i` in world space, sampling the desired subset of BxDFs
     /// selected by the flags passed. `wo_world` and `wi_world` should point from
@@ -105,6 +110,7 @@ impl<'a> BSDF<'a> {
             })
             .fold(Colorf::broadcast(0.0), |x, y| x + y)
     }
+
     /// Sample a component of the BSDF to get an incident light direction for light
     /// leaving the surface along `w_o`.
     /// `samples` are the 3 random values to use when sampling a component of the BSDF
@@ -150,6 +156,7 @@ impl<'a> BSDF<'a> {
         }
         (f, wi_world, pdf, bxdf.bxdf_type())
     }
+
     /// Compute the pdf for sampling the pair of incident and outgoing light directions for
     /// the BxDFs matching the flags set
     pub fn pdf(&self, wo_world: &Vector, wi_world: &Vector, flags: EnumSet<BxDFType>) -> f32 {
@@ -172,6 +179,7 @@ impl<'a> BSDF<'a> {
             0.0
         }
     }
+
     /// Get the `i`th BxDF that matches the flags passed. There should not be fewer than i
     /// BxDFs that match the flags
     fn matching_at(&self, i: usize, flags: EnumSet<BxDFType>) -> &dyn BxDF {

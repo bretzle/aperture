@@ -1,8 +1,7 @@
-use std::f32;
-use std::ops::Mul;
-
 use crate::geometry::BBox;
 use crate::linalg::{self, Matrix4, Normal, Point, Ray, Vector};
+use std::f32;
+use std::ops::Mul;
 
 /// Transform describes an affine transformation in 3D space
 /// and stores both the transformation and its inverse
@@ -174,20 +173,26 @@ impl Transform {
         let inv_tan = 1.0 / f32::tan(linalg::to_radians(fovy) / 2.0);
         Transform::scale(&Vector::new(inv_tan, inv_tan, 1.0)) * Transform::from_mat(&proj_div)
     }
+
     /// Return the inverse of the transformation
+    #[must_use]
     pub fn inverse(&self) -> Transform {
         Transform {
             mat: self.inv,
             inv: self.mat,
         }
     }
+
     /// Returns true if the transform has applies a scaling
     pub fn has_scale(&self) -> bool {
         let a = (*self * Vector::new(1.0, 0.0, 0.0)).length_sqr();
         let b = (*self * Vector::new(0.0, 1.0, 0.0)).length_sqr();
         let c = (*self * Vector::new(0.0, 0.0, 1.0)).length_sqr();
-        a < 0.999 || a > 1.001 || b < 0.999 || b > 1.001 || c < 0.999 || c > 1.001
+        !(0.999..=1.001).contains(&a)
+            || !(0.999..=1.001).contains(&b)
+            || !(0.999..=1.001).contains(&c)
     }
+
     /// Multiply the point by the inverse transformation
     /// TODO: These inverse mults are a bit hacky since Rust doesn't currently
     /// have function overloading, clean up when it's added

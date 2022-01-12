@@ -29,12 +29,12 @@ pub struct FrameInfo {
 }
 
 impl FrameInfo {
-    pub fn new(frames: usize, time: f32, start: usize, end: usize) -> FrameInfo {
-        FrameInfo {
-            frames: frames,
-            time: time,
-            start: start,
-            end: end,
+    pub fn new(frames: usize, time: f32, start: usize, end: usize) -> Self {
+        Self {
+            frames,
+            time,
+            start,
+            end,
         }
     }
 }

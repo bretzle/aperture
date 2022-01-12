@@ -23,6 +23,7 @@ impl Quaternion {
             w: 1.0,
         }
     }
+
     /// Construct a quaternion from the rotation matrix
     /// Based on Shoemake 1991
     pub fn from_matrix(m: &Matrix4) -> Quaternion {
@@ -38,7 +39,7 @@ impl Quaternion {
                     s * (*m.at(0, 2) - *m.at(2, 0)),
                     s * (*m.at(1, 0) - *m.at(0, 1)),
                 ),
-                w: w,
+                w,
             }
         } else {
             // Compute largest of x, y or z then the remaining components
@@ -61,13 +62,15 @@ impl Quaternion {
             let w = (*m.at(k, j) - *m.at(j, k)) * s;
             q[j] = (*m.at(j, i) + *m.at(i, j)) * s;
             q[k] = (*m.at(k, i) + *m.at(i, k)) * s;
-            Quaternion { v: q, w: w }
+            Quaternion { v: q, w }
         }
     }
+
     /// Construct the quaternion from the transform
     pub fn from_transform(t: &Transform) -> Quaternion {
         Quaternion::from_matrix(&t.mat)
     }
+
     /// Get the rotation transform described by this quaternion
     pub fn to_matrix(&self) -> Matrix4 {
         Matrix4::new([
@@ -90,11 +93,14 @@ impl Quaternion {
         ])
         .transpose()
     }
+
     /// Get the rotation transform described by this quaternion
     pub fn to_transform(&self) -> Transform {
         Transform::from_mat(&self.to_matrix())
     }
+
     /// Get the normalized quaternion for this rotation
+    #[must_use]
     pub fn normalized(&self) -> Quaternion {
         *self / f32::sqrt(dot(self, self))
     }
