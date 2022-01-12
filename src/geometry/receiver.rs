@@ -1,8 +1,11 @@
 use std::sync::Arc;
 
-use crate::{math::{AnimatedTransform, Ray}, material::Material};
+use crate::{
+    material::Material,
+    math::{AnimatedTransform, Ray},
+};
 
-use super::{BoundableGeom, differential_geometry::DifferentialGeometry};
+use super::{differential_geometry::DifferentialGeometry, BoundableGeom};
 
 pub struct Receiver<G, M> {
     geom: Arc<G>,

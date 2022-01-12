@@ -1,6 +1,9 @@
 use std::iter;
 
-use rand::{distributions::{Range, IndependentSample}, StdRng, Rng};
+use rand::{
+    distributions::{IndependentSample, Range},
+    Rng, StdRng,
+};
 
 use super::{Region, Sampler};
 

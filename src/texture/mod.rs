@@ -1,6 +1,5 @@
 use crate::film::color::Color;
 
-
 pub trait Texture {}
 
 //////////////////////////////////////

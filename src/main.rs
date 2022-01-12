@@ -8,7 +8,7 @@ use aperture::{
     geometry::{Instance, Sphere},
     material::Matte,
     math::{AnimatedTransform, Point, Transform, Vector},
-    sampler::{block_queue::BlockQueue, ImageSample, LowDiscrepancy, Sampler},
+    sampler::{BlockQueue, ImageSample, LowDiscrepancy, Sampler},
     texture::{ConstantColor, ConstantScalar},
     RenderTarget,
 };
@@ -55,6 +55,7 @@ fn main() -> color_eyre::Result<()> {
 
     let block_queue = BlockQueue::new((dim.0 as u32, dim.1 as u32), (8, 8), (0, 0));
     let block_dim = block_queue.block_dim();
+	info!("Using block size: {block_dim:?}");
     let mut sampler = LowDiscrepancy::new(block_dim, 32);
     let mut sample_pos = Vec::with_capacity(sampler.max_spp());
     let mut block_samples =
