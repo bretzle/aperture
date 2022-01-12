@@ -1,0 +1,250 @@
+{
+	"film": {
+		"width": 800,
+		"height": 600,
+		"samples": 4,
+		"frames": 1,
+		"start_frame": 0,
+		"end_frame": 0,
+		"scene_time": 0,
+		"filter" : {
+			"type": "mitchell_netravali",
+			"width": 2.0,
+			"height": 2.0,
+			"b": 0.333333333333333333,
+			"c": 0.333333333333333333
+		}
+	},
+	"camera": {
+		"fov": 30,
+		"transform": [
+			{
+				"type": "translate",
+				"translation": [0, 12, -60]
+			}
+		]
+	},
+	"integrator": {
+		"type": "pathtracer",
+		"min_depth": 4,
+		"max_depth": 8
+	},
+	"materials": [
+		{
+			"type": "matte",
+			"name": "white_wall",
+			"diffuse": [0.740063, 0.742313, 0.733934],
+			"roughness": 1.0
+		},
+		{
+			"type": "matte",
+			"name": "red_wall",
+			"diffuse": [0.366046, 0.0371827, 0.0416385],
+			"roughness": 1.0
+		},
+		{
+			"type": "matte",
+			"name": "green_wall",
+			"diffuse": [0.162928, 0.408903, 0.0833759],
+			"roughness": 1.0
+		},
+		{
+			"type": "plastic",
+			"name": "white_plastic",
+			"diffuse": [0.8, 0.8, 0.8],
+			"gloss": [0.6, 0.6, 0.6],
+			"roughness": 0.5
+		}
+	],
+	"objects": [
+		{
+			"type": "group",
+			"name": "walls",
+			"transform": [
+				{
+					"type": "translate",
+					"translation": [0, 12, 0]
+				}
+			],
+			"objects": [
+				{
+					"name": "back_wall",
+					"type": "receiver",
+					"material": "white_wall",
+					"geometry": {
+						"type": "plane"
+					},
+					"transform": [
+						{
+							"type": "scale",
+							"scaling": [15, 12, 1]
+						},
+						{
+							"type": "translate",
+							"translation": [0, 0, 20]
+						}
+					]
+				},
+				{
+					"name": "left_wall",
+					"type": "receiver",
+					"material": "red_wall",
+					"geometry": {
+						"type": "plane"
+					},
+					"transform": [
+						{
+							"type": "scale",
+							"scaling": [20, 12, 1]
+						},
+						{
+							"type": "rotate_y",
+							"rotation": 90.0
+						},
+						{
+							"type": "translate",
+							"translation": [-15.0, 0, 0]
+						}
+					]
+				},
+				{
+					"name": "right_wall",
+					"type": "receiver",
+					"material": "green_wall",
+					"geometry": {
+						"type": "plane"
+					},
+					"transform": [
+						{
+							"type": "scale",
+							"scaling": [20, 12, 1]
+						},
+						{
+							"type": "rotate_y",
+							"rotation": -90.0
+						},
+						{
+							"type": "translate",
+							"translation": [15.0, 0, 0]
+						}
+					]
+				},
+				{
+					"name": "top_wall",
+					"type": "receiver",
+					"material": "white_wall",
+					"geometry": {
+						"type": "plane"
+					},
+					"transform": [
+						{
+							"type": "scale",
+							"scaling": [15, 20, 1]
+						},
+						{
+							"type": "rotate_x",
+							"rotation": 90.0
+						},
+						{
+							"type": "translate",
+							"translation": [0.0, 12, 0]
+						}
+					]
+				},
+				{
+					"name": "bottom_wall",
+					"type": "receiver",
+					"material": "white_wall",
+					"geometry": {
+						"type": "plane"
+					},
+					"transform": [
+						{
+							"type": "scale",
+							"scaling": [15, 20, 1]
+						},
+						{
+							"type": "rotate_x",
+							"rotation": 90
+						},
+						{
+							"type": "translate",
+							"translation": [0.0, -12, 0]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "light",
+			"type": "emitter",
+			"material": "white_wall",
+			"emitter": "area",
+			"emission": [1, 0.772549, 0.560784, 40],
+			"geometry": {
+				"type": "rectangle",
+				"width": 6,
+				"height": 6
+			},
+			"transform": [
+				{
+					"type": "rotate_x",
+					"rotation": 90
+				},
+				{
+					"type": "translate",
+					"translation": [0, 23.8, 0]
+				}
+			]
+		},
+		{
+			"name": "tall_cube",
+			"type": "receiver",
+			"material": "white_plastic",
+			"geometry": {
+				"type": "mesh",
+				"file": "models/cube.obj",
+				"model": "Cube"
+			},
+			"transform": [
+				{
+					"type": "scale",
+					"scaling": [4, 10, 4]
+				},
+				{
+					"type": "rotate_y",
+					"rotation": -20
+				},
+				{
+					"type": "translate",
+					"translation": [-6, 5, 6]
+				}
+			]
+		},
+		{
+			"name": "short_block",
+			"type": "receiver",
+			"material": "white_plastic",
+			"geometry": {
+				"type": "mesh",
+				"file": "models/cube.obj",
+				"model": "Cube"
+			},
+			"transform": [
+				{
+					"type": "scale",
+					"scaling": [4, 5, 4]
+				},
+				{
+					"type": "rotate_y",
+					"rotation": 15
+				},
+				{
+					"type": "translate",
+					"translation": [4, 2.5, -3.0]
+				}
+			]
+		}
+	]
+}
+

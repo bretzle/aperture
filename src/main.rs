@@ -1,101 +1,60 @@
-#![feature(box_syntax)]
-
-#[macro_use]
-extern crate log;
-
 use aperture::{
-    film::{camera::Camera, color::Color, filter::MitchellNetravali},
-    geometry::{Instance, Sphere},
-    material::Matte,
-    math::{AnimatedTransform, Point, Transform, Vector},
-    sampler::{BlockQueue, ImageSample, LowDiscrepancy, Sampler},
-    texture::{ConstantColor, ConstantScalar},
-    RenderTarget,
+    exec::{self, Exec, MultiThreaded},
+    scene,
 };
-use rand::StdRng;
-use std::sync::Arc;
+use std::path::PathBuf;
+use std::time::SystemTime;
 
-const WIDTH: usize = 800;
-const HEIGHT: usize = 600;
+const SCENE_PATH: &str = "cornell.json";
 
-fn main() -> color_eyre::Result<()> {
-    color_eyre::install()?;
+fn main() {
+    let num_threads = num_cpus::get() as u32;
+    let out_path = PathBuf::from("./");
 
-    env_logger::Builder::from_default_env()
-        .format_timestamp(None)
-        .parse_filters("info")
-        .init();
-
-    info!("Starting...");
-
-    let filter = box MitchellNetravali::new(2.0, 2.0, 1.0 / 3.0, 1.0 / 3.0);
-    let rt = RenderTarget::new((WIDTH, HEIGHT), (20, 20), filter);
-    let transform = AnimatedTransform::unanimated(&Transform::look_at(
-        &Point::new(0.0, 0.0, -10.0),
-        &Point::new(0.0, 0.0, 0.0),
-        &Vector::new(0.0, 1.0, 0.0),
-    ));
-
-    let camera = Camera::new(transform, 40.0, rt.dimensions(), 0.5, 0);
-    let sphere = Sphere::new(1.5);
-    let texture = Arc::new(ConstantColor(Color::new(0.740063, 0.742313, 0.733934)));
-    let roughness = Arc::new(ConstantScalar(1.0));
-    let white_wall = Matte::new(&texture, &roughness);
-
-    let instance = Instance::receiver(
-        Arc::new(sphere),
-        Arc::new(white_wall),
-        AnimatedTransform::unanimated(&Transform::translate(&Vector::new(0.0, 2.0, 0.0))),
-        "single_sphere".to_string(),
-    );
-
-    info!("Created Instance.");
-
+    let (mut scene, mut rt, spp, frame_info) = scene::Scene::load_file(SCENE_PATH);
     let dim = rt.dimensions();
 
-    let block_queue = BlockQueue::new((dim.0 as u32, dim.1 as u32), (8, 8), (0, 0));
-    let block_dim = block_queue.block_dim();
-	info!("Using block size: {block_dim:?}");
-    let mut sampler = LowDiscrepancy::new(block_dim, 32);
-    let mut sample_pos = Vec::with_capacity(sampler.max_spp());
-    let mut block_samples =
-        Vec::with_capacity(sampler.max_spp() * (block_dim.0 * block_dim.1) as usize);
+    let scene_start = SystemTime::now();
+    let mut config = exec::Config::new(
+        out_path,
+        SCENE_PATH.to_string(),
+        spp,
+        num_threads,
+        frame_info,
+        (0, 0),
+    );
+    let mut exec = MultiThreaded::new(num_threads);
+    for i in frame_info.start..frame_info.end + 1 {
+        config.current_frame = i;
+        exec.render(&mut scene, &mut rt, &config);
 
-    let mut rng = StdRng::new()?;
-
-    info!("Rendering...");
-
-    for b in block_queue.iter() {
-        sampler.select_block(b);
-        while sampler.has_samples() {
-            sampler.get_samples(&mut sample_pos, &mut rng);
-            for s in &sample_pos[..] {
-                let mut ray = camera.generate_ray(s, 0.0);
-                block_samples.push(ImageSample::new(
-                    s.0,
-                    s.1,
-                    match instance.intersect(&mut ray) {
-                        Some(_) => Color::WHITE,
-                        None => Color::BLACK,
-                    },
-                ));
-            }
-        }
-
-        rt.write(&block_samples, sampler.get_region());
-        block_samples.clear();
+        let img = rt.get_render();
+        let out_file = match config.out_path.extension() {
+            Some(_) => config.out_path.clone(),
+            None => config
+                .out_path
+                .join(PathBuf::from(format!("frame{:05}.png", i))),
+        };
+        match image::save_buffer(
+            &out_file.as_path(),
+            &img[..],
+            dim.0 as u32,
+            dim.1 as u32,
+            image::RGB(8),
+        ) {
+            Ok(_) => {}
+            Err(e) => println!("Error saving image, {}", e),
+        };
+        rt.clear();
+        println!(
+            "Frame {}: rendered to '{}'\n--------------------",
+            i,
+            out_file.display()
+        );
     }
-
-    info!("Saving...");
-
-    let img = rt.get_render();
-    image::save_buffer(
-        "sphere.png",
-        &img[..],
-        dim.0 as u32,
-        dim.1 as u32,
-        image::RGB(8),
-    )?;
-
-    Ok(())
+    let time = scene_start.elapsed().expect("Failed to get render time?");
+    println!(
+        "Rendering entire sequence took {:4}s",
+        time.as_secs() as f64 + time.subsec_nanos() as f64 * 1e-9
+    )
 }

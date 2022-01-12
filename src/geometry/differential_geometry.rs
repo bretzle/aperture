@@ -1,7 +1,10 @@
-use crate::math::{self, Normal, Point, Vector};
+//! Defines the `DifferentialGeometry` type which is used to pass information
+//! about the hit piece of geometry back from the intersection to the shading
 
-use super::Geometry;
+use crate::geometry::Geometry;
+use crate::linalg::{self, Normal, Point, Vector};
 
+/// Stores information about a hit piece of geometry of some object in the scene
 #[derive(Clone, Copy)]
 pub struct DifferentialGeometry<'a> {
     /// The hit point
@@ -20,11 +23,12 @@ pub struct DifferentialGeometry<'a> {
     /// Derivative of the point with respect to the v parameterization coord of the surface
     pub dp_dv: Vector,
     /// The geometry that was hit
-    pub geom: &'a (dyn Geometry + 'a), // TODO: dont use dyn
+    pub geom: &'a (dyn Geometry + 'a),
 }
 
-#[allow(clippy::too_many_arguments)]
 impl<'a> DifferentialGeometry<'a> {
+    /// Setup the differential geometry. Note that the normal will be computed
+    /// using cross(dp_du, dp_dv)
     pub fn new(
         p: &Point,
         ng: &Normal,
@@ -34,21 +38,21 @@ impl<'a> DifferentialGeometry<'a> {
         dp_du: &Vector,
         dp_dv: &Vector,
         geom: &'a (dyn Geometry + 'a),
-    ) -> Self {
-        let n = math::cross(dp_du, dp_dv).normalize();
-        Self {
+    ) -> DifferentialGeometry<'a> {
+        let n = linalg::cross(dp_du, dp_dv).normalized();
+        DifferentialGeometry {
             p: *p,
             n: Normal::new(n.x, n.y, n.z),
-            ng: ng.normalize(),
-            u,
-            v,
-            time,
+            ng: ng.normalized(),
+            u: u,
+            v: v,
+            time: time,
             dp_du: *dp_du,
             dp_dv: *dp_dv,
-            geom,
+            geom: geom,
         }
     }
-
+    /// Setup the differential geometry using the normal passed for the surface normal
     pub fn with_normal(
         p: &Point,
         n: &Normal,
@@ -58,18 +62,18 @@ impl<'a> DifferentialGeometry<'a> {
         dp_du: &Vector,
         dp_dv: &Vector,
         geom: &'a (dyn Geometry + 'a),
-    ) -> Self {
-        let nn = n.normalize();
-        Self {
+    ) -> DifferentialGeometry<'a> {
+        let nn = n.normalized();
+        DifferentialGeometry {
             p: *p,
             n: nn,
             ng: nn,
-            u,
-            v,
-            time,
+            u: u,
+            v: v,
+            time: time,
             dp_du: *dp_du,
             dp_dv: *dp_dv,
-            geom,
+            geom: geom,
         }
     }
 }
