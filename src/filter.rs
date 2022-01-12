@@ -1,7 +1,7 @@
 use crate::math;
 
 pub trait Filter {
-    fn wieght(&self, x: f32, y: f32) -> f32;
+    fn weight(&self, x: f32, y: f32) -> f32;
     fn width(&self) -> f32;
     fn inv_width(&self) -> f32;
     fn height(&self) -> f32;
@@ -41,11 +41,29 @@ impl MitchellNetravali {
             c: math::clamp(c, 0.0, 1.0),
         }
     }
+
+    fn weight_1d(&self, x: f32) -> f32 {
+        let abs_x = f32::abs(x);
+        if x >= 2.0 {
+            0.0
+        } else if x >= 1.0 {
+            1.0 / 6.0
+                * ((-self.b - 6.0 * self.c) * f32::powf(abs_x, 3.0)
+                    + (6.0 * self.b + 30.0 * self.c) * f32::powf(abs_x, 2.0)
+                    + (-12.0 * self.b - 48.0 * self.c) * abs_x
+                    + (8.0 * self.b + 24.0 * self.c))
+        } else {
+            1.0 / 6.0
+                * ((12.0 - 9.0 * self.b - 6.0 * self.c) * f32::powf(abs_x, 3.0)
+                    + (-18.0 + 12.0 * self.b + 6.0 * self.c) * f32::powf(abs_x, 2.0)
+                    + (6.0 - 2.0 * self.b))
+        }
+    }
 }
 
 impl Filter for MitchellNetravali {
-    fn wieght(&self, x: f32, y: f32) -> f32 {
-        todo!()
+    fn weight(&self, x: f32, y: f32) -> f32 {
+        self.weight_1d(2.0 * x * self.inv_w) * self.weight_1d(2.0 * y * self.inv_h)
     }
 
     fn width(&self) -> f32 {

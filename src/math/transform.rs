@@ -1,4 +1,4 @@
-use super::{cross, Matrix, Point, Vector};
+use super::{cross, Matrix, Normal, Point, Ray, Vector};
 use crate::matrix;
 use std::ops::Mul;
 
@@ -176,6 +176,51 @@ impl Transform {
     pub fn has_scale(&self) -> bool {
         todo!()
     }
+
+    /// Multiply the point by the inverse transformation
+    /// TODO: These inverse mults are a bit hacky since Rust doesn't currently
+    /// have function overloading, clean up when it's added
+    pub fn inv_mul_point(&self, p: &Point) -> Point {
+        let mut res = Point::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.inv.at(i, 0) * p.x
+                + *self.inv.at(i, 1) * p.y
+                + *self.inv.at(i, 2) * p.z
+                + *self.inv.at(i, 3);
+        }
+        let w = *self.inv.at(3, 0) * p.x
+            + *self.inv.at(3, 1) * p.y
+            + *self.inv.at(3, 2) * p.z
+            + *self.inv.at(3, 3);
+        if (w - 1.0).abs() < f32::EPSILON {
+            res / w
+        } else {
+            res
+        }
+    }
+    /// Multiply the vector with the inverse transformation
+    pub fn inv_mul_vector(&self, v: &Vector) -> Vector {
+        let mut res = Vector::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.inv.at(i, 0) * v.x + *self.inv.at(i, 1) * v.y + *self.inv.at(i, 2) * v.z;
+        }
+        res
+    }
+    /// Multiply the normal with the inverse transformation
+    pub fn inv_mul_normal(&self, n: &Normal) -> Normal {
+        let mut res = Normal::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.mat.at(0, i) * n.x + *self.mat.at(1, i) * n.y + *self.mat.at(2, i) * n.z;
+        }
+        res
+    }
+    /// Multiply the ray with the inverse transformation
+    pub fn inv_mul_ray(&self, ray: &Ray) -> Ray {
+        let mut res = *ray;
+        res.o = self.inv_mul_point(&res.o);
+        res.d = self.inv_mul_vector(&res.d);
+        res
+    }
 }
 
 impl Mul for Transform {
@@ -186,5 +231,64 @@ impl Mul for Transform {
             mat: self.mat * rhs.mat,
             inv: rhs.inv * self.inv,
         }
+    }
+}
+
+impl Mul<Point> for Transform {
+    type Output = Point;
+    /// Multiply the point by the transform to apply the transformation
+    #[allow(clippy::suspicious_arithmetic_impl)]
+    fn mul(self, p: Point) -> Point {
+        let mut res = Point::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.mat.at(i, 0) * p.x
+                + *self.mat.at(i, 1) * p.y
+                + *self.mat.at(i, 2) * p.z
+                + *self.mat.at(i, 3);
+        }
+        let w = *self.mat.at(3, 0) * p.x
+            + *self.mat.at(3, 1) * p.y
+            + *self.mat.at(3, 2) * p.z
+            + *self.mat.at(3, 3);
+        if (w - 1.0).abs() < f32::EPSILON {
+            res / w
+        } else {
+            res
+        }
+    }
+}
+
+impl Mul<Vector> for Transform {
+    type Output = Vector;
+    /// Multiply the vector by the transform to apply the transformation
+    fn mul(self, v: Vector) -> Vector {
+        let mut res = Vector::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.mat.at(i, 0) * v.x + *self.mat.at(i, 1) * v.y + *self.mat.at(i, 2) * v.z;
+        }
+        res
+    }
+}
+
+impl Mul<Normal> for Transform {
+    type Output = Normal;
+    /// Multiply the normal by the transform to apply the transformation
+    fn mul(self, n: Normal) -> Normal {
+        let mut res = Normal::broadcast(0.0);
+        for i in 0..3 {
+            res[i] = *self.inv.at(0, i) * n.x + *self.inv.at(1, i) * n.y + *self.inv.at(2, i) * n.z;
+        }
+        res
+    }
+}
+
+impl Mul<Ray> for Transform {
+    type Output = Ray;
+    /// Multiply the ray by the transform to apply the transformation
+    fn mul(self, ray: Ray) -> Ray {
+        let mut res = ray;
+        res.o = self * res.o;
+        res.d = self * res.d;
+        res
     }
 }

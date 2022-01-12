@@ -1,5 +1,8 @@
 #![feature(box_syntax)]
 
+#[macro_use]
+extern crate log;
+
 use aperture::{
     camera::Camera,
     color::Color,
@@ -29,6 +32,8 @@ fn main() -> color_eyre::Result<()> {
         .parse_filters("info")
         .init();
 
+    info!("Starting...");
+
     let filter = box MitchellNetravali::new(2.0, 2.0, 1.0 / 3.0, 1.0 / 3.0);
     let rt = RenderTarget::new((WIDTH, HEIGHT), (20, 20), filter);
     let transform = AnimatedTransform::unanimated(&Transform::look_at(
@@ -54,6 +59,8 @@ fn main() -> color_eyre::Result<()> {
         "single_sphere".to_string(),
     );
 
+    info!("Created Instance.");
+
     let dim = rt.dimensions();
 
     let block_queue = BlockQueue::new((dim.0 as u32, dim.1 as u32), (8, 8), (0, 0));
@@ -64,6 +71,8 @@ fn main() -> color_eyre::Result<()> {
         Vec::with_capacity(sampler.max_spp() * (block_dim.0 * block_dim.1) as usize);
 
     let mut rng = StdRng::new()?;
+
+    info!("Rendering...");
 
     for b in block_queue.iter() {
         sampler.select_block(b);
@@ -86,6 +95,8 @@ fn main() -> color_eyre::Result<()> {
         rt.write(&block_samples, sampler.get_region());
         block_samples.clear();
     }
+
+    info!("Saving...");
 
     // Get the sRGB8 render buffer from the floating point framebuffer and save it
     let img = rt.get_render();

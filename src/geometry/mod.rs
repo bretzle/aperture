@@ -1,8 +1,13 @@
+use self::differential_geometry::DifferentialGeometry;
+use crate::math::Ray;
+
+pub mod differential_geometry;
 pub mod instance;
 pub mod intersection;
-pub mod differential_geometry;
 
-pub trait Geometry {}
+pub trait Geometry {
+    fn intersect(&self, ray: &mut Ray) -> Option<DifferentialGeometry>;
+}
 
 pub trait Boundable {}
 

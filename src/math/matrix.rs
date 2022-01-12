@@ -32,11 +32,142 @@ impl Matrix {
     }
 
     pub fn transpose(&self) -> Self {
-        todo!()
+        let mut res = Matrix::zero();
+        for i in 0..4 {
+            for j in 0..4 {
+                *res.at_mut(i, j) = *self.at(j, i);
+            }
+        }
+        res
     }
 
     pub fn inverse(&self) -> Self {
-        todo!()
+        //MESA's matrix inverse, tweaked for row-major matrices
+        let mut inv = Matrix::zero();
+        inv.mat[0] = self.mat[5] * self.mat[10] * self.mat[15]
+            - self.mat[5] * self.mat[11] * self.mat[14]
+            - self.mat[9] * self.mat[6] * self.mat[15]
+            + self.mat[9] * self.mat[7] * self.mat[14]
+            + self.mat[13] * self.mat[6] * self.mat[11]
+            - self.mat[13] * self.mat[7] * self.mat[10];
+
+        inv.mat[4] = -self.mat[4] * self.mat[10] * self.mat[15]
+            + self.mat[4] * self.mat[11] * self.mat[14]
+            + self.mat[8] * self.mat[6] * self.mat[15]
+            - self.mat[8] * self.mat[7] * self.mat[14]
+            - self.mat[12] * self.mat[6] * self.mat[11]
+            + self.mat[12] * self.mat[7] * self.mat[10];
+
+        inv.mat[8] = self.mat[4] * self.mat[9] * self.mat[15]
+            - self.mat[4] * self.mat[11] * self.mat[13]
+            - self.mat[8] * self.mat[5] * self.mat[15]
+            + self.mat[8] * self.mat[7] * self.mat[13]
+            + self.mat[12] * self.mat[5] * self.mat[11]
+            - self.mat[12] * self.mat[7] * self.mat[9];
+
+        inv.mat[12] = -self.mat[4] * self.mat[9] * self.mat[14]
+            + self.mat[4] * self.mat[10] * self.mat[13]
+            + self.mat[8] * self.mat[5] * self.mat[14]
+            - self.mat[8] * self.mat[6] * self.mat[13]
+            - self.mat[12] * self.mat[5] * self.mat[10]
+            + self.mat[12] * self.mat[6] * self.mat[9];
+
+        inv.mat[1] = -self.mat[1] * self.mat[10] * self.mat[15]
+            + self.mat[1] * self.mat[11] * self.mat[14]
+            + self.mat[9] * self.mat[2] * self.mat[15]
+            - self.mat[9] * self.mat[3] * self.mat[14]
+            - self.mat[13] * self.mat[2] * self.mat[11]
+            + self.mat[13] * self.mat[3] * self.mat[10];
+
+        inv.mat[5] = self.mat[0] * self.mat[10] * self.mat[15]
+            - self.mat[0] * self.mat[11] * self.mat[14]
+            - self.mat[8] * self.mat[2] * self.mat[15]
+            + self.mat[8] * self.mat[3] * self.mat[14]
+            + self.mat[12] * self.mat[2] * self.mat[11]
+            - self.mat[12] * self.mat[3] * self.mat[10];
+
+        inv.mat[9] = -self.mat[0] * self.mat[9] * self.mat[15]
+            + self.mat[0] * self.mat[11] * self.mat[13]
+            + self.mat[8] * self.mat[1] * self.mat[15]
+            - self.mat[8] * self.mat[3] * self.mat[13]
+            - self.mat[12] * self.mat[1] * self.mat[11]
+            + self.mat[12] * self.mat[3] * self.mat[9];
+
+        inv.mat[13] = self.mat[0] * self.mat[9] * self.mat[14]
+            - self.mat[0] * self.mat[10] * self.mat[13]
+            - self.mat[8] * self.mat[1] * self.mat[14]
+            + self.mat[8] * self.mat[2] * self.mat[13]
+            + self.mat[12] * self.mat[1] * self.mat[10]
+            - self.mat[12] * self.mat[2] * self.mat[9];
+
+        inv.mat[2] = self.mat[1] * self.mat[6] * self.mat[15]
+            - self.mat[1] * self.mat[7] * self.mat[14]
+            - self.mat[5] * self.mat[2] * self.mat[15]
+            + self.mat[5] * self.mat[3] * self.mat[14]
+            + self.mat[13] * self.mat[2] * self.mat[7]
+            - self.mat[13] * self.mat[3] * self.mat[6];
+
+        inv.mat[6] = -self.mat[0] * self.mat[6] * self.mat[15]
+            + self.mat[0] * self.mat[7] * self.mat[14]
+            + self.mat[4] * self.mat[2] * self.mat[15]
+            - self.mat[4] * self.mat[3] * self.mat[14]
+            - self.mat[12] * self.mat[2] * self.mat[7]
+            + self.mat[12] * self.mat[3] * self.mat[6];
+
+        inv.mat[10] = self.mat[0] * self.mat[5] * self.mat[15]
+            - self.mat[0] * self.mat[7] * self.mat[13]
+            - self.mat[4] * self.mat[1] * self.mat[15]
+            + self.mat[4] * self.mat[3] * self.mat[13]
+            + self.mat[12] * self.mat[1] * self.mat[7]
+            - self.mat[12] * self.mat[3] * self.mat[5];
+
+        inv.mat[14] = -self.mat[0] * self.mat[5] * self.mat[14]
+            + self.mat[0] * self.mat[6] * self.mat[13]
+            + self.mat[4] * self.mat[1] * self.mat[14]
+            - self.mat[4] * self.mat[2] * self.mat[13]
+            - self.mat[12] * self.mat[1] * self.mat[6]
+            + self.mat[12] * self.mat[2] * self.mat[5];
+
+        inv.mat[3] = -self.mat[1] * self.mat[6] * self.mat[11]
+            + self.mat[1] * self.mat[7] * self.mat[10]
+            + self.mat[5] * self.mat[2] * self.mat[11]
+            - self.mat[5] * self.mat[3] * self.mat[10]
+            - self.mat[9] * self.mat[2] * self.mat[7]
+            + self.mat[9] * self.mat[3] * self.mat[6];
+
+        inv.mat[7] = self.mat[0] * self.mat[6] * self.mat[11]
+            - self.mat[0] * self.mat[7] * self.mat[10]
+            - self.mat[4] * self.mat[2] * self.mat[11]
+            + self.mat[4] * self.mat[3] * self.mat[10]
+            + self.mat[8] * self.mat[2] * self.mat[7]
+            - self.mat[8] * self.mat[3] * self.mat[6];
+
+        inv.mat[11] = -self.mat[0] * self.mat[5] * self.mat[11]
+            + self.mat[0] * self.mat[7] * self.mat[9]
+            + self.mat[4] * self.mat[1] * self.mat[11]
+            - self.mat[4] * self.mat[3] * self.mat[9]
+            - self.mat[8] * self.mat[1] * self.mat[7]
+            + self.mat[8] * self.mat[3] * self.mat[5];
+
+        inv.mat[15] = self.mat[0] * self.mat[5] * self.mat[10]
+            - self.mat[0] * self.mat[6] * self.mat[9]
+            - self.mat[4] * self.mat[1] * self.mat[10]
+            + self.mat[4] * self.mat[2] * self.mat[9]
+            + self.mat[8] * self.mat[1] * self.mat[6]
+            - self.mat[8] * self.mat[2] * self.mat[5];
+
+        let mut det = self.mat[0] * inv.mat[0]
+            + self.mat[1] * inv.mat[4]
+            + self.mat[2] * inv.mat[8]
+            + self.mat[3] * inv.mat[12];
+        assert!(det != 0f32);
+        det = 1f32 / det;
+
+        for x in &mut inv.mat {
+            *x *= det;
+        }
+
+        inv
     }
 
     pub fn iter(&self) -> Iter<f32> {

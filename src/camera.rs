@@ -1,5 +1,5 @@
 use crate::{
-    math::{AnimatedTransform, Matrix, Ray, Transform, Vector},
+    math::{AnimatedTransform, Matrix, Point, Ray, Transform, Vector},
     matrix,
 };
 
@@ -64,6 +64,12 @@ impl Camera {
     }
 
     pub fn generate_ray(&self, px: &(f32, f32), time: f32) -> Ray {
-        todo!()
+        // Take the raster space position -> camera space
+        let px_pos =
+            self.scaling * (self.proj_div_inv * self.raster_screen * Point::new(px.0, px.1, 0.0));
+        let d = Vector::new(px_pos.x, px_pos.y, px_pos.z).normalize();
+        // Compute the time being sampled for this frame based on shutter open/close times
+        let frame_time = (self.shutter_close - self.shutter_open) * time + self.shutter_open;
+        self.cam_world.transform(frame_time) * Ray::new(Point::broadcast(0.0), d, frame_time)
     }
 }

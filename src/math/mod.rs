@@ -59,3 +59,21 @@ where
         x
     }
 }
+
+pub fn solve_quadratic(a: f32, b: f32, c: f32) -> Option<(f32, f32)> {
+    let discrim_sqr = b * b - 4.0 * a * c;
+    if discrim_sqr < 0.0 {
+        None
+    } else {
+        let discrim = f32::sqrt(discrim_sqr);
+        let q = if b < 0.0 {
+            -0.5 * (b - discrim)
+        } else {
+            -0.5 * (b + discrim)
+        };
+        match (q / a, c / q) {
+            (x, y) if x > y => Some((y, x)),
+            (x, y) => Some((x, y)),
+        }
+    }
+}
