@@ -23,30 +23,38 @@
 //! - Objects: See geometry
 //!
 
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::prelude::*,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use image;
 use serde_json::{self, Value};
 
-use crate::film::{filter, AnimatedColor, Camera, ColorKeyframe, Colorf, FrameInfo, RenderTarget};
-use crate::geometry::{
-    BoundableGeom, Disk, Instance, Intersection, Mesh, Rectangle, SampleableGeom, Sphere, BVH,
+use crate::{
+    film::{
+        filter::{self, Filters},
+        AnimatedColor, Camera, ColorKeyframe, Colorf, FrameInfo, RenderTarget,
+    },
+    geometry::{
+        BoundableGeometry, Disk, Instance, Intersection, Mesh, Rectangle, SampleableGeometry,
+        Sphere, BVH,
+    },
+    integrator::{self, Integrators},
+    linalg::{AnimatedTransform, Keyframe, Point, Ray, Transform, Vector},
+    material::{Glass, Materials, Matte, Merl, Metal, Plastic, RoughGlass, SpecularMetal},
+    texture::{self, Textures},
 };
-use crate::integrator::{self, Integrator};
-use crate::linalg::{AnimatedTransform, Keyframe, Point, Ray, Transform, Vector};
-use crate::material::{Glass, Material, Matte, Merl, Metal, Plastic, RoughGlass, SpecularMetal};
-use crate::texture::{self, Texture};
 
 /// This lets me enforce only certain types of textures are valid,
 /// and to look up the right type of texture result for a given
 /// input. But it's a bit of a pain to deal with, if I want to add
 /// more texture-able types and such.
 struct LoadedTextures {
-    textures: HashMap<String, Arc<dyn Texture + Send + Sync>>,
+    textures: HashMap<String, Arc<Textures>>,
 }
 impl LoadedTextures {
     pub fn none() -> LoadedTextures {
@@ -57,7 +65,7 @@ impl LoadedTextures {
     /// Get a Color texture, if it's in the map by loading from the element.
     /// If the element is a string the teture name will be looked up, if
     /// not a constant texture will be created and returned
-    pub fn find_color(&self, e: &Value) -> Option<Arc<dyn Texture + Send + Sync>> {
+    pub fn find_color(&self, e: &Value) -> Option<Arc<Textures>> {
         match *e {
             Value::String(ref s) => match self.textures.get(s) {
                 Some(t) => Some(t.clone()),
@@ -73,7 +81,7 @@ impl LoadedTextures {
     /// Get a scalar texture, if it's in the map by loading from the element.
     /// If the element is a string the teture name will be looked up, if
     /// not a constant texture will be created and returned
-    pub fn find_scalar(&self, e: &Value) -> Option<Arc<dyn Texture + Send + Sync>> {
+    pub fn find_scalar(&self, e: &Value) -> Option<Arc<Textures>> {
         match *e {
             Value::String(ref s) => match self.textures.get(s) {
                 Some(t) => Some(t.clone()),
@@ -93,7 +101,7 @@ pub struct Scene {
     pub cameras: Vec<Camera>,
     active_camera: Option<usize>,
     pub bvh: BVH<Instance>,
-    pub integrator: Box<dyn Integrator + Send + Sync>,
+    pub integrator: Box<Integrators>,
 }
 
 impl Scene {
@@ -264,7 +272,7 @@ fn load_film(elem: &Value) -> (RenderTarget, usize, FrameInfo) {
     )
 }
 /// Load the reconstruction filter described by the JSON value passed
-fn load_filter(elem: &Value) -> Box<dyn filter::Filter + Send + Sync> {
+fn load_filter(elem: &Value) -> Box<Filters> {
     let width = elem
         .get("width")
         .expect("The filter must specify the filter width")
@@ -292,7 +300,6 @@ fn load_filter(elem: &Value) -> Box<dyn filter::Filter + Send + Sync> {
             .as_f64()
             .expect("c must be a number") as f32;
         Box::new(filter::MitchellNetravali::new(width, height, b, c))
-            as Box<dyn filter::Filter + Send + Sync>
     } else if ty == "gaussian" {
         let alpha = elem
             .get("alpha")
@@ -300,7 +307,6 @@ fn load_filter(elem: &Value) -> Box<dyn filter::Filter + Send + Sync> {
             .as_f64()
             .expect("alpha must be a number") as f32;
         Box::new(filter::Gaussian::new(width, height, alpha))
-            as Box<dyn filter::Filter + Send + Sync>
     } else {
         panic!("Unrecognized filter type {}!", ty);
     }
@@ -412,7 +418,7 @@ fn load_camera(elem: &Value, dim: (usize, usize)) -> Camera {
 
 /// Load the integrator described by the JSON value passed.
 /// Return the integrator or panics if it's incorrectly specified
-fn load_integrator(elem: &Value) -> Box<dyn Integrator + Send + Sync> {
+fn load_integrator(elem: &Value) -> Box<Integrators> {
     let ty = elem
         .get("type")
         .expect("Integrator must specify a type")
@@ -438,7 +444,7 @@ fn load_integrator(elem: &Value) -> Box<dyn Integrator + Send + Sync> {
             .expect("min_depth must be a number") as u32;
         Box::new(integrator::Whitted::new(min_depth))
     } else if ty == "normals_debug" {
-        Box::new(integrator::NormalsDebug)
+        Box::new(Integrators::NormalsDebug(integrator::NormalsDebug))
     } else {
         panic!("Unrecognized integrator type '{}'", ty);
     }
@@ -588,7 +594,7 @@ fn load_materials(
     path: &Path,
     elem: &Value,
     textures: &LoadedTextures,
-) -> HashMap<String, Arc<dyn Material + Send + Sync>> {
+) -> HashMap<String, Arc<Materials>> {
     let mut materials = HashMap::new();
     let mat_vec = elem
         .as_array()
@@ -632,10 +638,7 @@ fn load_materials(
                 )
                 .expect(&mat_error(&name, "Invalid color specified for eta of glass")[..]);
 
-            materials.insert(
-                name,
-                Arc::new(Glass::new(reflect, transmit, eta)) as Arc<dyn Material + Send + Sync>,
-            );
+            materials.insert(name, Arc::new(Glass::new(reflect, transmit, eta)));
         } else if ty == "rough_glass" {
             let reflect = textures
                 .find_color(
@@ -673,8 +676,7 @@ fn load_materials(
 
             materials.insert(
                 name,
-                Arc::new(RoughGlass::new(reflect, transmit, eta, roughness))
-                    as Arc<dyn Material + Send + Sync>,
+                Arc::new(RoughGlass::new(reflect, transmit, eta, roughness)),
             );
         } else if ty == "matte" {
             let diffuse = textures
@@ -707,14 +709,10 @@ fn load_materials(
             if file_path.is_relative() {
                 materials.insert(
                     name,
-                    Arc::new(Merl::load_file(path.join(file_path).as_path()))
-                        as Arc<dyn Material + Send + Sync>,
+                    Arc::new(Merl::load_file(path.join(file_path).as_path())),
                 );
             } else {
-                materials.insert(
-                    name,
-                    Arc::new(Merl::load_file(file_path)) as Arc<dyn Material + Send + Sync>,
-                );
+                materials.insert(name, Arc::new(Merl::load_file(file_path)));
             }
         } else if ty == "metal" {
             let refr_index = textures
@@ -749,8 +747,7 @@ fn load_materials(
                 .expect(&mat_error(&name, "Invalid roughness specified for metal")[..]);
             materials.insert(
                 name,
-                Arc::new(Metal::new(refr_index, absorption_coef, roughness))
-                    as Arc<dyn Material + Send + Sync>,
+                Arc::new(Metal::new(refr_index, absorption_coef, roughness)),
             );
         } else if ty == "plastic" {
             let diffuse = textures
@@ -774,11 +771,7 @@ fn load_materials(
                 )
                 .expect(&mat_error(&name, "Invalid roughness specified for plastic")[..]);
 
-            materials.insert(
-                name,
-                Arc::new(Plastic::new(diffuse, gloss, roughness))
-                    as Arc<dyn Material + Send + Sync>,
-            );
+            materials.insert(name, Arc::new(Plastic::new(diffuse, gloss, roughness)));
         } else if ty == "specular_metal" {
             let refr_index =
                 textures
@@ -804,8 +797,7 @@ fn load_materials(
                 );
             materials.insert(
                 name,
-                Arc::new(SpecularMetal::new(refr_index, absorption_coef))
-                    as Arc<dyn Material + Send + Sync>,
+                Arc::new(SpecularMetal::new(refr_index, absorption_coef)),
             );
         } else {
             panic!(
@@ -821,8 +813,8 @@ fn load_materials(
 /// panic if an incorrectly specified object is found.
 fn load_objects(
     path: &Path,
-    materials: &HashMap<String, Arc<dyn Material + Send + Sync>>,
-    mesh_cache: &mut HashMap<String, HashMap<String, Arc<Mesh>>>,
+    materials: &HashMap<String, Arc<Materials>>,
+    mesh_cache: &mut HashMap<String, HashMap<String, Arc<BoundableGeometry>>>,
     elem: &Value,
 ) -> Vec<Instance> {
     let mut instances = Vec::new();
@@ -932,9 +924,9 @@ fn load_objects(
 /// and will place newly loaded meshees in the mesh cache.
 fn load_geometry(
     path: &Path,
-    meshes: &mut HashMap<String, HashMap<String, Arc<Mesh>>>,
+    meshes: &mut HashMap<String, HashMap<String, Arc<BoundableGeometry>>>,
     elem: &Value,
-) -> Arc<dyn BoundableGeom + Send + Sync> {
+) -> Arc<BoundableGeometry> {
     let ty = elem
         .get("type")
         .expect("A type is required for geometry")
@@ -946,7 +938,7 @@ fn load_geometry(
             .expect("A radius is required for a sphere")
             .as_f64()
             .expect("radius must be a number") as f32;
-        Arc::new(Sphere::new(r))
+        Arc::new(Sphere::new(r).into())
     } else if ty == "disk" {
         let r = elem
             .get("radius")
@@ -958,10 +950,10 @@ fn load_geometry(
             .expect("An inner radius is required for a disk")
             .as_f64()
             .expect("inner radius must be a number") as f32;
-        Arc::new(Disk::new(r, ir))
+        Arc::new(Disk::new(r, ir).into())
     } else if ty == "plane" {
         // We just treat plane as a special case of Rectangle now
-        Arc::new(Rectangle::new(2.0, 2.0))
+        Arc::new(Rectangle::new(2.0, 2.0).into())
     } else if ty == "rectangle" {
         let width = elem
             .get("width")
@@ -973,7 +965,7 @@ fn load_geometry(
             .expect("A height is required for a rectangle")
             .as_f64()
             .expect("height must be a number") as f32;
-        Arc::new(Rectangle::new(width, height))
+        Arc::new(Rectangle::new(width, height).into())
     } else if ty == "mesh" {
         let mut file = Path::new(
             elem.get("file")
@@ -1007,7 +999,7 @@ fn load_geometry(
 
 /// Load the sampleable geometry specified by the JSON value. Will panic if the geometry specified
 /// is not sampleable.
-fn load_sampleable_geometry(elem: &Value) -> Arc<dyn SampleableGeom + Send + Sync> {
+fn load_sampleable_geometry(elem: &Value) -> Arc<SampleableGeometry> {
     let ty = elem
         .get("type")
         .expect("A type is required for geometry")
@@ -1019,7 +1011,7 @@ fn load_sampleable_geometry(elem: &Value) -> Arc<dyn SampleableGeom + Send + Syn
             .expect("A radius is required for a sphere")
             .as_f64()
             .expect("radius must be a number") as f32;
-        Arc::new(Sphere::new(r))
+        Arc::new(Sphere::new(r).into())
     } else if ty == "disk" {
         let r = elem
             .get("radius")
@@ -1031,7 +1023,7 @@ fn load_sampleable_geometry(elem: &Value) -> Arc<dyn SampleableGeom + Send + Syn
             .expect("An inner radius is required for a disk")
             .as_f64()
             .expect("inner radius must be a number") as f32;
-        Arc::new(Disk::new(r, ir))
+        Arc::new(Disk::new(r, ir).into())
     } else if ty == "rectangle" {
         let width = elem
             .get("width")
@@ -1043,7 +1035,7 @@ fn load_sampleable_geometry(elem: &Value) -> Arc<dyn SampleableGeom + Send + Syn
             .expect("A height is required for a rectangle")
             .as_f64()
             .expect("height must be a number") as f32;
-        Arc::new(Rectangle::new(width, height))
+        Arc::new(Rectangle::new(width, height).into())
     } else {
         panic!(
             "Geometry of type '{}' is not sampleable and can't be used for area light geometry",

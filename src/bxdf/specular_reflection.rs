@@ -3,10 +3,13 @@
 use enum_set::EnumSet;
 use std::f32;
 
-use crate::bxdf::fresnel::Fresnel;
-use crate::bxdf::{self, BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::linalg::Vector;
+use crate::{
+    bxdf::{self, fresnel::Fresnel, BxDF, BxDFType},
+    film::Colorf,
+    linalg::Vector,
+};
+
+use super::{BxDFs, fresnel::Fresnels};
 
 /// Specular reflection BRDF that implements a specularly reflective material model
 #[derive(Copy, Clone)]
@@ -14,16 +17,20 @@ pub struct SpecularReflection<'a> {
     /// Color of the reflective material
     reflectance: Colorf,
     /// Fresnel term for the reflection model
-    fresnel: &'a dyn Fresnel,
+    fresnel: &'a Fresnels,
 }
 
 impl<'a> SpecularReflection<'a> {
     /// Create a specularly reflective BRDF with the reflective color and Fresnel term
-    pub fn new(c: &Colorf, fresnel: &'a dyn Fresnel) -> Self {
+    pub fn new(c: &Colorf, fresnel: &'a Fresnels) -> Self {
         Self {
             reflectance: *c,
             fresnel,
         }
+    }
+
+    pub fn new_bxdf(c: &Colorf, fresnel: &'a Fresnels) -> BxDFs<'a> {
+        BxDFs::SpecularReflection(Self::new(c, fresnel))
     }
 }
 

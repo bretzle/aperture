@@ -1,8 +1,9 @@
+use crate::{
+    film::Colorf,
+    linalg::clamp,
+    texture::{bilinear_interpolate, Texture, Textures},
+};
 use image::{self, GenericImage};
-
-use crate::film::Colorf;
-use crate::linalg::clamp;
-use crate::texture::{bilinear_interpolate, Texture};
 
 /// An `Image` texture is a `Texture` whose samples come
 /// from an image file.
@@ -11,8 +12,8 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(img: image::DynamicImage) -> Image {
-        Image { img }
+    pub fn new(img: image::DynamicImage) -> Textures {
+        Textures::Image(Image { img })
     }
 
     fn get_float(&self, x: u32, y: u32) -> f32 {

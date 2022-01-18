@@ -9,6 +9,8 @@ use crate::film::filter::Filter;
 use crate::film::Colorf;
 use crate::sampler::Region;
 
+use super::filter::Filters;
+
 const FILTER_TABLE_SIZE: usize = 16;
 
 /// A struct containing results of an image sample where a ray was fired through
@@ -31,7 +33,7 @@ pub struct RenderTarget {
     height: usize,
     pixels_locked: Vec<Mutex<Vec<Colorf>>>,
     lock_size: (i32, i32),
-    filter: Box<dyn Filter + Send + Sync>,
+    filter: Box<Filters>,
     filter_table: Vec<f32>,
     filter_pixel_width: (i32, i32),
 }
@@ -41,7 +43,7 @@ impl RenderTarget {
     pub fn new(
         image_dim: (usize, usize),
         lock_size: (usize, usize),
-        filter: Box<dyn Filter + Send + Sync>,
+        filter: Box<Filters>,
     ) -> RenderTarget {
         if image_dim.0 % lock_size.0 != 0 || image_dim.1 % lock_size.1 != 0 {
             panic!(

@@ -4,6 +4,8 @@ use std::f32;
 
 use crate::film::filter::Filter;
 
+use super::Filters;
+
 /// A Gaussian reconstruction filter.
 /// Recommended parameters to try: w = 2.0, h = 2.0, alpha = 2.0
 #[derive(Copy, Clone, Debug)]
@@ -18,8 +20,8 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    pub fn new(w: f32, h: f32, alpha: f32) -> Self {
-        Self {
+    pub fn new(w: f32, h: f32, alpha: f32) -> Filters {
+        Filters::Gaussian(Self {
             w,
             h,
             inv_w: 1.0 / w,
@@ -27,7 +29,7 @@ impl Gaussian {
             alpha,
             exp_x: f32::exp(-alpha * w * w),
             exp_y: f32::exp(-alpha * h * h),
-        }
+        })
     }
 
     fn weight_1d(&self, x: f32, e: f32) -> f32 {

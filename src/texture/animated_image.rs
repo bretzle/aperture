@@ -1,6 +1,8 @@
-use crate::film::Colorf;
-use crate::linalg::lerp;
-use crate::texture::{Image, Texture};
+use crate::{
+    film::Colorf,
+    linalg::lerp,
+    texture::{Image, Texture, Textures},
+};
 
 /// An `AnimatedImage` texture is a `Texture` whose samples come
 /// from a series of `Image`s which are played through over time.
@@ -12,9 +14,19 @@ pub struct AnimatedImage {
 }
 
 impl AnimatedImage {
-    pub fn new(frames: Vec<(f32, Image)>) -> Self {
+    pub fn new(frames: Vec<(f32, Textures)>) -> Textures {
         assert!(frames.len() >= 2);
-        Self { frames }
+        let frames = frames
+            .into_iter()
+            .map(|(x, t)| {
+                if let Textures::Image(img) = t {
+                    (x, img)
+                } else {
+                    panic!();
+                }
+            })
+            .collect::<Vec<_>>();
+        Textures::AnimatedImage(Self { frames })
     }
 
     pub fn active_keyframes(&self, time: f32) -> (usize, Option<usize>) {

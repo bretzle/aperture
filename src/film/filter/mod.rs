@@ -12,6 +12,7 @@ pub mod mitchell_netravali;
 /// Trait implemented by all reconstructon filters. Provides methods for getting
 /// the width/height and computing the weight at some point relative to the filter
 /// center.
+#[enum_dispatch(Filters)]
 pub trait Filter {
     /// Compute the weight of this filter at some point (x, y) relative
     /// to the center of the filter
@@ -24,4 +25,10 @@ pub trait Filter {
     fn height(&self) -> f32;
     /// Return the inverse height of the filter
     fn inv_height(&self) -> f32;
+}
+
+#[enum_dispatch]
+pub enum Filters {
+    MitchellNetravali,
+    Gaussian,
 }

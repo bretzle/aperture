@@ -19,23 +19,24 @@
 //! ]
 //! ```
 
-use std::sync::Arc;
-
+use crate::{
+    bxdf::{
+        fresnel::Dielectric, microfacet::Beckmann,  MicrofacetTransmission, TorranceSparrow,
+        BSDF, BxDFs,
+    },
+    geometry::Intersection,
+    material::{Material, Materials},
+    texture::{Texture, Textures},
+};
 use light_arena::Allocator;
-
-use crate::bxdf::fresnel::Dielectric;
-use crate::bxdf::microfacet::Beckmann;
-use crate::bxdf::{BxDF, MicrofacetTransmission, TorranceSparrow, BSDF};
-use crate::geometry::Intersection;
-use crate::material::Material;
-use crate::texture::Texture;
+use std::sync::Arc;
 
 /// The `RoughGlass` material describes specularly transmissive and reflective glass material
 pub struct RoughGlass {
-    reflect: Arc<dyn Texture + Send + Sync>,
-    transmit: Arc<dyn Texture + Send + Sync>,
-    eta: Arc<dyn Texture + Send + Sync>,
-    roughness: Arc<dyn Texture + Send + Sync>,
+    reflect: Arc<Textures>,
+    transmit: Arc<Textures>,
+    eta: Arc<Textures>,
+    roughness: Arc<Textures>,
 }
 
 impl RoughGlass {
@@ -45,17 +46,17 @@ impl RoughGlass {
     /// `eta`: refractive index of the material
     /// `roughness`: roughness of the material
     pub fn new(
-        reflect: Arc<dyn Texture + Send + Sync>,
-        transmit: Arc<dyn Texture + Send + Sync>,
-        eta: Arc<dyn Texture + Send + Sync>,
-        roughness: Arc<dyn Texture + Send + Sync>,
-    ) -> Self {
-        Self {
+        reflect: Arc<Textures>,
+        transmit: Arc<Textures>,
+        eta: Arc<Textures>,
+        roughness: Arc<Textures>,
+    ) -> Materials {
+        Materials::RoughGlass(RoughGlass {
             reflect,
             transmit,
             eta,
             roughness,
-        }
+        })
     }
 }
 
@@ -77,16 +78,16 @@ impl Material for RoughGlass {
             num_bxdfs += 1;
         }
 
-        let bxdfs = alloc.alloc_slice::<&dyn BxDF>(num_bxdfs);
+        let bxdfs = alloc.alloc_slice::<&BxDFs>(num_bxdfs);
         let mut i = 0;
-        let fresnel = alloc.alloc(Dielectric::new(1.0, eta));
-        let microfacet = alloc.alloc(Beckmann::new(roughness));
+        let fresnel = alloc.alloc(Dielectric::new(1.0, eta).into());
+        let microfacet = alloc.alloc(Beckmann::new(roughness).into());
         if !reflect.is_black() {
-            bxdfs[i] = alloc.alloc(TorranceSparrow::new(&reflect, fresnel, microfacet));
+            bxdfs[i] = alloc.alloc(TorranceSparrow::new_bxdf(&reflect, fresnel, microfacet));
             i += 1;
         }
         if !transmit.is_black() {
-            bxdfs[i] = alloc.alloc(MicrofacetTransmission::new(&transmit, fresnel, microfacet));
+            bxdfs[i] = alloc.alloc(MicrofacetTransmission::new_bxdf(&transmit, fresnel, microfacet));
         }
         BSDF::new(bxdfs, eta, &hit.dg)
     }

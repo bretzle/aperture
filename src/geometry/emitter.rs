@@ -58,12 +58,14 @@
 //! ```
 
 use std::sync::Arc;
-
-use crate::film::{AnimatedColor, Colorf};
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, SampleableGeom};
-use crate::light::{Light, OcclusionTester};
-use crate::linalg::{self, AnimatedTransform, Normal, Point, Ray, Vector};
-use crate::material::Material;
+use crate::{
+    film::{AnimatedColor, Colorf},
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable},
+    light::{Light, OcclusionTester},
+    linalg::{self, AnimatedTransform, Normal, Point, Ray, Vector},
+    material::Materials,
+};
+use super::SampleableGeometry;
 
 /// The type of emitter, either a point light or an area light
 /// in which case the emitter has associated geometry and a material
@@ -72,10 +74,7 @@ enum EmitterType {
     Point,
     /// The area light holds the geometry that is emitting the light
     /// and the material for the geometry
-    Area(
-        Arc<dyn SampleableGeom + Send + Sync>,
-        Arc<dyn Material + Send + Sync>,
-    ),
+    Area(Arc<SampleableGeometry>, Arc<Materials>),
 }
 
 /// An instance of geometry in the scene that receives and emits light.
@@ -95,8 +94,8 @@ impl Emitter {
     /// We also need MIS in the path tracer's direct light sampling so we get
     /// good quality
     pub fn area(
-        geom: Arc<dyn SampleableGeom + Send + Sync>,
-        material: Arc<dyn Material + Send + Sync>,
+        geom: Arc<SampleableGeometry>,
+        material: Arc<Materials>,
         emission: AnimatedColor,
         transform: AnimatedTransform,
         tag: String,
@@ -127,7 +126,7 @@ impl Emitter {
     /// Test the ray for intersection against this insance of geometry.
     /// returns Some(Intersection) if an intersection was found and None if not.
     /// If an intersection is found `ray.max_t` will be set accordingly
-    pub fn intersect(&self, ray: &mut Ray) -> Option<(DifferentialGeometry, &(dyn Material))> {
+    pub fn intersect(&self, ray: &mut Ray) -> Option<(DifferentialGeometry, &Materials)> {
         match self.emitter {
             EmitterType::Point => None,
             EmitterType::Area(ref geom, ref mat) => {

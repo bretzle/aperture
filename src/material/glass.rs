@@ -18,21 +18,21 @@
 //! ]
 //! ```
 
-use std::sync::Arc;
-
+use super::Materials;
+use crate::{
+    bxdf::{fresnel::Dielectric,  SpecularReflection, SpecularTransmission, BSDF, BxDFs},
+    geometry::Intersection,
+    material::Material,
+    texture::{Texture, Textures},
+};
 use light_arena::Allocator;
-
-use crate::bxdf::fresnel::Dielectric;
-use crate::bxdf::{BxDF, SpecularReflection, SpecularTransmission, BSDF};
-use crate::geometry::Intersection;
-use crate::material::Material;
-use crate::texture::Texture;
+use std::sync::Arc;
 
 /// The Glass material describes specularly transmissive and reflective glass material
 pub struct Glass {
-    reflect: Arc<dyn Texture + Send + Sync>,
-    transmit: Arc<dyn Texture + Send + Sync>,
-    eta: Arc<dyn Texture + Send + Sync>,
+    reflect: Arc<Textures>,
+    transmit: Arc<Textures>,
+    eta: Arc<Textures>,
 }
 
 impl Glass {
@@ -40,16 +40,12 @@ impl Glass {
     /// `reflect`: color of reflected light
     /// `transmit`: color of transmitted light
     /// `eta`: refractive index of the material
-    pub fn new(
-        reflect: Arc<dyn Texture + Send + Sync>,
-        transmit: Arc<dyn Texture + Send + Sync>,
-        eta: Arc<dyn Texture + Send + Sync>,
-    ) -> Self {
-        Self {
+    pub fn new(reflect: Arc<Textures>, transmit: Arc<Textures>, eta: Arc<Textures>) -> Materials {
+        Materials::Glass(Glass {
             reflect,
             transmit,
             eta,
-        }
+        })
     }
 }
 
@@ -71,16 +67,16 @@ impl Material for Glass {
         if !transmit.is_black() {
             num_bxdfs += 1;
         }
-        let bxdfs = alloc.alloc_slice::<&dyn BxDF>(num_bxdfs);
+        let bxdfs = alloc.alloc_slice::<&BxDFs>(num_bxdfs);
 
         let mut i = 0;
-        let fresnel = alloc.alloc(Dielectric::new(1.0, eta));
+        let fresnel = alloc.alloc(Dielectric::new(1.0, eta).into());
         if !reflect.is_black() {
-            bxdfs[i] = alloc.alloc(SpecularReflection::new(&reflect, fresnel));
+            bxdfs[i] = alloc.alloc(SpecularReflection::new_bxdf(&reflect, fresnel));
             i += 1;
         }
         if !transmit.is_black() {
-            bxdfs[i] = alloc.alloc(SpecularTransmission::new(&transmit, fresnel));
+            bxdfs[i] = alloc.alloc(SpecularTransmission::new_bxdf(&transmit, fresnel));
         }
         BSDF::new(bxdfs, eta, &hit.dg)
     }

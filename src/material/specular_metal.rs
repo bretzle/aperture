@@ -16,36 +16,32 @@
 //! ]
 //! ```
 
-use std::sync::Arc;
-
+use crate::{
+    bxdf::{fresnel::Conductor,  SpecularReflection, BSDF, BxDFs},
+    film::Colorf,
+    geometry::Intersection,
+    material::{Material, Materials},
+    texture::{Texture, Textures},
+};
 use light_arena::Allocator;
-
-use crate::bxdf::fresnel::Conductor;
-use crate::bxdf::{BxDF, SpecularReflection, BSDF};
-use crate::film::Colorf;
-use crate::geometry::Intersection;
-use crate::material::Material;
-use crate::texture::Texture;
+use std::sync::Arc;
 
 /// The Specular Metal material describes specularly reflective metals using their
 /// refractive index and absorption coefficient
 pub struct SpecularMetal {
-    eta: Arc<dyn Texture + Send + Sync>,
-    k: Arc<dyn Texture + Send + Sync>,
+    eta: Arc<Textures>,
+    k: Arc<Textures>,
 }
 
 impl SpecularMetal {
     /// Create a new specular metal with the desired metal properties.
     /// `eta`: refractive index of the metal
     /// `k`: absorption coefficient of the metal
-    pub fn new(
-        eta: Arc<dyn Texture + Send + Sync>,
-        k: Arc<dyn Texture + Send + Sync>,
-    ) -> SpecularMetal {
-        SpecularMetal {
+    pub fn new(eta: Arc<Textures>, k: Arc<Textures>) -> Materials {
+        Materials::SpecularMetal(SpecularMetal {
             eta: eta.clone(),
             k: k.clone(),
-        }
+        })
     }
 }
 
@@ -57,9 +53,9 @@ impl Material for SpecularMetal {
         let eta = self.eta.sample_color(hit.dg.u, hit.dg.v, hit.dg.time);
         let k = self.k.sample_color(hit.dg.u, hit.dg.v, hit.dg.time);
 
-        let bxdfs = alloc.alloc_slice::<&dyn BxDF>(1);
-        let fresnel = alloc.alloc(Conductor::new(&eta, &k));
-        bxdfs[0] = alloc.alloc(SpecularReflection::new(&Colorf::broadcast(1.0), fresnel));
+        let bxdfs = alloc.alloc_slice::<&BxDFs>(1);
+        let fresnel = alloc.alloc(Conductor::new(&eta, &k).into());
+        bxdfs[0] = alloc.alloc(SpecularReflection::new_bxdf(&Colorf::broadcast(1.0), fresnel));
         BSDF::new(bxdfs, 1.0, &hit.dg)
     }
 }

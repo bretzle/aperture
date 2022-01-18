@@ -1,16 +1,16 @@
 //! A receiver is an instance of geometry that does not emit any light
 
-use crate::geometry::{BBox, Boundable, BoundableGeom, DifferentialGeometry};
+use crate::geometry::{BBox, Boundable, Geometry,BoundableGeometry, DifferentialGeometry};
 use crate::linalg::{AnimatedTransform, Ray};
-use crate::material::Material;
+use crate::material::{Materials};
 use std::sync::Arc;
 
 /// An instance of geometry in the scene that only receives light
 pub struct Receiver {
     /// The geometry that's being instanced.
-    geom: Arc<dyn BoundableGeom + Send + Sync>,
+    geom: Arc<BoundableGeometry>,
     /// The material being used by this instance.
-    pub material: Arc<dyn Material + Send + Sync>,
+    pub material: Arc<Materials>,
     /// The transform to world space
     transform: AnimatedTransform,
     /// Tag to identify the instance
@@ -20,8 +20,8 @@ pub struct Receiver {
 impl Receiver {
     /// Create a new instance of some geometry in the scene
     pub fn new(
-        geom: Arc<dyn BoundableGeom + Send + Sync>,
-        material: Arc<dyn Material + Send + Sync>,
+        geom: Arc<BoundableGeometry>,
+        material: Arc<Materials>,
         transform: AnimatedTransform,
         tag: String,
     ) -> Self {
@@ -35,7 +35,7 @@ impl Receiver {
     /// Test the ray for intersection against this insance of geometry.
     /// returns Some(Intersection) if an intersection was found and None if not.
     /// If an intersection is found `ray.max_t` will be set accordingly
-    pub fn intersect(&self, ray: &mut Ray) -> Option<(DifferentialGeometry, &dyn Material)> {
+    pub fn intersect(&self, ray: &mut Ray) -> Option<(DifferentialGeometry, &Materials)> {
         let transform = self.transform.transform(ray.time);
         let mut local = transform.inv_mul_ray(ray);
         let mut dg = match self.geom.intersect(&mut local) {

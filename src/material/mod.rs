@@ -18,18 +18,12 @@
 //! ]
 //! ```
 
+pub use self::{
+    glass::Glass, matte::Matte, merl::Merl, metal::Metal, plastic::Plastic,
+    rough_glass::RoughGlass, specular_metal::SpecularMetal,
+};
+use crate::{bxdf::BSDF, geometry::Intersection};
 use light_arena::Allocator;
-
-use crate::bxdf::BSDF;
-use crate::geometry::Intersection;
-
-pub use self::glass::Glass;
-pub use self::matte::Matte;
-pub use self::merl::Merl;
-pub use self::metal::Metal;
-pub use self::plastic::Plastic;
-pub use self::rough_glass::RoughGlass;
-pub use self::specular_metal::SpecularMetal;
 
 pub mod glass;
 pub mod matte;
@@ -41,6 +35,7 @@ pub mod specular_metal;
 
 /// Trait implemented by materials. Provides method to get the BSDF describing
 /// the material properties at the intersection
+#[enum_dispatch(Materials)]
 pub trait Material {
     /// Get the BSDF for the material which defines its properties at the hit point.
     ///
@@ -50,4 +45,15 @@ pub trait Material {
     fn bsdf<'a, 'b, 'c>(&'a self, hit: &Intersection<'a, 'b>, alloc: &'c Allocator) -> BSDF<'c>
     where
         'a: 'c;
+}
+
+#[enum_dispatch]
+pub enum Materials {
+	Glass,
+	Matte,
+	Merl,
+	Metal,
+	Plastic,
+	RoughGlass,
+	SpecularMetal,
 }

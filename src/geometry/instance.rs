@@ -62,9 +62,11 @@
 
 use crate::{
     film::AnimatedColor,
-    geometry::{BBox, Boundable, BoundableGeom, Emitter, Intersection, Receiver, SampleableGeom},
+    geometry::{
+        BBox, Boundable, BoundableGeometry, Emitter, Intersection, Receiver, SampleableGeometry,
+    },
     linalg::{AnimatedTransform, Ray},
-    material::Material,
+    material::Materials,
 };
 use std::sync::Arc;
 
@@ -77,8 +79,8 @@ pub enum Instance {
 impl Instance {
     /// Create an instance of the geometry in the scene that will only receive light.
     pub fn receiver(
-        geom: Arc<dyn BoundableGeom + Send + Sync>,
-        material: Arc<dyn Material + Send + Sync>,
+        geom: Arc<BoundableGeometry>,
+        material: Arc<Materials>,
         transform: AnimatedTransform,
         tag: String,
     ) -> Instance {
@@ -87,8 +89,8 @@ impl Instance {
 
     /// Create an instance of the geometry in the scene that will emit and receive light
     pub fn area_light(
-        geom: Arc<dyn SampleableGeom + Send + Sync>,
-        material: Arc<dyn Material + Send + Sync>,
+        geom: Arc<SampleableGeometry>,
+        material: Arc<Materials>,
         emission: AnimatedColor,
         transform: AnimatedTransform,
         tag: String,

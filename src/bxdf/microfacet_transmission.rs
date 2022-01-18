@@ -5,11 +5,18 @@
 use enum_set::EnumSet;
 use std::f32;
 
-use crate::bxdf::fresnel::{Dielectric, Fresnel};
-use crate::bxdf::microfacet::MicrofacetDistribution;
-use crate::bxdf::{self, BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::linalg::{self, Vector};
+use crate::{
+    bxdf::{
+        self,
+        fresnel::{Dielectric, Fresnel},
+        microfacet::MicrofacetDistribution,
+        BxDF, BxDFType,
+    },
+    film::Colorf,
+    linalg::{self, Vector},
+};
+
+use super::{fresnel::Fresnels, microfacet::MicrofacetDistributions, BxDFs};
 
 /// Struct providing the microfacet BTDF, implemented as described in
 /// [Walter et al. 07](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)
@@ -19,7 +26,7 @@ pub struct MicrofacetTransmission<'a> {
     fresnel: &'a Dielectric,
     /// Microfacet distribution describing the structure of the microfacets of
     /// the material
-    microfacet: &'a dyn MicrofacetDistribution,
+    microfacet: &'a MicrofacetDistributions,
 }
 
 impl<'a> MicrofacetTransmission<'a> {
@@ -27,12 +34,25 @@ impl<'a> MicrofacetTransmission<'a> {
     pub fn new(
         c: &Colorf,
         fresnel: &'a Dielectric,
-        microfacet: &'a dyn MicrofacetDistribution,
+        microfacet: &'a MicrofacetDistributions,
     ) -> Self {
         Self {
             reflectance: *c,
             fresnel,
             microfacet,
+        }
+    }
+
+    pub fn new_bxdf(
+        c: &Colorf,
+        fresnel: &'a Fresnels,
+        microfacet: &'a MicrofacetDistributions,
+    ) -> BxDFs<'a> {
+        // BxDFs::MicrofacetTransmission(Self::new(c, fresnel, microfacet))
+        if let Fresnels::Dielectric(fresnel) = fresnel {
+            BxDFs::MicrofacetTransmission(Self::new(c, fresnel, microfacet))
+        } else {
+            panic!()
         }
     }
 

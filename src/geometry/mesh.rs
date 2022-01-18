@@ -18,12 +18,14 @@
 
 extern crate tobj;
 
-use std::collections::HashMap;
-use std::path::Path;
-use std::sync::Arc;
+use std::{collections::HashMap, path::Path, sync::Arc};
 
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, Geometry, BVH};
-use crate::linalg::{self, Normal, Point, Ray, Vector};
+use crate::{
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, BVH},
+    linalg::{self, Normal, Point, Ray, Vector},
+};
+
+use super::BoundableGeometry;
 
 /// A mesh composed of triangles, specified by directly passing the position,
 /// normal and index buffers for the triangles making up the mesh
@@ -62,7 +64,7 @@ impl Mesh {
     /// model's name in the file to its loaded mesh. TODO: Don't build the BVH until we actually
     /// use the mesh in the scene, will reduce scene load time.
     /// TODO: Currently materials are ignored
-    pub fn load_obj(file_name: &Path) -> HashMap<String, Arc<Mesh>> {
+    pub fn load_obj(file_name: &Path) -> HashMap<String, Arc<BoundableGeometry>> {
         match tobj::load_obj(file_name) {
             Ok((models, _)) => {
                 let mut meshes = HashMap::new();
@@ -97,7 +99,7 @@ impl Mesh {
                     );
                     meshes.insert(
                         m.name,
-                        Arc::new(Mesh::new(positions, normals, texcoords, mesh.indices)),
+                        Arc::new(BoundableGeometry::Mesh(Mesh::new(positions, normals, texcoords, mesh.indices))),
                     );
                 }
                 meshes

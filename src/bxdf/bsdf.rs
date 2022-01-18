@@ -10,6 +10,8 @@ use crate::geometry::DifferentialGeometry;
 use crate::linalg::{self, Normal, Point, Vector};
 use crate::sampler::Sample;
 
+use super::BxDFs;
+
 /// The BSDF contains the various BRDFs and BTDFs that describe the surface's properties
 /// at some point. It also transforms incident and outgoing light directions into
 /// shading space to make the BxDFs easier to implement.
@@ -29,13 +31,13 @@ pub struct BSDF<'a> {
     pub bitan: Vector,
     /// Refractive index of the geometry
     pub eta: f32,
-    bxdfs: &'a [&'a dyn BxDF],
+    bxdfs: &'a [&'a BxDFs<'a>],
 }
 
 impl<'a> BSDF<'a> {
     /// Create a new BSDF using the BxDFs passed to shade the differential geometry with
     /// refractive index `eta`
-    pub fn new<'b>(bxdfs: &'a [&'a dyn BxDF], eta: f32, dg: &DifferentialGeometry<'b>) -> Self {
+    pub fn new<'b>(bxdfs: &'a [&'a BxDFs], eta: f32, dg: &DifferentialGeometry<'b>) -> Self {
         let n = dg.n.normalized();
         let mut bitan = dg.dp_du.normalized();
         let tan = linalg::cross(&n, &bitan);
@@ -182,7 +184,7 @@ impl<'a> BSDF<'a> {
 
     /// Get the `i`th BxDF that matches the flags passed. There should not be fewer than i
     /// BxDFs that match the flags
-    fn matching_at(&self, i: usize, flags: EnumSet<BxDFType>) -> &dyn BxDF {
+    fn matching_at(&self, i: usize, flags: EnumSet<BxDFType>) -> &BxDFs {
         let mut it = self.bxdfs.iter().filter(|x| x.matches(flags)).skip(i);
         match it.next() {
             Some(b) => *b,

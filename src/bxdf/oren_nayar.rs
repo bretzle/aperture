@@ -4,9 +4,13 @@
 use enum_set::EnumSet;
 use std::f32;
 
-use crate::bxdf::{self, BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::linalg::{self, Vector};
+use crate::{
+    bxdf::{self, BxDF, BxDFType},
+    film::Colorf,
+    linalg::{self, Vector},
+};
+
+use super::BxDFs;
 
 /// Oren-Nayar BRDF that implements the Oren-Nayar reflectance model
 #[derive(Clone, Copy, Debug)]
@@ -23,14 +27,18 @@ impl OrenNayar {
     /// Create a new Oren-Nayar BRDF with the desired color and roughness
     /// `roughness` should be the variance of the Gaussian describing the
     /// microfacet distribution
-    pub fn new(c: &Colorf, roughness: f32) -> OrenNayar {
+    pub fn new(c: Colorf, roughness: f32) -> OrenNayar {
         let mut sigma = linalg::to_radians(roughness);
         sigma *= sigma;
         OrenNayar {
-            albedo: *c,
+            albedo: c,
             a: 1.0 - 0.5 * sigma / (sigma + 0.33),
             b: 0.45 * sigma / (sigma + 0.09),
         }
+    }
+
+    pub fn new_bxdf<'a>(c: Colorf, roughness: f32) -> BxDFs<'a> {
+        BxDFs::OrenNayar(Self::new(c, roughness))
     }
 }
 

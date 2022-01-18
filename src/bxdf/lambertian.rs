@@ -4,9 +4,13 @@
 use enum_set::EnumSet;
 use std::f32;
 
-use crate::bxdf::{BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::linalg::Vector;
+use crate::{
+    bxdf::{BxDF, BxDFType},
+    film::Colorf,
+    linalg::Vector,
+};
+
+use super::BxDFs;
 
 /// Lambertian BRDF that implements the Lambertian reflectance model
 #[derive(Clone, Copy, Debug)]
@@ -17,8 +21,12 @@ pub struct Lambertian {
 
 impl Lambertian {
     /// Create a new Lambertian BRDF with the desired reflective color property
-    pub fn new(c: &Colorf) -> Lambertian {
-        Lambertian { reflectance: *c }
+    pub fn new(c: Colorf) -> Lambertian {
+        Lambertian { reflectance: c }
+    }
+
+    pub fn new_bxdf<'a>(c: Colorf) -> BxDFs<'a> {
+        BxDFs::Lambertian(Self::new(c))
     }
 }
 

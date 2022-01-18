@@ -3,15 +3,14 @@
 
 use std::iter;
 use std::time::SystemTime;
-
 use light_arena;
 use rand::StdRng;
 use scoped_threadpool::Pool;
-
 use crate::exec::{Config, Exec};
 use crate::film::{Colorf, ImageSample, RenderTarget};
 use crate::geometry::{Emitter, Instance};
-use crate::sampler::BlockQueue;
+use crate::integrator::Integrator;
+use crate::sampler::{BlockQueue, Samplers};
 use crate::sampler::{self, Sampler};
 use crate::scene::Scene;
 
@@ -89,7 +88,7 @@ fn thread_work(
     target: &RenderTarget,
     light_list: &[&Emitter],
 ) {
-    let mut sampler = sampler::LowDiscrepancy::new(queue.block_dim(), spp);
+    let mut sampler: Samplers = sampler::LowDiscrepancy::new(queue.block_dim(), spp).into();
     let mut sample_pos = Vec::with_capacity(sampler.max_spp());
     let mut time_samples: Vec<_> = iter::repeat(0.0).take(sampler.max_spp()).collect();
     let block_dim = queue.block_dim();

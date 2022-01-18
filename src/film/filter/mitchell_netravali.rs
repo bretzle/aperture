@@ -6,6 +6,8 @@ use std::f32;
 use crate::film::filter::Filter;
 use crate::linalg;
 
+use super::Filters;
+
 /// A Mitchell-Netravali reconstruction filter.
 /// Recommended parameters to try: w = 2.0, h = 2.0, b = 1.0 / 3.0, c = 1.0 / 3.0
 #[derive(Copy, Clone, Debug)]
@@ -19,7 +21,7 @@ pub struct MitchellNetravali {
 }
 
 impl MitchellNetravali {
-    pub fn new(w: f32, h: f32, b: f32, c: f32) -> Self {
+    pub fn new(w: f32, h: f32, b: f32, c: f32) -> Filters {
         if !(0.0..=1.0).contains(&b) {
             println!(
                 "Warning! Mitchell-Netravali b param = {} is out of bounds, clamping in range",
@@ -33,14 +35,14 @@ impl MitchellNetravali {
             );
         }
 
-        Self {
+        Filters::MitchellNetravali(Self {
             w,
             h,
             inv_w: 1.0 / w,
             inv_h: 1.0 / h,
             b: linalg::clamp(b, 0.0, 1.0),
             c: linalg::clamp(c, 0.0, 1.0),
-        }
+        })
     }
 
     /// Compute a 1d weight for the filter. Note that the Mitchell-Netravali

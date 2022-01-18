@@ -3,7 +3,7 @@
 //! that was intersected
 
 use crate::geometry::{DifferentialGeometry, Instance};
-use crate::material::Material;
+use crate::material::Materials;
 
 /// Stores information about an intersection that occured with some instance
 /// of geometry in the scene
@@ -15,7 +15,7 @@ pub struct Intersection<'a, 'b> {
     /// The instance of geometry that was hit
     pub instance: &'b Instance,
     /// The material of the instance that was hit
-    pub material: &'b dyn Material,
+    pub material: &'b Materials,
 }
 
 impl<'a, 'b> Intersection<'a, 'b> {
@@ -25,7 +25,7 @@ impl<'a, 'b> Intersection<'a, 'b> {
     pub fn new(
         dg: DifferentialGeometry<'a>,
         instance: &'b Instance,
-        material: &'b dyn Material,
+        material: &'b Materials,
     ) -> Self {
         Self {
             dg,

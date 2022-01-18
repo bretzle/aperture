@@ -51,6 +51,7 @@ dependencies = [
  "color-eyre",
  "docopt",
  "enum-set",
+ "enum_dispatch",
  "env_logger",
  "image",
  "la",
@@ -267,6 +268,18 @@ name = "enum-set"
 version = "0.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da4d062c93d122903dbbbfc0c9a82f25af63ef65339a85dc1d0f6951458601b5"
+
+[[package]]
+name = "enum_dispatch"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd53b3fde38a39a06b2e66dc282f3e86191e53bd04cc499929c15742beae3df8"
+dependencies = [
+ "once_cell",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "enum_primitive"

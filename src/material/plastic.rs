@@ -22,37 +22,35 @@
 //! ]
 //! ```
 
-use std::sync::Arc;
-
+use crate::{
+    bxdf::{fresnel::Dielectric, microfacet::Beckmann,  Lambertian, TorranceSparrow, BSDF, BxDFs},
+    geometry::Intersection,
+    material::{Material, Materials},
+    texture::{Texture, Textures},
+};
 use light_arena::Allocator;
-
-use crate::bxdf::fresnel::Dielectric;
-use crate::bxdf::microfacet::Beckmann;
-use crate::bxdf::{BxDF, Lambertian, TorranceSparrow, BSDF};
-use crate::geometry::Intersection;
-use crate::material::Material;
-use crate::texture::Texture;
+use std::sync::Arc;
 
 /// The Plastic material describes plastic materials of varying roughness
 pub struct Plastic {
-    diffuse: Arc<dyn Texture + Send + Sync>,
-    gloss: Arc<dyn Texture + Send + Sync>,
-    roughness: Arc<dyn Texture + Send + Sync>,
+    diffuse: Arc<Textures>,
+    gloss: Arc<Textures>,
+    roughness: Arc<Textures>,
 }
 
 impl Plastic {
     /// Create a new plastic material specifying the diffuse and glossy colors
     /// along with the roughness of the surface
     pub fn new(
-        diffuse: Arc<dyn Texture + Send + Sync>,
-        gloss: Arc<dyn Texture + Send + Sync>,
-        roughness: Arc<dyn Texture + Send + Sync>,
-    ) -> Plastic {
-        Plastic {
+        diffuse: Arc<Textures>,
+        gloss: Arc<Textures>,
+        roughness: Arc<Textures>,
+    ) -> Materials {
+        Materials::Plastic(Plastic {
             diffuse: diffuse.clone(),
             gloss: gloss.clone(),
             roughness: roughness.clone(),
-        }
+        })
     }
 }
 
@@ -74,17 +72,17 @@ impl Material for Plastic {
         if !gloss.is_black() {
             num_bxdfs += 1;
         }
-        let bxdfs = alloc.alloc_slice::<&dyn BxDF>(num_bxdfs);
+        let bxdfs = alloc.alloc_slice::<&BxDFs>(num_bxdfs);
 
         let mut i = 0;
         if !diffuse.is_black() {
-            bxdfs[i] = alloc.alloc(Lambertian::new(&diffuse));
+            bxdfs[i] = alloc.alloc(Lambertian::new_bxdf(diffuse));
             i += 1;
         }
         if !gloss.is_black() {
-            let fresnel = alloc.alloc(Dielectric::new(1.0, 1.5));
-            let microfacet = alloc.alloc(Beckmann::new(roughness));
-            bxdfs[i] = alloc.alloc(TorranceSparrow::new(&gloss, fresnel, microfacet));
+            let fresnel = alloc.alloc(Dielectric::new(1.0, 1.5).into());
+            let microfacet = alloc.alloc(Beckmann::new(roughness).into());
+            bxdfs[i] = alloc.alloc(TorranceSparrow::new_bxdf(&gloss, fresnel, microfacet));
         }
         BSDF::new(bxdfs, 1.0, &hit.dg)
     }

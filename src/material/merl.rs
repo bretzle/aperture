@@ -18,17 +18,14 @@
 //! ]
 //! ```
 
-use std::fs::File;
-use std::io::BufReader;
-use std::iter;
-use std::path::Path;
-
+use crate::{
+    bxdf::{self,  BSDF, BxDFs},
+    geometry::Intersection,
+    material::{Material, Materials},
+};
 use byteorder::{LittleEndian, ReadBytesExt};
 use light_arena::Allocator;
-
-use crate::bxdf::{self, BxDF, BSDF};
-use crate::geometry::Intersection;
-use crate::material::Material;
+use std::{fs::File, io::BufReader, iter, path::Path};
 
 /// Material that uses measured data to model the surface reflectance properties.
 /// The measured data is from "A Data-Driven Reflectance Model",
@@ -48,7 +45,7 @@ pub struct Merl {
 impl Merl {
     /// Create a new MERL BRDF by loading the refletance data from a MERL BRDF
     /// database file
-    pub fn load_file(path: &Path) -> Self {
+    pub fn load_file(path: &Path) -> Materials {
         let file = match File::open(path) {
             Ok(f) => f,
             Err(e) => {
@@ -85,12 +82,13 @@ impl Merl {
                 brdf[3 * i + c] = f32::max(0.0, x);
             }
         }
-        Self {
+
+        Materials::Merl(Merl {
             brdf,
             n_theta_h,
             n_theta_d,
             n_phi_d,
-        }
+        })
     }
 }
 
@@ -99,7 +97,7 @@ impl Material for Merl {
     where
         'a: 'c,
     {
-        let bxdfs = alloc.alloc_slice::<&dyn BxDF>(1);
+        let bxdfs = alloc.alloc_slice::<&BxDFs>(1);
         bxdfs[0] = alloc.alloc(bxdf::Merl::new(
             &self.brdf[..],
             self.n_theta_h,

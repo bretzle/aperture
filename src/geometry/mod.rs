@@ -25,18 +25,12 @@
 
 use crate::linalg::{Normal, Point, Ray, Vector};
 
-pub use self::animated_mesh::AnimatedMesh;
-pub use self::bbox::BBox;
-pub use self::bvh::BVH;
-pub use self::differential_geometry::DifferentialGeometry;
-pub use self::disk::Disk;
-pub use self::emitter::Emitter;
-pub use self::instance::Instance;
-pub use self::intersection::Intersection;
-pub use self::mesh::Mesh;
-pub use self::receiver::Receiver;
-pub use self::rectangle::Rectangle;
-pub use self::sphere::Sphere;
+pub use self::{
+    animated_mesh::AnimatedMesh, bbox::BBox, bvh::BVH, differential_geometry::DifferentialGeometry,
+    disk::Disk, emitter::Emitter, instance::Instance, intersection::Intersection, mesh::Mesh,
+    receiver::Receiver, rectangle::Rectangle, sphere::Sphere,
+};
+use self::{animated_mesh::AnimatedTriangle, mesh::Triangle};
 
 pub mod animated_mesh;
 pub mod bbox;
@@ -52,6 +46,7 @@ pub mod rectangle;
 pub mod sphere;
 
 /// Trait implemented by geometric primitives
+#[enum_dispatch(BoundableGeometry, SampleableGeometry)]
 pub trait Geometry {
     /// Test a ray for intersection with the geometry.
     /// The ray should have been previously transformed into the geometry's
@@ -62,6 +57,7 @@ pub trait Geometry {
 }
 
 /// Trait implemented by scene objects that can report an AABB describing their bounds
+#[enum_dispatch(BoundableGeometry, SampleableGeometry)]
 pub trait Boundable {
     /// Get an AABB reporting the object's bounds over the time period
     /// The default implementation assumes the object isn't animated and
@@ -74,6 +70,7 @@ pub trait Boundable {
 }
 
 /// Trait implemented by geometry that can sample a point on its surface
+#[enum_dispatch(SampleableGeometry)]
 pub trait Sampleable {
     /// Uniformly sample a position and normal on the surface using the samples passed
     fn sample_uniform(&self, samples: &(f32, f32)) -> (Point, Normal);
@@ -91,5 +88,23 @@ pub trait Sampleable {
 pub trait BoundableGeom: Geometry + Boundable {}
 impl<T: ?Sized> BoundableGeom for T where T: Geometry + Boundable {}
 
+#[enum_dispatch]
+pub enum BoundableGeometry {
+    AnimatedMesh,
+    AnimatedTriangle,
+    Disk,
+    Mesh,
+    Triangle,
+    Rectangle,
+    Sphere,
+}
+
 pub trait SampleableGeom: Geometry + Boundable + Sampleable {}
 impl<T: ?Sized> SampleableGeom for T where T: Geometry + Boundable + Sampleable {}
+
+#[enum_dispatch]
+pub enum SampleableGeometry {
+    Disk,
+    Rectangle,
+    Sphere,
+}

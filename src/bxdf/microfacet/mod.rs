@@ -3,13 +3,13 @@
 
 use crate::linalg::Vector;
 
-pub use self::beckmann::Beckmann;
-pub use self::ggx::GGX;
+pub use self::{beckmann::Beckmann, ggx::GGX};
 
 pub mod beckmann;
 pub mod ggx;
 
 /// Trait implemented by all microfacet distributions
+#[enum_dispatch(MicrofacetDistributions)]
 pub trait MicrofacetDistribution {
     /// Compute the probability that microfacets are
     /// oriented with normal `w_h` in this distribution
@@ -28,4 +28,11 @@ pub trait MicrofacetDistribution {
     /// Return the monodirectional shadowing function, G_1
     /// `v` is the reflected/incident direction, `w_h` is the microfacet normal
     fn monodir_shadowing(&self, v: &Vector, w_h: &Vector) -> f32;
+}
+
+#[enum_dispatch]
+#[derive(Clone, Copy)]
+pub enum MicrofacetDistributions {
+    Beckmann,
+    GGX,
 }

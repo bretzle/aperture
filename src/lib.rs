@@ -1,5 +1,8 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
+#[macro_use]
+extern crate enum_dispatch;
+
 pub mod bxdf;
 pub mod exec;
 pub mod film;

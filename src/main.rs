@@ -2,8 +2,7 @@ use aperture::{
     exec::{Config, Exec, MultiThreaded},
     scene::Scene,
 };
-use std::path::PathBuf;
-use std::time::SystemTime;
+use std::{path::PathBuf, time::SystemTime};
 
 const SCENE_PATH: &str = "cornell.json";
 

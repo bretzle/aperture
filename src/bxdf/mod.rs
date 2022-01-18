@@ -3,21 +3,20 @@
 //! various BRDF/BTDFs to describe materials
 
 use enum_set::{CLike, EnumSet};
-use std::f32;
-use std::mem;
+use std::{f32, mem};
 
-use crate::film::Colorf;
-use crate::linalg::{self, Vector};
-use crate::mc;
+use crate::{
+    film::Colorf,
+    linalg::{self, Vector},
+    mc,
+};
 
-pub use self::bsdf::BSDF;
-pub use self::lambertian::Lambertian;
-pub use self::merl::Merl;
-pub use self::microfacet_transmission::MicrofacetTransmission;
-pub use self::oren_nayar::OrenNayar;
-pub use self::specular_reflection::SpecularReflection;
-pub use self::specular_transmission::SpecularTransmission;
-pub use self::torrance_sparrow::TorranceSparrow;
+pub use self::{
+    bsdf::BSDF, lambertian::Lambertian, merl::Merl,
+    microfacet_transmission::MicrofacetTransmission, oren_nayar::OrenNayar,
+    specular_reflection::SpecularReflection, specular_transmission::SpecularTransmission,
+    torrance_sparrow::TorranceSparrow,
+};
 
 pub mod bsdf;
 pub mod fresnel;
@@ -99,6 +98,7 @@ impl CLike for BxDFType {
 
 /// Trait implemented by BRDF/BTDFs in `tray_rust`. Provides methods for
 /// evaluating and sampling the function
+#[enum_dispatch(BxDFs)]
 pub trait BxDF {
     /// Get the type of this BxDF
     fn bxdf_type(&self) -> EnumSet<BxDFType>;
@@ -129,6 +129,18 @@ pub trait BxDF {
             0.0
         }
     }
+}
+
+#[enum_dispatch]
+#[derive(Copy, Clone)]
+pub enum BxDFs<'a> {
+    Merl(Merl<'a>),
+    Lambertian,
+    OrenNayar,
+    MicrofacetTransmission(MicrofacetTransmission<'a>),
+    SpecularReflection(SpecularReflection<'a>),
+    SpecularTransmission(SpecularTransmission<'a>),
+    TorranceSparrow(TorranceSparrow<'a>),
 }
 
 /// Compute the value of cosine theta for a vector in shading space

@@ -19,6 +19,7 @@ pub mod uniform;
 /// Provides the interface for all samplers to implement. Defines functions for
 /// getting samples from the sampler and checking the sampler has finished sampling
 /// the region
+#[enum_dispatch(Samplers)]
 pub trait Sampler {
     /// Fill the vector with 2D pixel coordinate samples for a single pixel
     /// in the region being sampled. If the sampler doesn't have any more samples
@@ -48,6 +49,13 @@ pub trait Sampler {
     fn report_results(&mut self, _samples: &[ImageSample]) -> bool {
         true
     }
+}
+
+#[enum_dispatch]
+pub enum Samplers {
+	Adaptive,
+	LowDiscrepancy,
+	Uniform,
 }
 
 /// Provides a simple way to pass around a 3 component sample consisting of one 2D and

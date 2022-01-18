@@ -17,21 +17,20 @@
 use enum_set::EnumSet;
 use light_arena::Allocator;
 use rand::StdRng;
-use std::cmp;
-use std::f32;
+use std::{cmp, f32};
 
-use crate::bxdf::{BxDFType, BSDF};
-use crate::film::Colorf;
-use crate::geometry::{Emitter, Instance, Intersection};
-use crate::light::Light;
-use crate::linalg::{self, Point, Ray, Vector};
-use crate::mc;
-use crate::sampler::{Sample, Sampler};
-use crate::scene::Scene;
+use crate::{
+    bxdf::{BxDFType, BSDF},
+    film::Colorf,
+    geometry::{Emitter, Instance, Intersection},
+    light::Light,
+    linalg::{self, Point, Ray, Vector},
+    mc,
+    sampler::{Sample, Sampler, Samplers},
+    scene::Scene,
+};
 
-pub use self::normals_debug::NormalsDebug;
-pub use self::path::Path;
-pub use self::whitted::Whitted;
+pub use self::{normals_debug::NormalsDebug, path::Path, whitted::Whitted};
 
 pub mod normals_debug;
 pub mod path;
@@ -40,6 +39,7 @@ pub mod whitted;
 /// Trait implemented by the various integration methods that can be used to render
 /// the scene. For scene usage information see whitted and path to get information
 /// on how to specify them.
+#[enum_dispatch(Integrators)]
 pub trait Integrator {
     /// Compute the illumination at the intersection in the scene
     fn illumination(
@@ -48,7 +48,7 @@ pub trait Integrator {
         light_list: &[&Emitter],
         ray: &Ray,
         hit: &Intersection,
-        sampler: &mut dyn Sampler,
+        sampler: &mut Samplers,
         rng: &mut StdRng,
         alloc: &Allocator,
     ) -> Colorf;
@@ -60,7 +60,7 @@ pub trait Integrator {
         light_list: &[&Emitter],
         ray: &Ray,
         bsdf: &BSDF,
-        sampler: &mut dyn Sampler,
+        sampler: &mut Samplers,
         rng: &mut StdRng,
         alloc: &Allocator,
     ) -> Colorf {
@@ -93,7 +93,7 @@ pub trait Integrator {
         light_list: &[&Emitter],
         ray: &Ray,
         bsdf: &BSDF,
-        sampler: &mut dyn Sampler,
+        sampler: &mut Samplers,
         rng: &mut StdRng,
         alloc: &Allocator,
     ) -> Colorf {
@@ -228,4 +228,11 @@ pub trait Integrator {
         }
         direct_light
     }
+}
+
+#[enum_dispatch]
+pub enum Integrators {
+    Path,
+    Whitted,
+    NormalsDebug,
 }

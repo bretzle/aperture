@@ -10,15 +10,17 @@
 //! }
 //! ```
 
+use crate::{
+    film::Colorf,
+    geometry::{Emitter, Intersection},
+    integrator::Integrator,
+    linalg::Ray,
+    material::Material,
+    sampler::{Samplers},
+    scene::Scene,
+};
 use light_arena::Allocator;
 use rand::StdRng;
-
-use crate::film::Colorf;
-use crate::geometry::{Emitter, Intersection};
-use crate::integrator::Integrator;
-use crate::linalg::Ray;
-use crate::sampler::Sampler;
-use crate::scene::Scene;
 
 /// The `NormalsDebug` integrator implementing the `NormalsDebug` recursive ray tracing algorithm
 #[derive(Clone, Copy, Debug)]
@@ -31,7 +33,7 @@ impl Integrator for NormalsDebug {
         _: &[&Emitter],
         _: &Ray,
         hit: &Intersection,
-        _: &mut dyn Sampler,
+        _: &mut Samplers,
         _: &mut StdRng,
         alloc: &Allocator,
     ) -> Colorf {

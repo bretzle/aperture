@@ -1,7 +1,6 @@
 //! Provides the Fresnel term trait and implementations for conductors and dielectric materials
 
-use crate::film::Colorf;
-use crate::linalg;
+use crate::{film::Colorf, linalg};
 use std::f32;
 
 /// Compute the Fresnel term for a dielectric material given the incident and transmission
@@ -25,9 +24,17 @@ fn conductor(cos_i: f32, eta: &Colorf, k: &Colorf) -> Colorf {
 }
 
 /// The Fresnel trait implemented by the various Fresnel term components
+#[enum_dispatch(Fresnels)]
 pub trait Fresnel {
     /// Compute the fresnel term for light incident to the object at angle `cos_i`
     fn fresnel(&self, cos_i: f32) -> Colorf;
+}
+
+#[enum_dispatch]
+#[derive(Clone, Copy)]
+pub enum Fresnels {
+    Dielectric,
+    Conductor,
 }
 
 /// Computes the Fresnel term for dielectric materials
