@@ -14,7 +14,7 @@ pub struct AnimatedImage {
 }
 
 impl AnimatedImage {
-    pub fn new(frames: Vec<(f32, Textures)>) -> Textures {
+    pub fn new_texture(frames: Vec<(f32, Textures)>) -> Textures {
         assert!(frames.len() >= 2);
         let frames = frames
             .into_iter()

@@ -18,11 +18,10 @@
 //! ]
 //! ```
 
-use super::Materials;
 use crate::{
-    bxdf::{fresnel::Dielectric,  SpecularReflection, SpecularTransmission, BSDF, BxDFs},
+    bxdf::{fresnel::Dielectric, BxDFs, SpecularReflection, SpecularTransmission, BSDF},
     geometry::Intersection,
-    material::Material,
+    material::{Material, Materials},
     texture::{Texture, Textures},
 };
 use light_arena::Allocator;
@@ -40,7 +39,11 @@ impl Glass {
     /// `reflect`: color of reflected light
     /// `transmit`: color of transmitted light
     /// `eta`: refractive index of the material
-    pub fn new(reflect: Arc<Textures>, transmit: Arc<Textures>, eta: Arc<Textures>) -> Materials {
+    pub fn new_material(
+        reflect: Arc<Textures>,
+        transmit: Arc<Textures>,
+        eta: Arc<Textures>,
+    ) -> Materials {
         Materials::Glass(Glass {
             reflect,
             transmit,

@@ -9,7 +9,7 @@ pub struct ConstantScalar {
 }
 
 impl ConstantScalar {
-    pub fn new(val: f32) -> Textures {
+    pub fn new_texture(val: f32) -> Textures {
         Textures::ConstantScalar(Self { val })
     }
 }
@@ -30,7 +30,7 @@ pub struct ConstantColor {
 }
 
 impl ConstantColor {
-    pub fn new(val: Colorf) -> Textures {
+    pub fn new_texture(val: Colorf) -> Textures {
         Textures::ConstantColor(Self { val })
     }
 }

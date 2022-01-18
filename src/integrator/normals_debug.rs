@@ -16,7 +16,7 @@ use crate::{
     integrator::Integrator,
     linalg::Ray,
     material::Material,
-    sampler::{Samplers},
+    sampler::Samplers,
     scene::Scene,
 };
 use light_arena::Allocator;

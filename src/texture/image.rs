@@ -12,7 +12,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(img: image::DynamicImage) -> Textures {
+    pub fn new_texture(img: image::DynamicImage) -> Textures {
         Textures::Image(Image { img })
     }
 

@@ -4,13 +4,13 @@
 use enum_set::EnumSet;
 use std::cmp;
 
-use crate::bxdf::{BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::geometry::DifferentialGeometry;
-use crate::linalg::{self, Normal, Point, Vector};
-use crate::sampler::Sample;
-
-use super::BxDFs;
+use crate::{
+    bxdf::{BxDF, BxDFType, BxDFs},
+    film::Colorf,
+    geometry::DifferentialGeometry,
+    linalg::{self, Normal, Point, Vector},
+    sampler::Sample,
+};
 
 /// The BSDF contains the various BRDFs and BTDFs that describe the surface's properties
 /// at some point. It also transforms incident and outgoing light directions into

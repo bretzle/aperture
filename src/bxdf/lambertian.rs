@@ -1,16 +1,13 @@
 //! Defines a Lambertion BRDF that describes perfectly diffuse surfaces.
 //! See [Lambertian reflectance](https://en.wikipedia.org/wiki/Lambertian_reflectance)
 
-use enum_set::EnumSet;
-use std::f32;
-
 use crate::{
-    bxdf::{BxDF, BxDFType},
+    bxdf::{BxDF, BxDFType, BxDFs},
     film::Colorf,
     linalg::Vector,
 };
-
-use super::BxDFs;
+use enum_set::EnumSet;
+use std::f32;
 
 /// Lambertian BRDF that implements the Lambertian reflectance model
 #[derive(Clone, Copy, Debug)]

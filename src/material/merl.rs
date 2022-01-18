@@ -19,7 +19,7 @@
 //! ```
 
 use crate::{
-    bxdf::{self,  BSDF, BxDFs},
+    bxdf::{self, BxDFs, BSDF},
     geometry::Intersection,
     material::{Material, Materials},
 };
@@ -98,7 +98,7 @@ impl Material for Merl {
         'a: 'c,
     {
         let bxdfs = alloc.alloc_slice::<&BxDFs>(1);
-        bxdfs[0] = alloc.alloc(bxdf::Merl::new(
+        bxdfs[0] = alloc.alloc(bxdf::Merl::new_bxdf(
             &self.brdf[..],
             self.n_theta_h,
             self.n_theta_d,

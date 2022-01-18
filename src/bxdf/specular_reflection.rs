@@ -1,15 +1,16 @@
 //! Defines a BRDF that describes specular reflection
 
-use enum_set::EnumSet;
-use std::f32;
-
 use crate::{
-    bxdf::{self, fresnel::Fresnel, BxDF, BxDFType},
+    bxdf::{
+        self,
+        fresnel::{Fresnel, Fresnels},
+        BxDF, BxDFType, BxDFs,
+    },
     film::Colorf,
     linalg::Vector,
 };
-
-use super::{BxDFs, fresnel::Fresnels};
+use enum_set::EnumSet;
+use std::f32;
 
 /// Specular reflection BRDF that implements a specularly reflective material model
 #[derive(Copy, Clone)]

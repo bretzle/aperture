@@ -1,12 +1,13 @@
 //! The film module provides color types and a render target that the image
 //! is written too.
 
-pub use self::animated_color::{AnimatedColor, ColorKeyframe};
-pub use self::camera::Camera;
-pub use self::color::Colorf;
-pub use self::image::Image;
-pub use self::render_target::ImageSample;
-pub use self::render_target::RenderTarget;
+pub use self::{
+    animated_color::{AnimatedColor, ColorKeyframe},
+    camera::Camera,
+    color::Colorf,
+    image::Image,
+    render_target::{ImageSample, RenderTarget},
+};
 
 pub mod animated_color;
 pub mod camera;

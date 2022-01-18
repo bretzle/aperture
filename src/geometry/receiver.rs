@@ -1,8 +1,10 @@
 //! A receiver is an instance of geometry that does not emit any light
 
-use crate::geometry::{BBox, Boundable, Geometry,BoundableGeometry, DifferentialGeometry};
-use crate::linalg::{AnimatedTransform, Ray};
-use crate::material::{Materials};
+use crate::{
+    geometry::{BBox, Boundable, BoundableGeometry, DifferentialGeometry, Geometry},
+    linalg::{AnimatedTransform, Ray},
+    material::Materials,
+};
 use std::sync::Arc;
 
 /// An instance of geometry in the scene that only receives light

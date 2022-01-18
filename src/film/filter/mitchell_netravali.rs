@@ -1,12 +1,11 @@
 //! Provides an implementation of the Mitchell-Netravali reconstruction filter.
 //! See [Reconstruction Filters in Computer Graphics](http://www.cs.utexas.edu/~fussell/courses/cs384g-fall2013/lectures/mitchell/Mitchell.pdf).
 
+use crate::{
+    film::filter::{Filter, Filters},
+    linalg,
+};
 use std::f32;
-
-use crate::film::filter::Filter;
-use crate::linalg;
-
-use super::Filters;
 
 /// A Mitchell-Netravali reconstruction filter.
 /// Recommended parameters to try: w = 2.0, h = 2.0, b = 1.0 / 3.0, c = 1.0 / 3.0
@@ -21,7 +20,7 @@ pub struct MitchellNetravali {
 }
 
 impl MitchellNetravali {
-    pub fn new(w: f32, h: f32, b: f32, c: f32) -> Filters {
+    pub fn new_filter(w: f32, h: f32, b: f32, c: f32) -> Filters {
         if !(0.0..=1.0).contains(&b) {
             println!(
                 "Warning! Mitchell-Netravali b param = {} is out of bounds, clamping in range",

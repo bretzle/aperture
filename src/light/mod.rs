@@ -4,9 +4,11 @@
 
 use std::f32;
 
-use crate::film::Colorf;
-use crate::linalg::{Point, Ray, Vector};
-use crate::scene::Scene;
+use crate::{
+    film::Colorf,
+    linalg::{Point, Ray, Vector},
+    scene::Scene,
+};
 
 /// The `OcclusionTester` provides a simple interface for setting up and executing
 /// occlusion queries in the scene

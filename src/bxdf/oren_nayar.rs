@@ -10,7 +10,7 @@ use crate::{
     linalg::{self, Vector},
 };
 
-use super::BxDFs;
+use crate::bxdf::BxDFs;
 
 /// Oren-Nayar BRDF that implements the Oren-Nayar reflectance model
 #[derive(Clone, Copy, Debug)]

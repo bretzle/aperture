@@ -21,8 +21,8 @@
 
 use crate::{
     bxdf::{
-        fresnel::Dielectric, microfacet::Beckmann,  MicrofacetTransmission, TorranceSparrow,
-        BSDF, BxDFs,
+        fresnel::Dielectric, microfacet::Beckmann, BxDFs, MicrofacetTransmission, TorranceSparrow,
+        BSDF,
     },
     geometry::Intersection,
     material::{Material, Materials},
@@ -45,7 +45,7 @@ impl RoughGlass {
     /// `transmit`: color of transmitted light
     /// `eta`: refractive index of the material
     /// `roughness`: roughness of the material
-    pub fn new(
+    pub fn new_material(
         reflect: Arc<Textures>,
         transmit: Arc<Textures>,
         eta: Arc<Textures>,
@@ -87,7 +87,9 @@ impl Material for RoughGlass {
             i += 1;
         }
         if !transmit.is_black() {
-            bxdfs[i] = alloc.alloc(MicrofacetTransmission::new_bxdf(&transmit, fresnel, microfacet));
+            bxdfs[i] = alloc.alloc(MicrofacetTransmission::new_bxdf(
+                &transmit, fresnel, microfacet,
+            ));
         }
         BSDF::new(bxdfs, eta, &hit.dg)
     }

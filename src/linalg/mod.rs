@@ -1,19 +1,16 @@
 //! The linalg module provides some basic linear algebra functionality for
 //! transforming 3D geometry
 
-use std::f32;
-use std::ops::{Add, Index, Mul};
+use std::{
+    f32,
+    ops::{Add, Index, Mul},
+};
 
 // Re-export the linalg types from the internal modules
-pub use self::animated_transform::AnimatedTransform;
-pub use self::keyframe::Keyframe;
-pub use self::matrix4::Matrix4;
-pub use self::normal::Normal;
-pub use self::point::Point;
-pub use self::quaternion::Quaternion;
-pub use self::ray::Ray;
-pub use self::transform::Transform;
-pub use self::vector::Vector;
+pub use self::{
+    animated_transform::AnimatedTransform, keyframe::Keyframe, matrix4::Matrix4, normal::Normal,
+    point::Point, quaternion::Quaternion, ray::Ray, transform::Transform, vector::Vector,
+};
 
 pub mod animated_transform;
 pub mod keyframe;

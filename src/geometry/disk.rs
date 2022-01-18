@@ -17,9 +17,11 @@
 /// ```
 use std::f32;
 
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable};
-use crate::linalg::{self, Normal, Point, Ray, Vector};
-use crate::mc;
+use crate::{
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable},
+    linalg::{self, Normal, Point, Ray, Vector},
+    mc,
+};
 
 /// A disk with some inner and outer radius allowing it to
 /// have a hole in the middle. The disk is oriented with the center
@@ -87,7 +89,7 @@ impl Geometry for Disk {
             &dp_dv,
             self,
         ))
-	}
+    }
 }
 
 impl Boundable for Disk {

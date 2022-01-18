@@ -2,21 +2,18 @@
 //! [Walter et al. 07](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)
 //! for details.
 
-use enum_set::EnumSet;
-use std::f32;
-
 use crate::{
     bxdf::{
         self,
-        fresnel::{Dielectric, Fresnel},
-        microfacet::MicrofacetDistribution,
-        BxDF, BxDFType,
+        fresnel::{Dielectric, Fresnel, Fresnels},
+        microfacet::{MicrofacetDistribution, MicrofacetDistributions},
+        BxDF, BxDFType, BxDFs,
     },
     film::Colorf,
     linalg::{self, Vector},
 };
-
-use super::{fresnel::Fresnels, microfacet::MicrofacetDistributions, BxDFs};
+use enum_set::EnumSet;
+use std::f32;
 
 /// Struct providing the microfacet BTDF, implemented as described in
 /// [Walter et al. 07](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)

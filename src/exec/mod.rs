@@ -3,8 +3,10 @@
 
 use std::path::PathBuf;
 
-use crate::film::{FrameInfo, RenderTarget};
-use crate::scene::Scene;
+use crate::{
+    film::{FrameInfo, RenderTarget},
+    scene::Scene,
+};
 
 pub use self::multithreaded::MultiThreaded;
 

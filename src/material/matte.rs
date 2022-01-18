@@ -20,7 +20,7 @@
 //! ```
 
 use crate::{
-    bxdf::{ BxDFs, Lambertian, OrenNayar, BSDF},
+    bxdf::{BxDFs, Lambertian, OrenNayar, BSDF},
     geometry::Intersection,
     material::{Material, Materials},
     texture::{Texture, Textures},
@@ -38,11 +38,8 @@ pub struct Matte {
 
 impl Matte {
     /// Create a new Matte material with the desired diffuse color and roughness
-    pub fn new(diffuse: Arc<Textures>, roughness: Arc<Textures>) -> Materials {
-        Materials::Matte(Matte {
-            diffuse: diffuse.clone(),
-            roughness: roughness.clone(),
-        })
+    pub fn new_material(diffuse: Arc<Textures>, roughness: Arc<Textures>) -> Materials {
+        Materials::Matte(Matte { diffuse, roughness })
     }
 }
 

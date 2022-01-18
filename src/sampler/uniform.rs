@@ -1,8 +1,10 @@
 //! Provides the simplest and worst sampling method, the Uniform sampler takes
 //! a single sample at the center of each pixel in its region
 
-use rand::distributions::{IndependentSample, Range};
-use rand::StdRng;
+use rand::{
+    distributions::{IndependentSample, Range},
+    StdRng,
+};
 
 use crate::sampler::{Region, Sampler};
 

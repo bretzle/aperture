@@ -3,8 +3,10 @@
 //! TODO: Should I also implement the Geometry trait?
 
 use crate::linalg::{self, Axis, Point, Ray, Vector};
-use std::f32::{INFINITY, NEG_INFINITY};
-use std::ops::{Index, IndexMut};
+use std::{
+    f32::{INFINITY, NEG_INFINITY},
+    ops::{Index, IndexMut},
+};
 
 /// A box between the min and max points
 #[derive(Clone, Copy, Debug)]

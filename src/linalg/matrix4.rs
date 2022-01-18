@@ -1,6 +1,8 @@
-use std::iter::{FromIterator, IntoIterator};
-use std::ops::{Add, Mul, Sub};
-use std::slice::Iter;
+use std::{
+    iter::{FromIterator, IntoIterator},
+    ops::{Add, Mul, Sub},
+    slice::Iter,
+};
 
 /// Matrix4 is a 4x4 matrix stored in row-major format
 #[derive(Debug, PartialEq, Copy, Clone)]

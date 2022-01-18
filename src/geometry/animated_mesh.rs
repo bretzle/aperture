@@ -31,9 +31,12 @@ extern crate tobj;
 
 use std::sync::Arc;
 
-use crate::geometry::mesh::intersect_triangle;
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Mesh, BVH};
-use crate::linalg::{self, lerp, Normal, Point, Ray};
+use crate::{
+    geometry::{
+        mesh::intersect_triangle, BBox, Boundable, DifferentialGeometry, Geometry, Mesh, BVH,
+    },
+    linalg::{self, lerp, Normal, Point, Ray},
+};
 
 pub struct AnimatedMeshData {
     positions: Vec<Arc<Vec<Point>>>,

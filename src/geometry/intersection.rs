@@ -2,8 +2,10 @@
 //! a full intersection, eg. hit info about the geometry and instance
 //! that was intersected
 
-use crate::geometry::{DifferentialGeometry, Instance};
-use crate::material::Materials;
+use crate::{
+    geometry::{DifferentialGeometry, Instance},
+    material::Materials,
+};
 
 /// Stores information about an intersection that occured with some instance
 /// of geometry in the scene

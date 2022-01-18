@@ -4,8 +4,10 @@
 //! block to work on
 
 use crate::sampler::morton;
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::vec::Vec;
+use std::{
+    sync::atomic::{AtomicUsize, Ordering},
+    vec::Vec,
+};
 
 /// The queue of blocks to be worked on shared immutably between worker threads.
 pub struct BlockQueue {

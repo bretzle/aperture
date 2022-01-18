@@ -67,14 +67,10 @@ impl LoadedTextures {
     /// not a constant texture will be created and returned
     pub fn find_color(&self, e: &Value) -> Option<Arc<Textures>> {
         match *e {
-            Value::String(ref s) => match self.textures.get(s) {
-                Some(t) => Some(t.clone()),
-                None => None,
-            },
-            Value::Array(_) => match load_color(e) {
-                Some(c) => Some(Arc::new(texture::ConstantColor::new(c))),
-                None => None,
-            },
+            Value::String(ref s) => self.textures.get(s).cloned(),
+            Value::Array(_) => {
+                load_color(e).map(|c| Arc::new(texture::ConstantColor::new_texture(c)))
+            }
             _ => panic!("Invalid JSON type for colorf texture"),
         }
     }
@@ -83,11 +79,8 @@ impl LoadedTextures {
     /// not a constant texture will be created and returned
     pub fn find_scalar(&self, e: &Value) -> Option<Arc<Textures>> {
         match *e {
-            Value::String(ref s) => match self.textures.get(s) {
-                Some(t) => Some(t.clone()),
-                None => None,
-            },
-            Value::Number(ref n) => Some(Arc::new(texture::ConstantScalar::new(
+            Value::String(ref s) => self.textures.get(s).cloned(),
+            Value::Number(ref n) => Some(Arc::new(texture::ConstantScalar::new_texture(
                 n.as_f64().unwrap() as f32,
             ))),
             _ => panic!("Invalid JSON type for scalar texture"),
@@ -299,14 +292,14 @@ fn load_filter(elem: &Value) -> Box<Filters> {
             .expect("A c parameter is required for the Mitchell-Netravali filter")
             .as_f64()
             .expect("c must be a number") as f32;
-        Box::new(filter::MitchellNetravali::new(width, height, b, c))
+        Box::new(filter::MitchellNetravali::new_filter(width, height, b, c))
     } else if ty == "gaussian" {
         let alpha = elem
             .get("alpha")
             .expect("An alpha parameter is required for the Gaussian filter")
             .as_f64()
             .expect("alpha must be a number") as f32;
-        Box::new(filter::Gaussian::new(width, height, alpha))
+        Box::new(filter::Gaussian::new_filter(width, height, alpha))
     } else {
         panic!("Unrecognized filter type {}!", ty);
     }
@@ -435,14 +428,14 @@ fn load_integrator(elem: &Value) -> Box<Integrators> {
             .expect("The integrator must specify the maximum ray depth")
             .as_u64()
             .expect("max_depth must be a number") as u32;
-        Box::new(integrator::Path::new(min_depth, max_depth))
+        Box::new(integrator::Path::new_integrator(min_depth, max_depth))
     } else if ty == "whitted" {
         let min_depth = elem
             .get("min_depth")
             .expect("The integrator must specify the minimum ray depth")
             .as_u64()
             .expect("min_depth must be a number") as u32;
-        Box::new(integrator::Whitted::new(min_depth))
+        Box::new(integrator::Whitted::new_integrator(min_depth))
     } else if ty == "normals_debug" {
         Box::new(Integrators::NormalsDebug(integrator::NormalsDebug))
     } else {
@@ -490,7 +483,7 @@ fn load_textures(path: &Path, elem: &Value) -> LoadedTextures {
 
             textures
                 .textures
-                .insert(name, Arc::new(texture::Image::new(img)));
+                .insert(name, Arc::new(texture::Image::new_texture(img)));
         } else if ty == "animated_image" {
             let frames_list = t
                 .get("keyframes")
@@ -520,7 +513,7 @@ fn load_textures(path: &Path, elem: &Value) -> LoadedTextures {
                         .as_f64()
                         .expect("animated_image keyframe time must be a number")
                         as f32;
-                    let img = texture::Image::new(
+                    let img = texture::Image::new_texture(
                         image::open(file_path).expect("Failed to load image file"),
                     );
                     (time, img)
@@ -529,7 +522,7 @@ fn load_textures(path: &Path, elem: &Value) -> LoadedTextures {
 
             textures
                 .textures
-                .insert(name, Arc::new(texture::AnimatedImage::new(frames)));
+                .insert(name, Arc::new(texture::AnimatedImage::new_texture(frames)));
         } else if ty == "movie" {
             // A movie is a generated animated_image, based on a format string to find the
             // keyframes and a framerate to play back at
@@ -565,7 +558,7 @@ fn load_textures(path: &Path, elem: &Value) -> LoadedTextures {
                         file_path = path.join(file_path);
                     }
                     let time = frame as f32 / framerate as f32;
-                    let img = texture::Image::new(
+                    let img = texture::Image::new_texture(
                         image::open(file_path).expect("Failed to load image file"),
                     );
                     (time, img)
@@ -574,7 +567,7 @@ fn load_textures(path: &Path, elem: &Value) -> LoadedTextures {
 
             textures
                 .textures
-                .insert(name, Arc::new(texture::AnimatedImage::new(frames)));
+                .insert(name, Arc::new(texture::AnimatedImage::new_texture(frames)));
         } else {
             panic!("Unrecognized texture type '{}' for texture '{}'", ty, name);
         }
@@ -638,7 +631,7 @@ fn load_materials(
                 )
                 .expect(&mat_error(&name, "Invalid color specified for eta of glass")[..]);
 
-            materials.insert(name, Arc::new(Glass::new(reflect, transmit, eta)));
+            materials.insert(name, Arc::new(Glass::new_material(reflect, transmit, eta)));
         } else if ty == "rough_glass" {
             let reflect = textures
                 .find_color(
@@ -676,7 +669,7 @@ fn load_materials(
 
             materials.insert(
                 name,
-                Arc::new(RoughGlass::new(reflect, transmit, eta, roughness)),
+                Arc::new(RoughGlass::new_material(reflect, transmit, eta, roughness)),
             );
         } else if ty == "matte" {
             let diffuse = textures
@@ -693,7 +686,7 @@ fn load_materials(
                 )
                 .expect(&mat_error(&name, "Invalid roughness specified for roughness")[..]);
 
-            materials.insert(name, Arc::new(Matte::new(diffuse, roughness)));
+            materials.insert(name, Arc::new(Matte::new_material(diffuse, roughness)));
         } else if ty == "merl" {
             let file_path = Path::new(
                 m.get("file")
@@ -747,7 +740,7 @@ fn load_materials(
                 .expect(&mat_error(&name, "Invalid roughness specified for metal")[..]);
             materials.insert(
                 name,
-                Arc::new(Metal::new(refr_index, absorption_coef, roughness)),
+                Arc::new(Metal::new_material(refr_index, absorption_coef, roughness)),
             );
         } else if ty == "plastic" {
             let diffuse = textures
@@ -771,7 +764,10 @@ fn load_materials(
                 )
                 .expect(&mat_error(&name, "Invalid roughness specified for plastic")[..]);
 
-            materials.insert(name, Arc::new(Plastic::new(diffuse, gloss, roughness)));
+            materials.insert(
+                name,
+                Arc::new(Plastic::new_material(diffuse, gloss, roughness)),
+            );
         } else if ty == "specular_metal" {
             let refr_index =
                 textures
@@ -797,7 +793,7 @@ fn load_materials(
                 );
             materials.insert(
                 name,
-                Arc::new(SpecularMetal::new(refr_index, absorption_coef)),
+                Arc::new(SpecularMetal::new_material(refr_index, absorption_coef)),
             );
         } else {
             panic!(

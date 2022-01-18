@@ -5,10 +5,7 @@
 use crate::film::ImageSample;
 use rand::StdRng;
 
-pub use self::adaptive::Adaptive;
-pub use self::block_queue::BlockQueue;
-pub use self::ld::LowDiscrepancy;
-pub use self::uniform::Uniform;
+pub use self::{adaptive::Adaptive, block_queue::BlockQueue, ld::LowDiscrepancy, uniform::Uniform};
 
 pub mod adaptive;
 pub mod block_queue;
@@ -53,9 +50,9 @@ pub trait Sampler {
 
 #[enum_dispatch]
 pub enum Samplers {
-	Adaptive,
-	LowDiscrepancy,
-	Uniform,
+    Adaptive,
+    LowDiscrepancy,
+    Uniform,
 }
 
 /// Provides a simple way to pass around a 3 component sample consisting of one 2D and

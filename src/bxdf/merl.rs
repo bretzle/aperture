@@ -6,11 +6,13 @@
 use enum_set::EnumSet;
 use std::f32;
 
-use crate::bxdf::{self, BxDF, BxDFType};
-use crate::film::Colorf;
-use crate::linalg::{self, Vector};
+use crate::{
+    bxdf::{self, BxDF, BxDFType},
+    film::Colorf,
+    linalg::{self, Vector},
+};
 
-use super::BxDFs;
+use crate::bxdf::BxDFs;
 
 /// BRDF that uses measured data to model the surface reflectance properties.
 /// The measured data is from "A Data-Driven Reflectance Model",
@@ -30,7 +32,7 @@ pub struct Merl<'a> {
 
 impl<'a> Merl<'a> {
     /// Create a MERL BRDF to use data loaded from a MERL BRDF data file
-    pub fn new(brdf: &'a [f32], n_theta_h: usize, n_theta_d: usize, n_phi_d: usize) -> BxDFs {
+    pub fn new_bxdf(brdf: &'a [f32], n_theta_h: usize, n_theta_d: usize, n_phi_d: usize) -> BxDFs {
         BxDFs::Merl(Self {
             brdf,
             n_theta_h,

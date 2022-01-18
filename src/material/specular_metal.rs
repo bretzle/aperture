@@ -17,7 +17,7 @@
 //! ```
 
 use crate::{
-    bxdf::{fresnel::Conductor,  SpecularReflection, BSDF, BxDFs},
+    bxdf::{fresnel::Conductor, BxDFs, SpecularReflection, BSDF},
     film::Colorf,
     geometry::Intersection,
     material::{Material, Materials},
@@ -37,11 +37,8 @@ impl SpecularMetal {
     /// Create a new specular metal with the desired metal properties.
     /// `eta`: refractive index of the metal
     /// `k`: absorption coefficient of the metal
-    pub fn new(eta: Arc<Textures>, k: Arc<Textures>) -> Materials {
-        Materials::SpecularMetal(SpecularMetal {
-            eta: eta.clone(),
-            k: k.clone(),
-        })
+    pub fn new_material(eta: Arc<Textures>, k: Arc<Textures>) -> Materials {
+        Materials::SpecularMetal(SpecularMetal { eta, k })
     }
 }
 
@@ -55,7 +52,10 @@ impl Material for SpecularMetal {
 
         let bxdfs = alloc.alloc_slice::<&BxDFs>(1);
         let fresnel = alloc.alloc(Conductor::new(&eta, &k).into());
-        bxdfs[0] = alloc.alloc(SpecularReflection::new_bxdf(&Colorf::broadcast(1.0), fresnel));
+        bxdfs[0] = alloc.alloc(SpecularReflection::new_bxdf(
+            &Colorf::broadcast(1.0),
+            fresnel,
+        ));
         BSDF::new(bxdfs, 1.0, &hit.dg)
     }
 }

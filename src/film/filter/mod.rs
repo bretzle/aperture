@@ -3,8 +3,7 @@
 //! height refer to how many pixels the filter covers, where a single
 //! pixel is 0.5x0.5
 
-pub use self::gaussian::Gaussian;
-pub use self::mitchell_netravali::MitchellNetravali;
+pub use self::{gaussian::Gaussian, mitchell_netravali::MitchellNetravali};
 
 pub mod gaussian;
 pub mod mitchell_netravali;

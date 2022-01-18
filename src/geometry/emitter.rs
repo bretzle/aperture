@@ -57,15 +57,14 @@
 //! ]
 //! ```
 
-use std::sync::Arc;
 use crate::{
     film::{AnimatedColor, Colorf},
-    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable},
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable, SampleableGeometry},
     light::{Light, OcclusionTester},
     linalg::{self, AnimatedTransform, Normal, Point, Ray, Vector},
     material::Materials,
 };
-use super::SampleableGeometry;
+use std::sync::Arc;
 
 /// The type of emitter, either a point light or an area light
 /// in which case the emitter has associated geometry and a material

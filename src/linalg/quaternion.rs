@@ -1,7 +1,9 @@
 //! Provides a Quaternion type for properly interpolating rotations
 
-use std::f32;
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::{
+    f32,
+    ops::{Add, Div, Mul, Neg, Sub},
+};
 
 use crate::linalg::{self, Matrix4, Transform, Vector};
 

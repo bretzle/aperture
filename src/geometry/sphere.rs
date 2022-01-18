@@ -12,9 +12,11 @@
 
 use std::f32;
 
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable};
-use crate::linalg::{self, Normal, Point, Ray, Vector};
-use crate::mc;
+use crate::{
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable},
+    linalg::{self, Normal, Point, Ray, Vector},
+    mc,
+};
 
 /// A sphere with user-specified radius located at the origin.
 #[derive(Clone, Copy)]

@@ -23,7 +23,7 @@
 //! ```
 
 use crate::{
-    bxdf::{fresnel::Dielectric, microfacet::Beckmann,  Lambertian, TorranceSparrow, BSDF, BxDFs},
+    bxdf::{fresnel::Dielectric, microfacet::Beckmann, BxDFs, Lambertian, TorranceSparrow, BSDF},
     geometry::Intersection,
     material::{Material, Materials},
     texture::{Texture, Textures},
@@ -41,15 +41,15 @@ pub struct Plastic {
 impl Plastic {
     /// Create a new plastic material specifying the diffuse and glossy colors
     /// along with the roughness of the surface
-    pub fn new(
+    pub fn new_material(
         diffuse: Arc<Textures>,
         gloss: Arc<Textures>,
         roughness: Arc<Textures>,
     ) -> Materials {
         Materials::Plastic(Plastic {
-            diffuse: diffuse.clone(),
-            gloss: gloss.clone(),
-            roughness: roughness.clone(),
+            diffuse,
+            gloss,
+            roughness,
         })
     }
 }

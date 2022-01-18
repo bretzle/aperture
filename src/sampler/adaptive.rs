@@ -4,10 +4,14 @@
 //! same as those from the Low Discrepancy sampler but the
 //! number of samples taken per pixel will vary.
 
-use crate::film::ImageSample;
-use crate::sampler::{ld, Region, Sampler};
-use rand::distributions::{IndependentSample, Range};
-use rand::{Rng, StdRng};
+use crate::{
+    film::ImageSample,
+    sampler::{ld, Region, Sampler},
+};
+use rand::{
+    distributions::{IndependentSample, Range},
+    Rng, StdRng,
+};
 use std::{f32, iter, u32};
 
 /// Adaptive sampler that makes use of the (0, 2) sequence to generate

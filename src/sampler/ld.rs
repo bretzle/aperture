@@ -1,8 +1,10 @@
 //! Provides a high quality sampling scheme based on (0, 2)-sequences
 //! See sec. 7.4.3 of Physically Based Rendering
 
-use rand::distributions::{IndependentSample, Range};
-use rand::{Rng, StdRng};
+use rand::{
+    distributions::{IndependentSample, Range},
+    Rng, StdRng,
+};
 use std::{f32, iter, u32};
 
 use crate::sampler::{Region, Sampler};

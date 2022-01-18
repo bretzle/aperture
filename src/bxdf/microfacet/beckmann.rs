@@ -3,9 +3,11 @@
 
 use std::f32;
 
-use crate::bxdf;
-use crate::bxdf::microfacet::MicrofacetDistribution;
-use crate::linalg::{self, Vector};
+use crate::{
+    bxdf,
+    bxdf::microfacet::MicrofacetDistribution,
+    linalg::{self, Vector},
+};
 
 /// Beckmann microfacet distribution with Smith shadowing-masking. This is the
 /// microfacet model described by [Walter et al.](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)

@@ -1,7 +1,8 @@
-use crate::geometry::BBox;
-use crate::linalg::{self, Matrix4, Normal, Point, Ray, Vector};
-use std::f32;
-use std::ops::Mul;
+use crate::{
+    geometry::BBox,
+    linalg::{self, Matrix4, Normal, Point, Ray, Vector},
+};
+use std::{f32, ops::Mul};
 
 /// Transform describes an affine transformation in 3D space
 /// and stores both the transformation and its inverse

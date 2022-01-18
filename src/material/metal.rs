@@ -21,7 +21,7 @@
 //! ```
 
 use crate::{
-    bxdf::{fresnel::Conductor, microfacet::Beckmann,  TorranceSparrow, BSDF, BxDFs},
+    bxdf::{fresnel::Conductor, microfacet::Beckmann, BxDFs, TorranceSparrow, BSDF},
     film::Colorf,
     geometry::Intersection,
     material::{Material, Materials},
@@ -39,12 +39,12 @@ pub struct Metal {
 
 impl Metal {
     /// Create a new metal material specifying the reflectance properties of the metal
-    pub fn new(eta: Arc<Textures>, k: Arc<Textures>, roughness: Arc<Textures>) -> Materials {
-        Materials::Metal(Metal {
-            eta: eta.clone(),
-            k: k.clone(),
-            roughness: roughness.clone(),
-        })
+    pub fn new_material(
+        eta: Arc<Textures>,
+        k: Arc<Textures>,
+        roughness: Arc<Textures>,
+    ) -> Materials {
+        Materials::Metal(Metal { eta, k, roughness })
     }
 }
 

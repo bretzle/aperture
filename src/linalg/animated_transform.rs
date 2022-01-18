@@ -1,8 +1,10 @@
 //! Provides an animated transformation that moves an object between a
 //! set of specified keyframes.
 
-use crate::geometry::BBox;
-use crate::linalg::{self, quaternion, Keyframe, Transform};
+use crate::{
+    geometry::BBox,
+    linalg::{self, quaternion, Keyframe, Transform},
+};
 use bspline::BSpline;
 use std::ops::Mul;
 

@@ -1,15 +1,14 @@
 //! Defines the render target for tray, where our image will be written too
 //! during rendering
 
-use std::sync::Mutex;
-use std::vec::Vec;
-use std::{cmp, f32, iter};
-
-use crate::film::filter::Filter;
-use crate::film::Colorf;
-use crate::sampler::Region;
-
-use super::filter::Filters;
+use crate::{
+    film::{
+        filter::{Filter, Filters},
+        Colorf,
+    },
+    sampler::Region,
+};
+use std::{cmp, f32, iter, sync::Mutex, vec::Vec};
 
 const FILTER_TABLE_SIZE: usize = 16;
 

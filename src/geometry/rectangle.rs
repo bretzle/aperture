@@ -16,8 +16,10 @@
 
 use std::f32;
 
-use crate::geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable};
-use crate::linalg::{self, Normal, Point, Ray, Vector};
+use crate::{
+    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, Sampleable},
+    linalg::{self, Normal, Point, Ray, Vector},
+};
 
 /// A rectangle centered at the origin spanning [-width / 2, -height / 2]
 /// to [width / 2, height / 2] with a normal along [0, 0, 1]

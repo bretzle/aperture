@@ -1,19 +1,16 @@
 //! Defines a BTDF that describes specular transmission
 
-use enum_set::EnumSet;
-use std::f32;
-
 use crate::{
     bxdf::{
         self,
-        fresnel::{Dielectric, Fresnel},
-        BxDF, BxDFType,
+        fresnel::{Dielectric, Fresnel, Fresnels},
+        BxDF, BxDFType, BxDFs,
     },
     film::Colorf,
     linalg::{self, Vector},
 };
-
-use super::{fresnel::Fresnels, BxDFs};
+use enum_set::EnumSet;
+use std::f32;
 
 /// Specular transmission BTDF that implements a specularly transmissive material model
 #[derive(Clone, Copy)]
@@ -37,8 +34,8 @@ impl<'a> SpecularTransmission<'a> {
         if let Fresnels::Dielectric(fresnel) = fresnel {
             BxDFs::SpecularTransmission(Self::new(c, fresnel))
         } else {
-			panic!()
-		}
+            panic!()
+        }
     }
 }
 

@@ -2,16 +2,18 @@
 //! [Walter et al. 07](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)
 //! for details.
 
-use enum_set::EnumSet;
-use std::f32;
-
 use crate::{
-    bxdf::{self, fresnel::Fresnel, microfacet::MicrofacetDistribution, BxDF, BxDFType},
+    bxdf::{
+        self,
+        fresnel::{Fresnel, Fresnels},
+        microfacet::{MicrofacetDistribution, MicrofacetDistributions},
+        BxDF, BxDFType, BxDFs,
+    },
     film::Colorf,
     linalg::{self, Vector},
 };
-
-use super::{BxDFs, microfacet::MicrofacetDistributions, fresnel::Fresnels};
+use enum_set::EnumSet;
+use std::f32;
 
 /// Struct providing the Torrance Sparrow BRDF, implemented as described in
 /// [Walter et al. 07](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)
@@ -26,11 +28,7 @@ pub struct TorranceSparrow<'a> {
 
 impl<'a> TorranceSparrow<'a> {
     /// Create a new Torrance Sparrow microfacet BRDF
-    pub fn new(
-        c: &Colorf,
-        fresnel: &'a Fresnels,
-        microfacet: &'a MicrofacetDistributions,
-    ) -> Self {
+    pub fn new(c: &Colorf, fresnel: &'a Fresnels, microfacet: &'a MicrofacetDistributions) -> Self {
         Self {
             reflectance: *c,
             fresnel,

@@ -12,20 +12,20 @@
 //! }
 //! ```
 
+use crate::{
+    bxdf::BxDFType,
+    film::Colorf,
+    geometry::{Emitter, Instance, Intersection},
+    integrator::{Integrator, Integrators},
+    light::Light,
+    linalg::{self, Ray},
+    material::Material,
+    sampler::{Sampler, Samplers},
+    scene::Scene,
+};
 use light_arena::Allocator;
 use rand::StdRng;
 use std::f32;
-use crate::material::Material;
-use crate::bxdf::BxDFType;
-use crate::film::Colorf;
-use crate::geometry::{Emitter, Instance, Intersection};
-use crate::integrator::Integrator;
-use crate::light::Light;
-use crate::linalg::{self, Ray};
-use crate::sampler::{Sampler, Samplers};
-use crate::scene::Scene;
-
-use super::Integrators;
 
 /// The Whitted integrator implementing the Whitted recursive ray tracing algorithm
 #[derive(Clone, Copy, Debug)]
@@ -36,7 +36,7 @@ pub struct Whitted {
 
 impl Whitted {
     /// Create a new Whitted integrator with the desired maximum recursion depth for rays
-    pub fn new(max_depth: u32) -> Integrators {
+    pub fn new_integrator(max_depth: u32) -> Integrators {
         Integrators::Whitted(Self { max_depth })
     }
 }

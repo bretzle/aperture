@@ -18,14 +18,11 @@
 
 extern crate tobj;
 
-use std::{collections::HashMap, path::Path, sync::Arc};
-
 use crate::{
-    geometry::{BBox, Boundable, DifferentialGeometry, Geometry, BVH},
+    geometry::{BBox, Boundable, BoundableGeometry, DifferentialGeometry, Geometry, BVH},
     linalg::{self, Normal, Point, Ray, Vector},
 };
-
-use super::BoundableGeometry;
+use std::{collections::HashMap, path::Path, sync::Arc};
 
 /// A mesh composed of triangles, specified by directly passing the position,
 /// normal and index buffers for the triangles making up the mesh
@@ -99,7 +96,12 @@ impl Mesh {
                     );
                     meshes.insert(
                         m.name,
-                        Arc::new(BoundableGeometry::Mesh(Mesh::new(positions, normals, texcoords, mesh.indices))),
+                        Arc::new(BoundableGeometry::Mesh(Mesh::new(
+                            positions,
+                            normals,
+                            texcoords,
+                            mesh.indices,
+                        ))),
                     );
                 }
                 meshes

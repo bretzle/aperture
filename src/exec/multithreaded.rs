@@ -1,18 +1,18 @@
 //! The multithreaded module provides a multithreaded execution for rendering
 //! the image.
 
-use std::iter;
-use std::time::SystemTime;
+use crate::{
+    exec::{Config, Exec},
+    film::{Colorf, ImageSample, RenderTarget},
+    geometry::{Emitter, Instance},
+    integrator::Integrator,
+    sampler::{self, BlockQueue, Sampler, Samplers},
+    scene::Scene,
+};
 use light_arena;
 use rand::StdRng;
 use scoped_threadpool::Pool;
-use crate::exec::{Config, Exec};
-use crate::film::{Colorf, ImageSample, RenderTarget};
-use crate::geometry::{Emitter, Instance};
-use crate::integrator::Integrator;
-use crate::sampler::{BlockQueue, Samplers};
-use crate::sampler::{self, Sampler};
-use crate::scene::Scene;
+use std::{iter, time::SystemTime};
 
 /// The `MultiThreaded` execution uses a configurable number of threads in
 /// a threadpool to render each frame

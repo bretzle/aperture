@@ -1,5 +1,7 @@
-use std::f32;
-use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
+use std::{
+    f32,
+    ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
+};
 
 use crate::linalg::{self, Vector};
 

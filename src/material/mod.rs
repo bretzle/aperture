@@ -49,11 +49,11 @@ pub trait Material {
 
 #[enum_dispatch]
 pub enum Materials {
-	Glass,
-	Matte,
-	Merl,
-	Metal,
-	Plastic,
-	RoughGlass,
-	SpecularMetal,
+    Glass,
+    Matte,
+    Merl,
+    Metal,
+    Plastic,
+    RoughGlass,
+    SpecularMetal,
 }

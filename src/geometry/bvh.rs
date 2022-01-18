@@ -1,10 +1,11 @@
 //! Provides a simple SAH split based BVH2 that stores types implementing the Boundable trait
 
-use crate::geometry::{BBox, Boundable};
-use crate::linalg::{Axis, Point, Ray, Vector};
-use crate::partition::partition;
-use std::f32;
-use std::slice::Iter;
+use crate::{
+    geometry::{BBox, Boundable},
+    linalg::{Axis, Point, Ray, Vector},
+    partition::partition,
+};
+use std::{f32, slice::Iter};
 
 /// A standard BVH2 that stores objects that can report their bounds in some space
 /// via the `Boundable` trait. The BVH is constructed using a SAH partitioning scheme

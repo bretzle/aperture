@@ -2,8 +2,7 @@
 
 use std::cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd};
 
-use crate::film::Colorf;
-use crate::linalg;
+use crate::{film::Colorf, linalg};
 
 /// `ColorKeyframe` is a color associated with a specific time
 #[derive(Debug, Copy, Clone)]

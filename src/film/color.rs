@@ -1,7 +1,9 @@
 //! Defines types for operating with floating point and 8 bit RGB colors
 
-use std::f32;
-use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
+use std::{
+    f32,
+    ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
+};
 
 use crate::linalg;
 

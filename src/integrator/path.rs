@@ -19,7 +19,7 @@ use crate::{
     bxdf::BxDFType,
     film::Colorf,
     geometry::{Emitter, Instance, Intersection},
-    integrator::Integrator,
+    integrator::{Integrator, Integrators},
     linalg::{self, Ray},
     material::Material,
     sampler::{Sample, Sampler, Samplers},
@@ -28,8 +28,6 @@ use crate::{
 use light_arena::Allocator;
 use rand::{Rng, StdRng};
 use std::f32;
-
-use super::Integrators;
 
 /// The path integrator implementing Path tracing with explicit light sampling
 #[derive(Clone, Copy, Debug)]
@@ -40,7 +38,7 @@ pub struct Path {
 
 impl Path {
     /// Create a new path integrator with the min and max length desired for paths
-    pub fn new(min_depth: u32, max_depth: u32) -> Integrators {
+    pub fn new_integrator(min_depth: u32, max_depth: u32) -> Integrators {
         Integrators::Path(Path {
             min_depth: min_depth as usize,
             max_depth: max_depth as usize,

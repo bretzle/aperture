@@ -1,10 +1,7 @@
 //! Provides a Gaussian reconstruction filter.
 
+use crate::film::filter::{Filter, Filters};
 use std::f32;
-
-use crate::film::filter::Filter;
-
-use super::Filters;
 
 /// A Gaussian reconstruction filter.
 /// Recommended parameters to try: w = 2.0, h = 2.0, alpha = 2.0
@@ -20,7 +17,7 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    pub fn new(w: f32, h: f32, alpha: f32) -> Filters {
+    pub fn new_filter(w: f32, h: f32, alpha: f32) -> Filters {
         Filters::Gaussian(Self {
             w,
             h,

@@ -1,8 +1,10 @@
 //! Defines the `DifferentialGeometry` type which is used to pass information
 //! about the hit piece of geometry back from the intersection to the shading
 
-use crate::geometry::Geometry;
-use crate::linalg::{self, Normal, Point, Vector};
+use crate::{
+    geometry::Geometry,
+    linalg::{self, Normal, Point, Vector},
+};
 
 /// Stores information about a hit piece of geometry of some object in the scene
 #[derive(Clone, Copy)]
